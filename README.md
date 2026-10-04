@@ -1,16 +1,21 @@
-# Bluey 0.5.2 — Self-Diagnosing Microphone Build
+# Bluey 0.5.3 — Clean Voice Conversation Test
 
-Temporary developer build for isolating the silent microphone issue.
+The microphone issue was isolated successfully in 0.5.2. This build returns Bluey to a clean user-facing experience.
 
 ## Changes
-- Adds an on-screen Developer Mic Diagnostic panel.
-- Shows selected device, track state, enabled/muted state, sample rate and channel count.
-- Shows live peak and RMS values.
-- Shows final recording duration, byte size, and MIME type.
-- Gives a clear microphone-audio detected / no-audio result.
-- Does NOT call the transcription API when the live signal is effectively silent.
-- Keeps playback available for testing when a usable signal is detected.
+- Removes the large developer microphone diagnostic panel from the visible UI.
+- Removes the visible playback test panel.
+- Keeps live microphone analysis and detailed diagnostics in the browser console.
+- Keeps the working native MediaRecorder capture pipeline.
+- Keeps the normal listening message: “I’m listening. Tap Bluey when you’re done.”
+- If no audio is detected, Bluey now suggests checking whether the microphone is muted.
+- Restores the conversation area as the focus so speech transcription and Bluey’s answer are visible.
 
 ## Test
-Tap Bluey, speak normally for 5 seconds, and tap Bluey again.
-Take a screenshot of the Developer Mic Diagnostic panel after the recording.
+1. Make sure the microphone is not muted.
+2. Tap Bluey.
+3. Say: “Bluey, tell me something interesting about elephants.”
+4. Tap Bluey again.
+5. Confirm the spoken words appear as the user message.
+6. Confirm Bluey answers.
+7. If transcription fails, use the newest Vercel `/api/transcribe` error; the browser console also retains capture diagnostics.
