@@ -1,47 +1,75 @@
-export const config={api:{bodyParser:false}};
+import formidable from "formidable";
+import fs from "fs";
 
-async function readRequest(req){
-  const parts=[];
-  for await(const chunk of req) parts.push(chunk);
-  return Buffer.concat(parts);
+export const config = { api: { bodyParser: false } };
+
+function parseForm(req) {
+  return new Promise((resolve, reject) => {
+    const form = formidable({
+      multiples: false,
+      maxFiles: 1,
+      maxFileSize: 20 * 1024 * 1024,
+      allowEmptyFiles: false,
+    });
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
+    });
+  });
 }
 
-export default async function handler(req,res){
-  if(req.method!=="POST") return res.status(405).json({error:"Method not allowed"});
-  if(!process.env.OPENAI_API_KEY) return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
-  try{
-    const raw=await readRequest(req);
-    const incomingType=req.headers["content-type"]||"";
-    const boundaryMatch=incomingType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
-    if(!boundaryMatch) return res.status(400).json({error:"Missing audio form boundary"});
-    const oldBoundary=boundaryMatch[1]||boundaryMatch[2];
+function firstFile(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
-    // Forward the browser's multipart body and inject the required model field
-    // immediately before the terminating boundary.
-    const marker=Buffer.from(`--${oldBoundary}--`);
-    const idx=raw.lastIndexOf(marker);
-    if(idx<0) return res.status(400).json({error:"Invalid audio form data"});
-    const modelPart=Buffer.from(
-      `--${oldBoundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\ngpt-transcribe\r\n`
-    );
-    const body=Buffer.concat([raw.subarray(0,idx),modelPart,raw.subarray(idx)]);
+export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("Bluey transcription: OPENAI_API_KEY missing");
+    return res.status(503).json({ error: "Transcription is temporarily unavailable" });
+  }
 
-    const r=await fetch("https://api.openai.com/v1/audio/transcriptions",{
-      method:"POST",
-      headers:{
-        Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type":incomingType
-      },
-      body
+  let tempPath;
+  try {
+    const { files } = await parseForm(req);
+    const audio = firstFile(files.audio);
+    if (!audio?.filepath) return res.status(400).json({ error: "No audio received" });
+
+    tempPath = audio.filepath;
+    const bytes = await fs.promises.readFile(audio.filepath);
+    if (!bytes.length) return res.status(400).json({ error: "Empty audio received" });
+
+    const mime = audio.mimetype || "audio/webm";
+    const original = audio.originalFilename || (mime.includes("mp4") ? "bluey.m4a" : "bluey.webm");
+
+    const body = new FormData();
+    body.append("file", new Blob([bytes], { type: mime }), original);
+    body.append("model", process.env.BLUEY_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe");
+    body.append("response_format", "json");
+
+    const r = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+      body,
     });
-    const d=await r.json();
-    if(!r.ok){
-      console.error("Transcription API error",r.status,d);
-      return res.status(r.status).json({error:d?.error?.message||`Transcription failed (${r.status})`});
+
+    const raw = await r.text();
+    let data = {};
+    try { data = JSON.parse(raw); } catch {}
+
+    if (!r.ok) {
+      console.error("OpenAI transcription error", r.status, raw);
+      return res.status(r.status).json({ error: "Transcription is temporarily unavailable" });
     }
-    return res.status(200).json({text:d.text||""});
-  }catch(e){
-    console.error("Transcription server error",e);
-    return res.status(500).json({error:e?.message||"Transcription failed"});
+
+    const text = typeof data.text === "string" ? data.text.trim() : "";
+    if (!text) return res.status(422).json({ error: "No speech detected" });
+
+    return res.status(200).json({ text });
+  } catch (e) {
+    console.error("Bluey transcription server error", e);
+    return res.status(500).json({ error: "Transcription is temporarily unavailable" });
+  } finally {
+    if (tempPath) fs.promises.unlink(tempPath).catch(() => {});
   }
 }
