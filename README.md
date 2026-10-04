@@ -1,13 +1,26 @@
-# Bluey 0.4.5
+# Bluey 0.4.6
 
-## Microphone recording lifecycle fix
-- Records one complete browser media container instead of 250 ms timeslices.
-- On the second tap, requests final data and then stops the recorder.
-- Waits for the browser's final `dataavailable` event before uploading.
-- Rejects accidental recordings shorter than ~700 ms or 2 KB locally.
-- Logs duration, final byte size, MIME type, and chunk count in the browser.
-- Sends duration to Vercel so `/api/transcribe` logs can be compared with browser recording data.
-- Keeps 0.4.4's temporary status cleanup and visual color language.
+## Cross-browser microphone change
+The repeated 1,063-byte WebM file showed that MediaRecorder was not producing a usable recording in our deployed path.
+
+0.4.6 removes MediaRecorder from Bluey's microphone path.
+
+New flow:
+1. `getUserMedia()` captures the microphone.
+2. Web Audio captures mono PCM samples.
+3. Bluey creates a real WAV file in the browser.
+4. The WAV is uploaded as `bluey.wav`.
+5. Vercel sends that file to OpenAI transcription using the official OpenAI Node SDK.
+
+This gives us a deterministic audio container rather than depending on browser WebM/Opus finalization.
+
+The browser console logs:
+- duration
+- WAV byte size
+- sample rate
+- PCM chunk count
+
+The Vercel `/api/transcribe` log should now show `audio/wav`, `bluey.wav`, and a file substantially larger than 1,063 bytes for a several-second recording.
 
 ## Vercel
 Required: `OPENAI_API_KEY`
