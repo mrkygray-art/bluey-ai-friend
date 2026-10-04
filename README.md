@@ -1,20 +1,16 @@
-# Bluey 0.5.1 — Live Microphone Diagnostic
+# Bluey 0.5.2 — Self-Diagnosing Microphone Build
 
-This build isolates the microphone signal before MediaRecorder/transcription.
+Temporary developer build for isolating the silent microphone issue.
 
-## Added
-- Live microphone level bar while Bluey listens.
-- Bluey reacts directly to live microphone energy.
-- Logs the selected microphone track label, state, muted/enabled flags, and browser track settings.
-- Logs maximum live peak/RMS observed during the recording.
-- Keeps native MediaRecorder and Play my recording from 0.5.0.
+## Changes
+- Adds an on-screen Developer Mic Diagnostic panel.
+- Shows selected device, track state, enabled/muted state, sample rate and channel count.
+- Shows live peak and RMS values.
+- Shows final recording duration, byte size, and MIME type.
+- Gives a clear microphone-audio detected / no-audio result.
+- Does NOT call the transcription API when the live signal is effectively silent.
+- Keeps playback available for testing when a usable signal is detected.
 
 ## Test
-1. Tap Bluey.
-2. Speak normally for 3–5 seconds.
-3. Watch for `Microphone: hearing you` and movement in the level bar/Bluey.
-4. Tap Bluey to stop.
-5. Play the recording.
-6. In the browser console copy `Bluey microphone track` and `Bluey live microphone summary`.
-
-If livePeak/liveRms are zero, the browser microphone stream itself is silent. If they are healthy but playback is silent, the recording layer is the next target.
+Tap Bluey, speak normally for 5 seconds, and tap Bluey again.
+Take a screenshot of the Developer Mic Diagnostic panel after the recording.
