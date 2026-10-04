@@ -101,9 +101,37 @@ export default async function handler(req,res) {
       response_format:"json"
     });
 
-    const text=typeof result?.text==="string"?result.text.trim():"";
-    if(!text) {
-      console.error("Bluey transcription returned no text");
+    // 0.4.8: inspect the response safely and normalize common SDK/API shapes.
+    const responseShape={
+      jsType:typeof result,
+      constructor:result?.constructor?.name||null,
+      keys:result && typeof result==="object" ? Object.keys(result).slice(0,20) : [],
+      hasText:typeof result?.text==="string",
+      hasOutputText:typeof result?.output_text==="string",
+      dataType:typeof result?.data
+    };
+    console.log("Bluey transcription response shape",responseShape);
+
+    let text="";
+    if(typeof result==="string") text=result.trim();
+    else if(typeof result?.text==="string") text=result.text.trim();
+    else if(typeof result?.output_text==="string") text=result.output_text.trim();
+    else if(typeof result?.data?.text==="string") text=result.data.text.trim();
+    else if(typeof result?.transcript==="string") text=result.transcript.trim();
+
+    // Last-resort safe inspection: stringify only a short redacted preview.
+    if(!text){
+      let preview="";
+      try{
+        preview=JSON.stringify(result,(key,value)=>{
+          if(/key|token|authorization|secret/i.test(key)) return "[REDACTED]";
+          return value;
+        });
+      }catch(_){}
+      console.error("Bluey transcription returned no normalized text",{
+        ...responseShape,
+        preview:preview ? preview.slice(0,1000) : null
+      });
       return res.status(422).json({error:"No speech detected"});
     }
 

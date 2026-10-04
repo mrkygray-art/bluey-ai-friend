@@ -1,17 +1,21 @@
-# Bluey 0.4.7
+# Bluey 0.4.8
 
-Transcription-only diagnostic/fix release.
+Transcription response diagnostic/normalization release.
 
 ## What changed
-- Validates the generated WAV before OpenAI receives it.
-- Checks RIFF/WAVE markers, PCM format, mono channel count, sample rate, byte rate, block alignment, 16-bit depth, and data chunk.
-- Logs the validated WAV properties in Vercel.
-- Uses the OpenAI SDK `toFile()` helper to create a clean `bluey.wav` upload rather than passing Formidable's temporary file metadata.
-- No intentional UI/personality changes.
+- Keeps the validated WAV pipeline from 0.4.7 unchanged.
+- Logs the safe JavaScript shape of the OpenAI transcription response.
+- Normalizes several possible text-bearing response shapes.
+- If no transcript is found, logs a short redacted response preview.
+- No intentional UI, motion, personality, microphone, or WAV changes.
 
 ## Acceptance test
-Tap Bluey → speak → tap again → your transcript appears in gray → Bluey answers → answer is spoken.
+Tap Bluey → speak → tap Bluey again → spoken words appear in gray → Bluey answers → Bluey speaks the answer.
 
-## Vercel
-Required: `OPENAI_API_KEY`
-Optional: `BLUEY_MODEL`, `BLUEY_TRANSCRIBE_MODEL`
+## Vercel logs
+Look for:
+- `Bluey WAV validated`
+- `Bluey transcription response shape`
+- `Bluey transcription success`
+
+If normalization still fails, copy the `response shape` and `returned no normalized text` entries.
