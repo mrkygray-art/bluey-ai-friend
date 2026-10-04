@@ -1,17 +1,17 @@
-# Bluey 0.5.4 — OpenAI Upload Fix
+# Bluey 0.5.5 — Firefox Voice Compatibility
 
-The microphone/browser capture path is intentionally unchanged from 0.5.3.
+Chrome's full voice pipeline is already confirmed working. This build preserves that path and adds browser-aware recording for Firefox.
 
-## Server-side change
-`/api/transcribe` now:
-- reads the uploaded browser recording into bytes,
-- normalizes its audio MIME type,
-- constructs an explicit OpenAI SDK `File` with filename + MIME metadata using `toFile`,
-- sends that file to the transcription endpoint,
-- logs the first eight file bytes (signature) plus upload metadata for diagnosis.
+- Chromium prefers WebM/Opus.
+- Firefox prefers Ogg/Opus when supported.
+- Upload filename matches the actual recorded container.
+- The 0.5.4 server-side OpenAI upload fix remains unchanged.
+- Microphone mute/audio diagnostics remain hidden in the UI.
+- Console logs the selected recorder format and upload handoff.
 
-This targets the remaining `400 Unsupported file format` error without changing the now-proven microphone capture path.
-
-## Test
-Tap Bluey, speak for 3–5 seconds, tap again, and confirm your speech appears in the conversation.
-If it fails, copy the newest `Bluey transcription upload prepared` and `Bluey transcription server error` log entries.
+Test Chrome first to confirm no regression, then Firefox.
+If Firefox fails, capture the newest:
+`Bluey recorder selection`
+`Bluey upload handoff`
+`Bluey transcription upload prepared`
+`Bluey transcription server error`

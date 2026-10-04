@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.5.4</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.5.5</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -162,8 +162,17 @@ function startMeter(stream){
  tick();
 }
 function recorderType(){
- const types=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
- return types.find(x=>MediaRecorder.isTypeSupported?.(x))||'';
+ const firefox=/Firefox\//i.test(navigator.userAgent||'');
+ const types=firefox
+  ? ['audio/ogg;codecs=opus','audio/ogg','audio/webm;codecs=opus','audio/webm','audio/mp4']
+  : ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg','audio/mp4'];
+ const selected=types.find(x=>MediaRecorder.isTypeSupported?.(x))||'';
+ console.log('Bluey recorder selection',{
+  browser:firefox?'Firefox':'Chromium/other',
+  selectedMime:selected||'(browser default)',
+  support:Object.fromEntries(types.map(x=>[x,!!MediaRecorder.isTypeSupported?.(x)]))
+ });
+ return selected;
 }
 async function finishRecording(){
  if(!mediaRecorder)return;
@@ -179,7 +188,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.5.4 voice capture',{
+ console.log('Bluey 0.5.5 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -205,7 +214,11 @@ async function finishRecording(){
  audioDiagnosticText.textContent=`Recorded ${(durationMs/1000).toFixed(1)} seconds. Play it back — you should clearly hear your voice.`;
  if(durationMs<700||blob.size<1000){tempStatus("I didn't catch enough to understand. Tap me and try again.",6500);behavior('unsure');return}
  behavior('thinking');statusEl.textContent='One moment…';
- const ext=mime.includes('ogg')?'ogg':mime.includes('mp4')?'m4a':'webm';
+ const ext=mime.includes('ogg')?'ogg':mime.includes('wav')?'wav':mime.includes('mp4')?'m4a':'webm';
+ console.log('Bluey upload handoff',{
+  browser:/Firefox\//i.test(navigator.userAgent||'')?'Firefox':'Chromium/other',
+  mime,extension:ext,bytes:blob.size,durationMs
+ });
  const fd=new FormData();fd.append('audio',blob,`bluey.${ext}`);fd.append('duration_ms',String(durationMs));
  try{
   const r=await fetch('/api/transcribe',{method:'POST',body:fd}),d=await r.json().catch(()=>({}));
