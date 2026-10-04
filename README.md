@@ -1,21 +1,17 @@
-# Bluey 0.5.3 — Clean Voice Conversation Test
+# Bluey 0.5.4 — OpenAI Upload Fix
 
-The microphone issue was isolated successfully in 0.5.2. This build returns Bluey to a clean user-facing experience.
+The microphone/browser capture path is intentionally unchanged from 0.5.3.
 
-## Changes
-- Removes the large developer microphone diagnostic panel from the visible UI.
-- Removes the visible playback test panel.
-- Keeps live microphone analysis and detailed diagnostics in the browser console.
-- Keeps the working native MediaRecorder capture pipeline.
-- Keeps the normal listening message: “I’m listening. Tap Bluey when you’re done.”
-- If no audio is detected, Bluey now suggests checking whether the microphone is muted.
-- Restores the conversation area as the focus so speech transcription and Bluey’s answer are visible.
+## Server-side change
+`/api/transcribe` now:
+- reads the uploaded browser recording into bytes,
+- normalizes its audio MIME type,
+- constructs an explicit OpenAI SDK `File` with filename + MIME metadata using `toFile`,
+- sends that file to the transcription endpoint,
+- logs the first eight file bytes (signature) plus upload metadata for diagnosis.
+
+This targets the remaining `400 Unsupported file format` error without changing the now-proven microphone capture path.
 
 ## Test
-1. Make sure the microphone is not muted.
-2. Tap Bluey.
-3. Say: “Bluey, tell me something interesting about elephants.”
-4. Tap Bluey again.
-5. Confirm the spoken words appear as the user message.
-6. Confirm Bluey answers.
-7. If transcription fails, use the newest Vercel `/api/transcribe` error; the browser console also retains capture diagnostics.
+Tap Bluey, speak for 3–5 seconds, tap again, and confirm your speech appears in the conversation.
+If it fails, copy the newest `Bluey transcription upload prepared` and `Bluey transcription server error` log entries.
