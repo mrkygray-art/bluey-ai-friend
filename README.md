@@ -1,18 +1,13 @@
-# Bluey 0.4.4
+# Bluey 0.4.5
 
-## Fixes
-- Rebuilt speech transcription using the official OpenAI Node SDK.
-- Keeps browser audio upload parsing with Formidable.
-- Adds useful transcription diagnostics to Vercel Function Logs without exposing technical errors to users.
-- “I didn't catch that” now clears automatically after about 7 seconds.
-- A new idle/personality nudge clears any stale status message before appearing.
-- User activity also clears old temporary status messages.
-- Browser title is explicitly `Bluey 0.4.4`.
-
-## Visual language
-- Blue = Bluey's temporary voice/status/personality language
-- Muted gray = the user's typed or transcribed words
-- Near-black = Bluey's substantive answer
+## Microphone recording lifecycle fix
+- Records one complete browser media container instead of 250 ms timeslices.
+- On the second tap, requests final data and then stops the recorder.
+- Waits for the browser's final `dataavailable` event before uploading.
+- Rejects accidental recordings shorter than ~700 ms or 2 KB locally.
+- Logs duration, final byte size, MIME type, and chunk count in the browser.
+- Sends duration to Vercel so `/api/transcribe` logs can be compared with browser recording data.
+- Keeps 0.4.4's temporary status cleanup and visual color language.
 
 ## Vercel
 Required: `OPENAI_API_KEY`

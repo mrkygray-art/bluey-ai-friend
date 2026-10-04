@@ -32,8 +32,9 @@ export default async function handler(req, res) {
 
   let tempPath;
   try {
-    const { files } = await parseForm(req);
+    const { fields, files } = await parseForm(req);
     const audio = firstFile(files.audio);
+    const durationMs = Array.isArray(fields.duration_ms) ? fields.duration_ms[0] : fields.duration_ms;
     if (!audio?.filepath) {
       console.error("Bluey transcription: no audio file in multipart upload", Object.keys(files || {}));
       return res.status(400).json({ error: "No audio received" });
@@ -44,7 +45,8 @@ export default async function handler(req, res) {
     console.log("Bluey transcription upload", {
       bytes: stat.size,
       mimetype: audio.mimetype,
-      filename: audio.originalFilename
+      filename: audio.originalFilename,
+      durationMs: durationMs || null
     });
     if (stat.size < 500) return res.status(400).json({ error: "Audio recording was too short" });
 
