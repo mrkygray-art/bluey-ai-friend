@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.5.0</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.5.1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -24,6 +24,12 @@
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
+<div id="liveMicDiagnostic" style="display:none;width:min(780px,calc(100% - 28px));margin:0 auto 10px;padding:12px 14px;border:1px solid #e1e5e8;border-radius:18px;color:#64748b;font-size:14px">
+  <div id="liveMicText">Microphone test starting…</div>
+  <div style="height:7px;background:#edf1f4;border-radius:999px;margin-top:9px;overflow:hidden">
+    <div id="liveMicBar" style="height:100%;width:0%;background:#159ddd;border-radius:999px;transition:width 80ms linear"></div>
+  </div>
+</div>
 <div id="audioDiagnostic" style="display:none;width:min(780px,calc(100% - 28px));margin:0 auto 10px;padding:12px 14px;border:1px solid #e1e5e8;border-radius:18px;color:#64748b;font-size:14px">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
     <span id="audioDiagnosticText">Audio diagnostic ready.</span>
@@ -35,6 +41,9 @@
 <script>
 const app=document.querySelector('#app'),mover=document.querySelector('#mover'),orb=document.querySelector('#orb'),statusEl=document.querySelector('#status'),messages=document.querySelector('#messages'),form=document.querySelector('#form'),input=document.querySelector('#input');
 const audioDiagnostic=document.querySelector('#audioDiagnostic'),audioDiagnosticText=document.querySelector('#audioDiagnosticText'),playLastRecording=document.querySelector('#playLastRecording'),lastRecordingAudio=document.querySelector('#lastRecordingAudio');
+const liveMicDiagnostic=document.querySelector('#liveMicDiagnostic'),liveMicText=document.querySelector('#liveMicText'),liveMicBar=document.querySelector('#liveMicBar');
+let livePeakSeen=0,liveRmsSeen=0,liveFrames=0;
+
 let lastRecordingUrl=null;
 playLastRecording.onclick=()=>{if(lastRecordingAudio.src){lastRecordingAudio.currentTime=0;lastRecordingAudio.play().catch(e=>console.error('Bluey playback error',e));}};
 
@@ -87,14 +96,32 @@ function stopMeter(){
 }
 function startMeter(stream){
  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+ livePeakSeen=0;liveRmsSeen=0;liveFrames=0;
+ const track=stream.getAudioTracks()[0];
+ console.log('Bluey microphone track',{
+  label:track?.label||'(no label)',readyState:track?.readyState,enabled:track?.enabled,
+  muted:track?.muted,settings:track?.getSettings?.()||{}
+ });
+ liveMicDiagnostic.style.display='block';
+ liveMicText.textContent=`Microphone: ${track?.label||'active input'} — listening for sound…`;
  meterCtx=new Ctx();meterSource=meterCtx.createMediaStreamSource(stream);
- meterAnalyser=meterCtx.createAnalyser();meterAnalyser.fftSize=1024;meterSource.connect(meterAnalyser);
- const data=new Uint8Array(meterAnalyser.fftSize);
- const tick=()=>{if(!meterAnalyser)return;meterAnalyser.getByteTimeDomainData(data);let s=0;
-  for(const x of data){const v=(x-128)/128;s+=v*v}
-  const e=Math.min(1,Math.sqrt(s/data.length)*8);
-  orb.style.transform=`translateY(${-e*7}px) scale(${1+e*.035})`;
-  meterFrame=requestAnimationFrame(tick)};
+ meterAnalyser=meterCtx.createAnalyser();meterAnalyser.fftSize=2048;meterSource.connect(meterAnalyser);
+ const data=new Float32Array(meterAnalyser.fftSize);
+ const tick=()=>{
+  if(!meterAnalyser)return;
+  meterAnalyser.getFloatTimeDomainData(data);
+  let sum=0,peak=0;
+  for(const v of data){const a=Math.abs(v);if(a>peak)peak=a;sum+=v*v}
+  const rms=Math.sqrt(sum/data.length);
+  livePeakSeen=Math.max(livePeakSeen,peak);liveRmsSeen=Math.max(liveRmsSeen,rms);liveFrames++;
+  const pct=Math.min(100,Math.max(1,rms*650));
+  liveMicBar.style.width=`${pct}%`;
+  if(rms>.008)liveMicText.textContent=`Microphone: hearing you`;
+  else liveMicText.textContent=`Microphone: listening…`;
+  const energy=Math.min(1,rms*10);
+  orb.style.transform=`translateY(${-energy*8}px) scale(${1+energy*.04})`;
+  meterFrame=requestAnimationFrame(tick)
+ };
  tick();
 }
 function recorderType(){
@@ -105,6 +132,12 @@ async function finishRecording(){
  if(!mediaRecorder)return;
  const rec=mediaRecorder,stream=audioStream,durationMs=Math.round(performance.now()-recordingStartedAt);
  const done=new Promise(resolve=>rec.addEventListener('stop',resolve,{once:true}));
+ const track=stream?.getAudioTracks?.()[0];
+ console.log('Bluey live microphone summary',{
+  label:track?.label||'(no label)',readyState:track?.readyState,enabled:track?.enabled,muted:track?.muted,
+  livePeak:+livePeakSeen.toFixed(6),liveRms:+liveRmsSeen.toFixed(6),frames:liveFrames,
+  settings:track?.getSettings?.()||{}
+ });
  if(rec.state!=='inactive')rec.stop();await done;stopMeter();stream?.getTracks().forEach(t=>t.stop());
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
@@ -112,7 +145,7 @@ async function finishRecording(){
  if(lastRecordingUrl)URL.revokeObjectURL(lastRecordingUrl);
  lastRecordingUrl=URL.createObjectURL(blob);lastRecordingAudio.src=lastRecordingUrl;
  audioDiagnostic.style.display='block';
- audioDiagnosticText.textContent=`Recorded ${(durationMs/1000).toFixed(1)} seconds. Play it back to confirm Bluey captured your voice.`;
+ audioDiagnosticText.textContent=`Recorded ${(durationMs/1000).toFixed(1)} seconds. Play it back — you should clearly hear your voice.`;
  if(durationMs<700||blob.size<1000){tempStatus("I didn't catch enough to understand. Tap me and try again.",6500);behavior('unsure');return}
  behavior('thinking');statusEl.textContent='One moment…';
  const ext=mime.includes('ogg')?'ogg':mime.includes('mp4')?'m4a':'webm';
