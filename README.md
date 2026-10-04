@@ -1,10 +1,12 @@
-# Bluey 0.4.9 — Audio Diagnostic
+# Bluey 0.5.0 — Microphone Capture Rebuild
 
-This release diagnoses the remaining voice transcription issue without changing Bluey's normal personality/UI.
+The microphone path now uses the browser-native MediaRecorder instead of the custom zero-filled PCM/WAV path.
 
-- Measures PCM peak, RMS, silence %, clipping %, and sample count on Vercel.
-- Logs `Bluey audio diagnostic` with `audioStatus`.
-- Adds a temporary **Play my recording** control after a voice recording so you can hear exactly what Bluey captured.
-- Keeps the 0.4.8 WAV validation and transcription-response diagnostics.
+Acceptance test:
+1. Tap Bluey and speak for 3–5 seconds.
+2. Tap Bluey again.
+3. Use Play my recording. Your voice should be clearly audible.
+4. Bluey should transcribe the speech and answer.
+5. Test Chrome and Firefox.
 
-Test: tap Bluey, speak for 3–5 seconds, tap again, play the recording, then inspect the newest Vercel `/api/transcribe` log.
+Bluey also subtly reacts to live microphone energy while listening. The playback diagnostic remains temporarily for testing.
