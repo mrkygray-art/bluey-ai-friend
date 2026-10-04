@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.4.3</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.4.4</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -32,10 +32,13 @@ const textNudges=["Still there?","What can I help you with?","No rush. I’m rig
 const voiceNudges=["Can I help you with anything?","I’m still here if you need me.","Want to work on something together?"];
 const personalityNudges=["Curiosity is a pretty good place to start.","Small questions are welcome here.","We don’t have to know where we’re going yet.","One question can lead somewhere interesting.","Take your time. I’m not going anywhere."];
 const valid=new Set(['idle','listening','thinking','curious','explaining','serious','happy','unsure']);
+let statusTimer=null;
+function clearStatus(){clearTimeout(statusTimer);statusTimer=null;statusEl.textContent=''}
+function tempStatus(text,ms=7000){clearTimeout(statusTimer);statusEl.textContent=text;statusTimer=setTimeout(()=>{statusEl.textContent=''},ms)}
 function randomFrom(a){return a[Math.floor(Math.random()*a.length)]}
-function showNudge(text){const n=document.querySelector('#nudge');n.textContent=text;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),12000)}
+function showNudge(text){clearStatus();const n=document.querySelector('#nudge');n.textContent=text;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),12000)}
 function scheduleIdle(){clearTimeout(idleTimer);if(document.hidden)return;const delay=idleStage===0?75000:idleStage===1?60000:120000;idleTimer=setTimeout(runIdle,delay)}
-function touchActivity(){lastActivity=Date.now();idleStage=0;const n=document.querySelector('#nudge');n.classList.remove('show');n.textContent='';scheduleIdle()}
+function touchActivity(){clearStatus();lastActivity=Date.now();idleStage=0;const n=document.querySelector('#nudge');n.classList.remove('show');n.textContent='';scheduleIdle()}
 function runIdle(){
  if(document.hidden||Date.now()-lastActivity<55000){scheduleIdle();return}
  if(idleStage===0){showNudge(randomFrom(textNudges));behavior('curious');idleStage=1}
@@ -76,7 +79,7 @@ async function listen(){
    const type=mediaRecorder.mimeType||preferred||'audio/webm';
    const ext=type.includes('mp4')?'m4a':'webm';
    const blob=new Blob(chunks,{type});
-   if(blob.size<1000){statusEl.textContent="I didn't catch that. Tap me and try again.";behavior('unsure');return}
+   if(blob.size<1000){tempStatus("I didn't catch that. Tap me and try again.",7000);behavior('unsure');return}
    const fd=new FormData();fd.append('audio',blob,`bluey.${ext}`);
    try{
     const r=await fetch('/api/transcribe',{method:'POST',body:fd});
@@ -87,7 +90,7 @@ async function listen(){
     send(d.text.trim());
    }catch(e){
     console.error('Bluey transcription error:',e);
-    statusEl.textContent="I didn't catch that. Tap me and try again, or type below.";
+    tempStatus("I didn't catch that. Tap me and try again, or type below.",7000);
     behavior('unsure')
    }
   };
@@ -95,7 +98,7 @@ async function listen(){
   behavior('listening');statusEl.textContent='I’m listening. Tap Bluey when you’re done.';
  }catch(e){
   console.error('Bluey microphone error:',e);
-  statusEl.textContent='I can’t use the microphone yet. You can type below.';
+  tempStatus('I can’t use the microphone yet. You can type below.',8000);
   behavior('unsure')
  }
 }

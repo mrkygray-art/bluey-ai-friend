@@ -1,16 +1,19 @@
-# Bluey 0.4.3
+# Bluey 0.4.4
 
-Visible verification markers:
-- Browser title: `Bluey 0.4.3`
-- `index.html` contains the phrase `Still there?`
+## Fixes
+- Rebuilt speech transcription using the official OpenAI Node SDK.
+- Keeps browser audio upload parsing with Formidable.
+- Adds useful transcription diagnostics to Vercel Function Logs without exposing technical errors to users.
+- “I didn't catch that” now clears automatically after about 7 seconds.
+- A new idle/personality nudge clears any stale status message before appearing.
+- User activity also clears old temporary status messages.
+- Browser title is explicitly `Bluey 0.4.4`.
 
-Changes:
-- Blue status/check-in text
-- Muted gray user text
-- Black readable Bluey answers
-- Silent inactivity nudge after ~75 seconds
-- One later spoken check-in
-- Quiet-mode recognition for “I’m busy”, “not right now”, etc.
-- Random calm Bluey personality lines
+## Visual language
+- Blue = Bluey's temporary voice/status/personality language
+- Muted gray = the user's typed or transcribed words
+- Near-black = Bluey's substantive answer
 
-Required Vercel variable: `OPENAI_API_KEY`.
+## Vercel
+Required: `OPENAI_API_KEY`
+Optional: `BLUEY_MODEL`, `BLUEY_TRANSCRIBE_MODEL`

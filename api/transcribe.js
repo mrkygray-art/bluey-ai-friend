@@ -1,5 +1,6 @@
 import formidable from "formidable";
 import fs from "fs";
+import OpenAI from "openai";
 
 export const config = { api: { bodyParser: false } };
 
@@ -9,7 +10,7 @@ function parseForm(req) {
       multiples: false,
       maxFiles: 1,
       maxFileSize: 20 * 1024 * 1024,
-      allowEmptyFiles: false,
+      allowEmptyFiles: false
     });
     form.parse(req, (err, fields, files) => {
       if (err) reject(err);
@@ -18,57 +19,61 @@ function parseForm(req) {
   });
 }
 
-function firstFile(value) {
-  return Array.isArray(value) ? value[0] : value;
+function firstFile(v) {
+  return Array.isArray(v) ? v[0] : v;
 }
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.OPENAI_API_KEY) {
     console.error("Bluey transcription: OPENAI_API_KEY missing");
-    return res.status(503).json({ error: "Transcription is temporarily unavailable" });
+    return res.status(503).json({ error: "Transcription temporarily unavailable" });
   }
 
   let tempPath;
   try {
     const { files } = await parseForm(req);
     const audio = firstFile(files.audio);
-    if (!audio?.filepath) return res.status(400).json({ error: "No audio received" });
-
-    tempPath = audio.filepath;
-    const bytes = await fs.promises.readFile(audio.filepath);
-    if (!bytes.length) return res.status(400).json({ error: "Empty audio received" });
-
-    const mime = audio.mimetype || "audio/webm";
-    const original = audio.originalFilename || (mime.includes("mp4") ? "bluey.m4a" : "bluey.webm");
-
-    const body = new FormData();
-    body.append("file", new Blob([bytes], { type: mime }), original);
-    body.append("model", process.env.BLUEY_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe");
-    body.append("response_format", "json");
-
-    const r = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-      body,
-    });
-
-    const raw = await r.text();
-    let data = {};
-    try { data = JSON.parse(raw); } catch {}
-
-    if (!r.ok) {
-      console.error("OpenAI transcription error", r.status, raw);
-      return res.status(r.status).json({ error: "Transcription is temporarily unavailable" });
+    if (!audio?.filepath) {
+      console.error("Bluey transcription: no audio file in multipart upload", Object.keys(files || {}));
+      return res.status(400).json({ error: "No audio received" });
     }
 
-    const text = typeof data.text === "string" ? data.text.trim() : "";
-    if (!text) return res.status(422).json({ error: "No speech detected" });
+    tempPath = audio.filepath;
+    const stat = await fs.promises.stat(tempPath);
+    console.log("Bluey transcription upload", {
+      bytes: stat.size,
+      mimetype: audio.mimetype,
+      filename: audio.originalFilename
+    });
+    if (stat.size < 500) return res.status(400).json({ error: "Audio recording was too short" });
 
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const result = await client.audio.transcriptions.create({
+      file: fs.createReadStream(tempPath),
+      model: process.env.BLUEY_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe",
+      response_format: "json"
+    });
+
+    const text = typeof result?.text === "string" ? result.text.trim() : "";
+    if (!text) {
+      console.error("Bluey transcription: API returned no text", result);
+      return res.status(422).json({ error: "No speech detected" });
+    }
+
+    console.log("Bluey transcription success", { characters: text.length });
     return res.status(200).json({ text });
   } catch (e) {
-    console.error("Bluey transcription server error", e);
-    return res.status(500).json({ error: "Transcription is temporarily unavailable" });
+    console.error("Bluey transcription server error", {
+      name: e?.name,
+      message: e?.message,
+      status: e?.status,
+      code: e?.code,
+      type: e?.type
+    });
+    return res.status(e?.status || 500).json({
+      error: "Transcription temporarily unavailable"
+    });
   } finally {
     if (tempPath) fs.promises.unlink(tempPath).catch(() => {});
   }
