@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.4.8</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.4.9</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -23,9 +23,21 @@
 @media(max-width:520px){.nudge{font-size:15px}}
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
-<section class="workspace"><div class="messages" id="messages"></div><form class="composer" id="form"><input id="input" placeholder="Just start typing…" autocomplete="off"><button>Send</button></form></section></div>
+<section class="workspace"><div class="messages" id="messages"></div>
+<div id="audioDiagnostic" style="display:none;width:min(780px,calc(100% - 28px));margin:0 auto 10px;padding:12px 14px;border:1px solid #e1e5e8;border-radius:18px;color:#64748b;font-size:14px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <span id="audioDiagnosticText">Audio diagnostic ready.</span>
+    <button id="playLastRecording" type="button" style="border:0;border-radius:999px;padding:9px 14px;background:#eef6fb;color:#087fc1;font:inherit;cursor:pointer">Play my recording</button>
+  </div>
+  <audio id="lastRecordingAudio" preload="metadata"></audio>
+</div>
+<form class="composer" id="form"><input id="input" placeholder="Just start typing…" autocomplete="off"><button>Send</button></form></section></div>
 <script>
 const app=document.querySelector('#app'),mover=document.querySelector('#mover'),orb=document.querySelector('#orb'),statusEl=document.querySelector('#status'),messages=document.querySelector('#messages'),form=document.querySelector('#form'),input=document.querySelector('#input');
+const audioDiagnostic=document.querySelector('#audioDiagnostic'),audioDiagnosticText=document.querySelector('#audioDiagnosticText'),playLastRecording=document.querySelector('#playLastRecording'),lastRecordingAudio=document.querySelector('#lastRecordingAudio');
+let lastRecordingUrl=null;
+playLastRecording.onclick=()=>{if(lastRecordingAudio.src){lastRecordingAudio.currentTime=0;lastRecordingAudio.play().catch(e=>console.error('Bluey playback error',e));}};
+
 let history=[],mediaRecorder=null,chunks=[],recordingStartedAt=0,audioCtx=null,audioStream=null,audioSource=null,audioProcessor=null,pcmChunks=[];
 let lastActivity=Date.now(),idleStage=0,quietMode=false,idleTimer=null;
 const textNudges=["Still there?","What can I help you with?","No rush. I’m right here.","Got something on your mind?","We can figure something out together.","You can ask me something simple.","Want to learn something new?","I’m here when you’re ready."];
@@ -95,6 +107,11 @@ async function stopWavRecording(){
 
  const blob=encodeWav(pcmChunks,sampleRate);
  console.log('Bluey WAV finalized',{durationMs,bytes:blob.size,type:blob.type,sampleRate,chunks:pcmChunks.length});
+ if(lastRecordingUrl)URL.revokeObjectURL(lastRecordingUrl);
+ lastRecordingUrl=URL.createObjectURL(blob);
+ lastRecordingAudio.src=lastRecordingUrl;
+ audioDiagnostic.style.display='block';
+ audioDiagnosticText.textContent=`Recorded ${(durationMs/1000).toFixed(1)} seconds. Play it back to confirm Bluey captured your voice.`;
  pcmChunks=[];
 
  if(durationMs<700||blob.size<3000){

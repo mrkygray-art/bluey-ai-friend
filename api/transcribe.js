@@ -58,7 +58,29 @@ function inspectWav(buf) {
   const expectedRate=fmt.sampleRate*fmt.blockAlign;
   if (fmt.byteRate!==expectedRate) throw new Error("WAV_BAD_BYTE_RATE");
 
-  return {...fmt,dataBytes:data.size,fileBytes:buf.length};
+  return {...fmt,dataBytes:data.size,dataOffset:data.offset,fileBytes:buf.length};
+}
+
+
+function analyzePcm16(buf,wav){
+  const start=wav.dataOffset,end=Math.min(buf.length,start+wav.dataBytes);
+  let peak=0,sumSq=0,nearSilent=0,clipped=0,count=0;
+  for(let i=start;i+1<end;i+=2){
+    const v=buf.readInt16LE(i)/32768,a=Math.abs(v);
+    peak=Math.max(peak,a); sumSq+=v*v;
+    if(a<0.003)nearSilent++;
+    if(a>0.98)clipped++;
+    count++;
+  }
+  const rms=count?Math.sqrt(sumSq/count):0;
+  const silencePercent=count?nearSilent/count*100:100;
+  const clippingPercent=count?clipped/count*100:0;
+  let audioStatus="good";
+  if(peak<0.01||rms<0.0015||silencePercent>99)audioStatus="silent";
+  else if(peak<0.04||rms<0.006||silencePercent>94)audioStatus="too_quiet";
+  else if(clippingPercent>5)audioStatus="clipping";
+  return {sampleCount:count,peak:+peak.toFixed(6),rms:+rms.toFixed(6),
+    silencePercent:+silencePercent.toFixed(2),clippingPercent:+clippingPercent.toFixed(2),audioStatus};
 }
 
 export default async function handler(req,res) {
@@ -88,6 +110,12 @@ export default async function handler(req,res) {
       incomingMime:audio.mimetype,
       incomingName:audio.originalFilename
     });
+
+    const diagnostic=analyzePcm16(bytes,wav);
+    console.log("Bluey audio diagnostic",{durationMs:durationMs||null,...diagnostic});
+    if(diagnostic.audioStatus==="silent"){
+      return res.status(422).json({error:"Bluey recorded silence",diagnostic});
+    }
 
     const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 

@@ -1,21 +1,10 @@
-# Bluey 0.4.8
+# Bluey 0.4.9 — Audio Diagnostic
 
-Transcription response diagnostic/normalization release.
+This release diagnoses the remaining voice transcription issue without changing Bluey's normal personality/UI.
 
-## What changed
-- Keeps the validated WAV pipeline from 0.4.7 unchanged.
-- Logs the safe JavaScript shape of the OpenAI transcription response.
-- Normalizes several possible text-bearing response shapes.
-- If no transcript is found, logs a short redacted response preview.
-- No intentional UI, motion, personality, microphone, or WAV changes.
+- Measures PCM peak, RMS, silence %, clipping %, and sample count on Vercel.
+- Logs `Bluey audio diagnostic` with `audioStatus`.
+- Adds a temporary **Play my recording** control after a voice recording so you can hear exactly what Bluey captured.
+- Keeps the 0.4.8 WAV validation and transcription-response diagnostics.
 
-## Acceptance test
-Tap Bluey → speak → tap Bluey again → spoken words appear in gray → Bluey answers → Bluey speaks the answer.
-
-## Vercel logs
-Look for:
-- `Bluey WAV validated`
-- `Bluey transcription response shape`
-- `Bluey transcription success`
-
-If normalization still fails, copy the `response shape` and `returned no normalized text` entries.
+Test: tap Bluey, speak for 3–5 seconds, tap again, play the recording, then inspect the newest Vercel `/api/transcribe` log.
