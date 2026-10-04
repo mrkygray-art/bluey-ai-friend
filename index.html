@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.4.2</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.4.3</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -11,24 +11,48 @@
 .mover{position:absolute;inset:0;display:grid;place-items:center;will-change:transform}
 .orb{width:178px;height:178px;border:0;border-radius:50%;cursor:pointer;background:radial-gradient(circle at 31% 22%,#fff 0 3%,rgba(255,255,255,.6) 7%,rgba(255,255,255,.08) 20%,transparent 29%),radial-gradient(circle at 68% 73%,rgba(0,70,150,.32),transparent 42%),linear-gradient(145deg,#58d6ff,#12afea 37%,#008bd5 68%,#0871bf);box-shadow:inset -22px -25px 38px rgba(0,60,130,.22),inset 18px 15px 28px rgba(255,255,255,.2),0 22px 35px rgba(0,116,185,.18);transition:.6s}
 .app.working .orb{width:102px;height:102px}.shadow{position:absolute;bottom:7px;width:116px;height:20px;border-radius:50%;background:rgba(0,76,126,.15);filter:blur(7px)}
-.app.working .shadow{width:72px;height:12px}.greeting{font-size:clamp(24px,4vw,34px);font-weight:430;margin:7px 0 0;text-align:center;color:#596675}.app.working .greeting{font-size:17px}.status{min-height:26px;margin-top:8px;color:#65717d;text-align:center}
-.workspace{position:absolute;top:235px;bottom:0;left:0;right:0;background:#fff;display:none;flex-direction:column}.app.working .workspace{display:flex}.messages{width:min(780px,100%);margin:0 auto;flex:1;overflow:auto;padding:26px 24px}.msg{font-size:20px;line-height:1.5;margin:0 0 22px}.msg.user{color:#53606d}.msg.assistant{font-size:21px;color:#151a1f}.composer{width:min(780px,calc(100% - 28px));margin:0 auto calc(12px + env(safe-area-inset-bottom));display:flex;gap:8px;border:1px solid #e1e5e8;border-radius:22px;padding:7px 8px 7px 15px;box-shadow:0 8px 26px rgba(0,0,0,.05)}
+.app.working .shadow{width:72px;height:12px}.greeting{font-size:clamp(24px,4vw,34px);font-weight:430;margin:7px 0 0;text-align:center;color:#596675}.app.working .greeting{font-size:17px}.status{min-height:26px;margin-top:8px;color:#087fc4;text-align:center;font-weight:500}
+.workspace{position:absolute;top:235px;bottom:0;left:0;right:0;background:#fff;display:none;flex-direction:column}.app.working .workspace{display:flex}.messages{width:min(780px,100%);margin:0 auto;flex:1;overflow:auto;padding:26px 24px}.msg{font-size:20px;line-height:1.5;margin:0 0 22px}.msg.user{color:#7a858f}.msg.assistant{font-size:21px;color:#151a1f}.composer{width:min(780px,calc(100% - 28px));margin:0 auto calc(12px + env(safe-area-inset-bottom));display:flex;gap:8px;border:1px solid #e1e5e8;border-radius:22px;padding:7px 8px 7px 15px;box-shadow:0 8px 26px rgba(0,0,0,.05)}
 .composer input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:18px}.composer button{border:0;border-radius:16px;padding:9px 13px;background:#171b20;color:#fff}
 @keyframes idle{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-3px)}}@keyframes listen{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}@keyframes think{0%,100%{transform:translate(-5px,0) rotate(-1deg) scale(.98)}25%{transform:translate(6px,-3px) rotate(1.4deg) scale(.965)}50%{transform:translate(8px,1px) rotate(-1.4deg) scale(.985)}75%{transform:translate(-4px,-4px) rotate(1deg) scale(.99)}}@keyframes curious{0%,100%{transform:translate(0,0) scale(1)}35%{transform:translate(7px,-3px) scale(1.035)}70%{transform:translate(-4px,0) scale(1.015)}}@keyframes explain{0%,100%{transform:translate(-4px,0) scale(1.005)}33%{transform:translate(5px,-2px) scale(1.018)}66%{transform:translate(2px,2px) scale(1.01)}}@keyframes serious{0%,100%{transform:translateY(1px) scale(1.01)}50%{transform:translateY(-1px) scale(1.018)}}@keyframes happy{0%{transform:none}15%{transform:translateY(4px) scale(1.06,.94)}42%{transform:translateY(-20px) scale(.98,1.03)}64%{transform:translateY(0) scale(1.05,.95)}80%{transform:translateY(-6px)}100%{transform:none}}@keyframes unsure{0%,100%{transform:none}30%{transform:translateX(-9px) rotate(-2deg)}70%{transform:translateX(8px) rotate(2deg)}}
 .idle{animation:idle 6s ease-in-out infinite}.listening{animation:listen 1.7s ease-in-out infinite}.thinking{animation:think 4s ease-in-out infinite}.curious{animation:curious 2.6s ease-in-out infinite}.explaining{animation:explain 5s ease-in-out infinite}.serious{animation:serious 4.5s ease-in-out infinite}.happy{animation:happy .8s ease-out}.unsure{animation:unsure 2.1s ease-in-out infinite}
 @media(max-width:520px){.app.working .stage{height:210px;min-height:210px}.workspace{top:210px}.messages{padding:20px 18px}.msg,.msg.assistant{font-size:18px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}}
+.nudge{min-height:24px;margin-top:7px;color:#087fc4;text-align:center;font-size:16px;opacity:0;transition:opacity .4s;padding:0 18px}
+.nudge.show{opacity:1}
+@media(max-width:520px){.nudge{font-size:15px}}
 </style></head>
-<body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div></section>
+<body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div><form class="composer" id="form"><input id="input" placeholder="Just start typing…" autocomplete="off"><button>Send</button></form></section></div>
 <script>
 const app=document.querySelector('#app'),mover=document.querySelector('#mover'),orb=document.querySelector('#orb'),statusEl=document.querySelector('#status'),messages=document.querySelector('#messages'),form=document.querySelector('#form'),input=document.querySelector('#input');
 let history=[],mediaRecorder=null,chunks=[];
+let lastActivity=Date.now(),idleStage=0,quietMode=false,idleTimer=null;
+const textNudges=["Still there?","What can I help you with?","No rush. I’m right here.","Got something on your mind?","We can figure something out together.","You can ask me something simple.","Want to learn something new?","I’m here when you’re ready."];
+const voiceNudges=["Can I help you with anything?","I’m still here if you need me.","Want to work on something together?"];
+const personalityNudges=["Curiosity is a pretty good place to start.","Small questions are welcome here.","We don’t have to know where we’re going yet.","One question can lead somewhere interesting.","Take your time. I’m not going anywhere."];
 const valid=new Set(['idle','listening','thinking','curious','explaining','serious','happy','unsure']);
+function randomFrom(a){return a[Math.floor(Math.random()*a.length)]}
+function showNudge(text){const n=document.querySelector('#nudge');n.textContent=text;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),12000)}
+function scheduleIdle(){clearTimeout(idleTimer);if(document.hidden)return;const delay=idleStage===0?75000:idleStage===1?60000:120000;idleTimer=setTimeout(runIdle,delay)}
+function touchActivity(){lastActivity=Date.now();idleStage=0;const n=document.querySelector('#nudge');n.classList.remove('show');n.textContent='';scheduleIdle()}
+function runIdle(){
+ if(document.hidden||Date.now()-lastActivity<55000){scheduleIdle();return}
+ if(idleStage===0){showNudge(randomFrom(textNudges));behavior('curious');idleStage=1}
+ else if(idleStage===1&&!quietMode){const line=randomFrom(voiceNudges);showNudge(line);behavior('curious');speak(line,'curious');idleStage=2}
+ else{showNudge(randomFrom(personalityNudges));behavior('idle');idleStage=3}
+ scheduleIdle()
+}
+function detectQuietIntent(text){
+ const t=text.toLowerCase();
+ if(/working on something else|busy right now|leave me alone|don't bother|do not bother|not right now|give me a minute|give me some time|i'm busy/.test(t)){quietMode=true;showNudge("Of course. I’ll stay quiet.")}
+ if(/i'm back|im back|i am back|ready now|you can talk|i'm ready|im ready/.test(t))quietMode=false
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){lastActivity=Date.now();scheduleIdle()}});
 function behavior(b){b=valid.has(b)?b:'explaining';mover.className='mover '+b;if(b==='happy')setTimeout(()=>behavior('idle'),900)}
 function working(){app.classList.add('working')}
 function add(role,text){working();let p=document.createElement('p');p.className='msg '+role;p.textContent=text;messages.appendChild(p);messages.scrollTop=messages.scrollHeight}
-async function send(text){text=text.trim();if(!text)return;add('user',text);history.push({role:'user',content:text});input.value='';behavior('thinking');statusEl.textContent='Thinking…';
+async function send(text){text=text.trim();if(!text)return;detectQuietIntent(text);touchActivity();add('user',text);history.push({role:'user',content:text});input.value='';behavior('thinking');statusEl.textContent='Thinking…';
  try{let r=await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({messages:history.slice(-12)})});let d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');statusEl.textContent='';add('assistant',d.reply);history.push({role:'assistant',content:d.reply});behavior(d.behavior);speak(d.reply,d.behavior)}
  catch(e){
   console.error('Bluey chat error:',e);
@@ -75,6 +99,7 @@ async function listen(){
   behavior('unsure')
  }
 }
-orb.onpointerdown=()=>orb.style.transform='scale(.95)';orb.onpointerup=()=>{orb.style.transform='';listen()};form.onsubmit=e=>{e.preventDefault();send(input.value)};
+scheduleIdle();
+orb.onpointerdown=()=>{lastActivity=Date.now();orb.style.transform='scale(.95)'};orb.onpointerup=()=>{orb.style.transform='';listen()};form.onsubmit=e=>{e.preventDefault();send(input.value)};
 if('speechSynthesis'in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
 </script></body></html>
