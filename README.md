@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 36 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 37 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -213,3 +213,14 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 ### Alpha 36 voice deployment
 
 Upload the complete bundle, including `api/speech.js`, `alpha36.js`, and `alpha36.css`, then redeploy. The speech function uses the existing `OPENAI_API_KEY`; optional settings are `BLUEY_SPEECH_MODEL` (defaults to `gpt-4o-mini-tts`) and `BLUEY_SPEECH_VOICE` (defaults to `coral`). Spoken replies use the OpenAI speech endpoint, so speech usage is billed separately from text chat. Keep the API key in the hosting provider's server-side environment settings; never put it in browser code.
+
+
+## Bluey 1.0 Alpha 37 — Rooms with depth, objects with stories
+
+- Bluey now cruises through a shallow 3D stage, moving left/right as well as forward/back. Depth changes his apparent size and shadow. Tapping Bluey or the stage brings him close and gives him a playful bounce. Motion respects reduced-motion settings and pauses while the page is hidden.
+- Asking “Where are you?” brings Bluey into his office and reveals stage objects. Asking to see his office, garage, house, bedroom, or another established room changes the stage and places a few tappable objects beside him.
+- Bluey introduces the objects and invites the user to explore. Tapping an object starts a short conversation about it. Room objects fade away on their own and fade out when changing rooms.
+- The full B.L.U.E.Y. promise is part of Bluey's server-side character instructions, so the definition is shared across users: Buddy, Listen, Unlocks, Encourage, You. When asked, Bluey explains the promise in his own voice.
+- Alpha 36 generated mobile speech, voice testing/mute/replay, saved conversations, Copy/Save/New Chat controls, photo analysis, document creation, transcription, and Prompt Workshop remain included.
+
+Upload this entire bundle to the project root and redeploy. Keep every API file inside the root `api/` folder so voice, photos, documents, and chat all deploy together.

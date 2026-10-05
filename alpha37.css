@@ -1,0 +1,32 @@
+/* Alpha 37: a phone-friendly room with a visible sense of forward/back depth. */
+.stage{perspective:1050px;perspective-origin:50% 45%;transform-style:preserve-3d}
+.bluey-depth-room{position:absolute;inset:0;z-index:1;pointer-events:none;transform-style:preserve-3d}
+.stage>.greeting,.stage>.status,.stage>.nudge{position:relative;z-index:2}
+.bluey-flight-layer{position:absolute;inset:0;display:grid;place-items:center;transform-style:preserve-3d;pointer-events:none;will-change:transform,filter}
+.bluey-flight-layer .rig{pointer-events:auto;transform-style:preserve-3d}
+.bluey-depth-room::after{content:"";position:absolute;left:50%;bottom:9%;width:min(58vw,390px);height:28px;transform:translateX(-50%) rotateX(72deg);border-radius:50%;background:radial-gradient(ellipse,rgba(22,134,187,.10),rgba(22,134,187,0) 72%);pointer-events:none}
+.app.working .bluey-flight-layer{place-items:start center;padding-top:8px}
+.app.working .stage .greeting{margin-top:126px}
+.app.working .bluey-depth-room::after{bottom:18%;width:min(42vw,220px);height:18px}
+.stage .bluey-interactive-object{z-index:7!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:58px;min-height:58px;padding:6px;border:1px solid rgba(139,199,220,.58);border-radius:15px;background:linear-gradient(150deg,rgba(255,255,255,.94),rgba(228,247,255,.86));box-shadow:0 10px 22px rgba(24,91,126,.12),inset 0 1px 0 white;backdrop-filter:blur(5px);transform:perspective(480px) rotateY(-7deg) translateZ(var(--object-depth,90px));transform-origin:center;opacity:.96;animation:blueyObjectArrive .75s ease both}
+.stage .bluey-interactive-object:nth-of-type(even){transform:perspective(480px) rotateY(7deg) translateZ(var(--object-depth,90px))}
+.stage .bluey-interactive-object:hover,.stage .bluey-interactive-object:focus-visible{opacity:1;transform:perspective(480px) rotateY(0deg) translateY(-4px) translateZ(135px) scale(1.08);outline:3px solid rgba(48,172,222,.55);outline-offset:2px}
+.bluey-item-label{display:block;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#527487;font:600 9px/1.1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.01em}
+.stage .bluey-interactive-object.bluey-object-leaving{opacity:0;filter:blur(3px);transform:translate3d(0,18px,-100px) scale(.68);pointer-events:none;transition:opacity .36s ease,transform .36s ease,filter .36s ease}
+.stage.bluey-stage-active .bluey-interactive-object{transition:transform .35s ease,opacity .35s ease,filter .35s ease}
+body.world-bedroom .stage{background:radial-gradient(ellipse at 52% 34%,rgba(68,156,210,.13),transparent 54%),linear-gradient(180deg,#eef6ff 0 55%,#fff 100%)}
+body.world-house .stage{background:radial-gradient(ellipse at 20% 44%,rgba(248,213,154,.21),transparent 38%),linear-gradient(180deg,#f8fbff 0 58%,#fff 100%)}
+body.world-workshop .stage,body.world-garage .stage{background:radial-gradient(ellipse at 50% 74%,rgba(63,155,191,.11),transparent 55%),linear-gradient(180deg,#eff7fa 0 53%,#fff 100%)}
+@keyframes blueyDepthCruise{
+ 0%,100%{transform:translate3d(0,0,0) scale(1)}18%{transform:translate3d(-22vw,7px,-245px) scale(.78)}37%{transform:translate3d(-16vw,-15px,115px) scale(1.13)}57%{transform:translate3d(18vw,-8px,45px) scale(1.06)}78%{transform:translate3d(24vw,9px,-280px) scale(.72)}90%{transform:translate3d(10vw,-16px,-80px) scale(.94)}
+}
+.bluey-flight-layer.bluey-depth-cruise{animation:blueyDepthCruise 7.9s cubic-bezier(.42,0,.58,1) both}
+@media(max-width:520px){
+ .stage{perspective:780px;perspective-origin:50% 38%}
+ .stage .bluey-interactive-object{min-width:52px;min-height:52px;padding:5px;border-radius:13px;font-size:24px}
+ .bluey-item-label{max-width:70px;font-size:8px}
+ .app.working .stage .greeting{margin-top:124px}
+ .stage .bluey-interactive-object:nth-of-type(even){transform:perspective(390px) rotateY(6deg) translateZ(var(--object-depth,70px))}
+ .stage.bluey-stage-wandering .rig{animation-name:none}
+}
+@media(prefers-reduced-motion:reduce){.bluey-flight-layer.bluey-depth-cruise{animation:none!important}.bluey-depth-room::after{display:none}}
