@@ -1,0 +1,14 @@
+/* Alpha 11: discreet version stamp, anchored to the viewport on desktop and mobile. */
+#bluey-version{
+ position:fixed;
+ right:max(8px,env(safe-area-inset-right));
+ bottom:max(5px,env(safe-area-inset-bottom));
+ z-index:1000;
+ padding:2px 4px;
+ color:rgba(75,91,106,.48);
+ font:10px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;
+ letter-spacing:.02em;
+ pointer-events:none;
+ user-select:none;
+}
+@media(max-width:520px){#bluey-version{font-size:9px;right:max(7px,env(safe-area-inset-right));bottom:max(4px,env(safe-area-inset-bottom))}}

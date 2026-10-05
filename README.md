@@ -1,6 +1,8 @@
-# Bluey 1.0 Alpha 9 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 11 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
+
+This bundle carries the Alpha 7–10 tools and world forward, adds a persistent lower-right version label, and routes assistant messages through the voice preference.
 
 ## Six connected systems
 - **Character Engine:** existing personality, body language, comedy, dancing and lore.
@@ -157,3 +159,10 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 - Photo replies now confirm how many images reached the vision request. If the count does not match, Bluey shows an error and keeps the selected images so they can be retried.
 - The chat endpoint attaches supported image data to the latest user message and returns the accepted image count.
 - Alpha 7 document creation, Alpha 8 stage behavior, and Alpha 9 response variation are retained.
+
+## Bluey 1.0 Alpha 11 — A visible version and spoken replies
+
+- A small, pale “Bluey 1.0 Alpha 11” label stays in the lower-right corner on desktop and mobile.
+- All assistant chat messages, including local character replies and file-creation confirmations, use the Voice setting. Existing direct speech calls are deduplicated so a reply is not restarted twice.
+- The browser speech engine is resumed on the user's send action and when Bluey speaks, improving playback reliability on mobile browsers.
+- Alpha 10's refresh-ready composer, photo preview and image-receipt confirmation remain included, along with Alpha 7–9 tools and character features.
