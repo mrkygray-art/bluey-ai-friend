@@ -1,27 +1,32 @@
-# Bluey 0.7.0 — Emotional Intelligence
+# Bluey 0.7.1 — First Meeting
 
-Built on the stable 0.6.4 character/holiday version.
+## Goal
+The relationship should begin naturally. Bluey's name is not permanently pasted onto the interface.
 
-Bluey's “emotions” are presentation states controlling animation, timing and response style. They are not claims that the AI literally experiences human emotion.
+## First visit
+Bluey notices the visitor, approaches through character motion, and changes the hero greeting:
+1. “Oh! Hi there...”
+2. “Hi! I'm Bluey. 💙”
+3. “You can talk to me or type whenever you want. What should we do first?”
 
-## New presentation states
-Neutral, curious, happy, excited, warm, concerned, thinking and quiet.
+Bluey does **not** immediately ask for the visitor's name. Their name can arise naturally in conversation.
 
-## Character reactions
-- 😂 / lol / haha: happy physical reaction; often no text at all.
-- ❤️ / 💙: warm reaction; often no text.
-- “That worked!”: excited celebration and a very short reply.
-- “Thanks Bluey”: warm movement and concise acknowledgement.
-- Frustration language: calmer/concerned motion while the normal AI handles the actual problem.
-- “Leave me alone / not now / I'm busy”: quiet mode and no proactive interruptions for 30 minutes.
-- “I'm back”: wake-up reaction and short welcome.
-- “I don't understand / teach me”: curious/teaching presentation while preserving the normal AI answer.
-- “Who are you? / What is Bluey?”: conversational About Bluey response without adding a UI button.
+## Returning visits
+Bluey recognizes that this browser has visited before and performs a short recognition animation with a randomized greeting such as:
+- “Hey, you're back. Good to see you.”
+- “Oh, hey! Good to see you again.”
+- “There you are. What are we getting into today?”
 
-## Presence
-- Bluey does not proactively chatter while the browser tab is hidden.
-- Returning to the tab can wake his attention state.
-- Quiet mode expires automatically.
+The normal hero greeting returns afterward.
 
-## Protected
-The stable Chrome/Firefox microphone capture, transcription pipeline, 0.6 state motion and 0.6.4 seasonal wardrobe remain in place.
+## Privacy / storage
+Only a lightweight `bluey_met_v1=yes` flag is stored in localStorage. No visitor name or other personal information is silently persisted.
+
+## Preserved
+- Bluey 0.7 emotional/reaction states
+- 0.6.4 seasonal wardrobe
+- character motion
+- Chrome/Firefox microphone capture
+- stable transcription pipeline
+- quiet/busy behavior
+- conversational “Who is Bluey?” response

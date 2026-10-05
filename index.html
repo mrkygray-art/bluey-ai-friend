@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.7.0</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.7.1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -213,6 +213,29 @@ body.holiday-memorial #orb::after,body.holiday-labor #orb::after{
   50%{transform:translate3d(0,-4px,0) scale(1)}
 }
 
+
+/* Bluey 0.7.1 — first-meeting character acting */
+#orb.bluey-meeting{
+ animation:blueyFirstMeeting 2.25s cubic-bezier(.34,1.35,.64,1) 1;
+}
+#orb.bluey-recognize{
+ animation:blueyRecognize 1.25s cubic-bezier(.34,1.45,.64,1) 1;
+}
+@keyframes blueyFirstMeeting{
+ 0%{transform:translate3d(0,12px,0) scale(.78);filter:saturate(.85)}
+ 20%{transform:translate3d(-4px,3px,0) scale(.9) rotate(-1deg)}
+ 43%{transform:translate3d(4px,-11px,0) scale(1.055) rotate(1.1deg)}
+ 62%{transform:translate3d(-2px,-16px,0) scale(1.09) rotate(-.5deg)}
+ 80%{transform:translate3d(1px,-7px,0) scale(1.025)}
+ 100%{transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes blueyRecognize{
+ 0%,100%{transform:translate3d(0,0,0) scale(1)}
+ 32%{transform:translate3d(0,-15px,0) scale(1.09)}
+ 58%{transform:translate3d(-5px,-7px,0) scale(1.035) rotate(-1deg)}
+ 78%{transform:translate3d(4px,-10px,0) scale(1.055) rotate(.8deg)}
+}
+
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
@@ -380,7 +403,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.7.0 voice capture',{
+ console.log('Bluey 0.7.1 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -521,7 +544,7 @@ const blueyFunLines=[
 function setBlueyState(state){
  if(!blueyOrb)return;
  blueyState=state;
- blueyOrb.classList.remove('bluey-idle','bluey-listening','bluey-thinking','bluey-speaking','bluey-attention','bluey-happy','bluey-curious','bluey-excited','bluey-warm','bluey-concerned','bluey-quiet');
+ blueyOrb.classList.remove('bluey-idle','bluey-listening','bluey-thinking','bluey-speaking','bluey-attention','bluey-happy','bluey-curious','bluey-excited','bluey-warm','bluey-concerned','bluey-quiet','bluey-meeting','bluey-recognize');
  blueyOrb.classList.add('bluey-'+state);
 }
 function blueyHappyReaction(){
@@ -712,13 +735,76 @@ setInterval(()=>{
  }
 },5000);
 
+
+// ---- Bluey 0.7.1 first-meeting relationship layer ----
+// Only the fact that this browser has met Bluey is stored. A person's name is
+// NOT silently persisted. Bluey can naturally learn it during conversation.
+const BLUEY_MET_KEY='bluey_met_v1';
+let blueyFirstMeeting=false;
+try{blueyFirstMeeting=localStorage.getItem(BLUEY_MET_KEY)!=='yes'}catch(e){}
+
+const blueyReturnGreetings=[
+ "Hey, you're back. Good to see you.",
+ "Oh, hey! Good to see you again.",
+ "Hey! I was wondering when you'd be back.",
+ "There you are. What are we getting into today?",
+ "Welcome back. What's on your mind?"
+];
+
+function blueySetHeroGreeting(text){
+ const candidates=[...document.querySelectorAll('body *')].filter(el=>{
+   const t=(el.textContent||'').trim();
+   return t==="Hello, how can I help you today?" && el.children.length===0;
+ });
+ if(candidates[0])candidates[0].textContent=text;
+}
+
+function blueyFirstMeet(){
+ if(!blueyOrb)return;
+ blueyOrb.classList.remove('bluey-idle');
+ blueyOrb.classList.add('bluey-meeting');
+ blueySetHeroGreeting("Oh! Hi there...");
+ setTimeout(()=>{
+   blueySetHeroGreeting("Hi! I'm Bluey. 💙");
+ },950);
+ setTimeout(()=>{
+   // Keep the invitation conversational. We don't immediately ask for personal data.
+   if(typeof tempStatus==='function'){
+     tempStatus("You can talk to me or type whenever you want. What should we do first?",9000);
+   }
+   blueyOrb.classList.remove('bluey-meeting');
+   setBlueyState('warm');
+ },1850);
+ try{localStorage.setItem(BLUEY_MET_KEY,'yes')}catch(e){}
+}
+
+function blueyReturningMeet(){
+ if(!blueyOrb)return;
+ blueyOrb.classList.remove('bluey-idle');
+ blueyOrb.classList.add('bluey-recognize');
+ const line=blueyReturnGreetings[Math.floor(Math.random()*blueyReturnGreetings.length)];
+ blueySetHeroGreeting(line);
+ setTimeout(()=>{
+   blueyOrb.classList.remove('bluey-recognize');
+   setBlueyState('idle');
+ },1450);
+ // Restore the normal invitation after a moment so the UI remains familiar.
+ setTimeout(()=>blueySetHeroGreeting("Hello, how can I help you today?"),7000);
+}
+
+// Run only after the existing page has initialized.
+setTimeout(()=>{
+ if(blueyFirstMeeting)blueyFirstMeet();
+ else blueyReturningMeet();
+},420);
+
 // Future feature hook: intentionally simple foundation, not a new UI button.
 setBlueyState('idle');
 
 window.blueyAbout={
  name:'Bluey',
- summary:'Bluey is an AI friend designed to listen, think, help, teach, and keep you company without getting in the way.',
- version:'0.7.0',
+ summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
+ version:'0.7.1',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet']
 };
