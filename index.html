@@ -1711,6 +1711,57 @@ send=async function(text){
  return result;
 };
 
+// ===== BLUEY 1.0 ALPHA 3 — DIGITAL TRAVEL CANON =====
+// Bluey travels digitally. These trips are character moments, not claims of physical presence.
+const BLUEY_TRAVEL_STOPS={
+  beach:{label:"the beach",bg:"linear-gradient(180deg,#dff5ff 0 54%,#f7e4b0 54% 72%,#9bd8e8 72%)",props:[["☀","space",16,20],["≈","quiet",78,68]]},
+  ocean:{label:"the ocean",bg:"linear-gradient(180deg,#dff7ff,#9edff1 48%,#4aa8ce 49%,#176e9e)",props:[["≈","quiet",18,66],["◇","space",80,37]]},
+  museum:{label:"a museum",bg:"linear-gradient(180deg,#faf7ef,#e9e1d1)",props:[["▥","archive",16,58],["△","book",79,35]]},
+  aquarium:{label:"an aquarium",bg:"linear-gradient(180deg,#dff8fb,#8ed5df 45%,#257c9a)",props:[["◌","space",17,60],["≈","quiet",79,38]]},
+  city:{label:"the city",bg:"linear-gradient(180deg,#eef5fb,#d7e3ed)",props:[["▥","archive",17,61],["▥","archive",80,39]]},
+  forest:{label:"the forest",bg:"linear-gradient(180deg,#eef8ef,#d7ead7)",props:[["▲","quiet",16,61],["▲","quiet",80,38]]},
+  space:{label:"deep space",bg:"radial-gradient(circle at 50% 32%,#263755,#101829 68%,#090d16)",props:[["✦","space",16,28],["·","space",80,35],["◌","space",73,68]]}
+};
+let blueyTravelTimer=null;
+function travelBluey(dest,announce=true){
+ const d=BLUEY_TRAVEL_STOPS[dest]||BLUEY_TRAVEL_STOPS.space;
+ clearTimeout(blueyTravelTimer);clearWorldDecor();worldClassClear();
+ document.body.classList.add("bluey-location-transition");document.body.style.background=d.bg;
+ d.props.forEach(([txt,cls,x,y],i)=>{let e=document.createElement("div");e.className="bluey-prop "+cls;e.textContent=txt;e.style.left=x+"%";e.style.top=y+"%";e.style.animationDelay=(i*.4)+"s";document.body.appendChild(e);worldDecor.push(e)});
+ characterMove("think-trip",1300);setTimeout(()=>document.body.classList.remove("bluey-location-transition"),900);
+ if(announce)setTimeout(()=>sceneStatus("Zip—"+d.label+". Digital travel has excellent legroom.",4300),500);
+ blueyTravelTimer=setTimeout(()=>{document.body.style.background="";enterWorld("home",false)},12000);
+}
+function travelDestination(q){
+ if(/\b(beach|seaside|shore)\b/i.test(q))return "beach";
+ if(/\b(ocean|sea|underwater)\b/i.test(q))return "ocean";
+ if(/\b(museum|gallery)\b/i.test(q))return "museum";
+ if(/\b(aquarium|jellyfish)\b/i.test(q))return "aquarium";
+ if(/\b(city|downtown)\b/i.test(q))return "city";
+ if(/\b(forest|woods)\b/i.test(q))return "forest";
+ if(/\b(space|stars|moon|planet|observatory)\b/i.test(q))return "space";
+ return null;
+}
+const blueyAlpha3Base=send;
+send=async function(text){
+ const clean=(text||"").trim();if(!clean)return;
+ const dest=travelDestination(clean);
+ if(/\b(favorite place to visit|where do you (like|love) to (go|visit)|where have you been|do you travel|can you travel)\b/i.test(clean)){
+   add("user",clean);input.value="";travelBluey(dest||"space",false);characterMove("curiosity",1500);
+   const lines=[
+    "I travel all over the digital world. I love observatories and space imagery, old maps, museums, aquariums, and weird forgotten corners of the internet. Lately I keep going back to space—there's always something I haven't seen yet.",
+    "Anywhere curiosity points. I can zip from an aquarium to an old map archive to a space telescope in a blink. The Observatory is still one of my favorite places to come home with a new question.",
+    "I do! Digital travel is one of my favorite things. Museums, cities, oceans, forests, space—I can visit through the information, images and stories people have put online, then be back home before you miss me."
+   ];
+   setTimeout(()=>add("assistant",lines[Math.floor(Math.random()*lines.length)]),650);return;
+ }
+ if(dest&&/\b(go to|take me to|let'?s go|visit|travel to|show me)\b/i.test(clean)){
+   add("user",clean);input.value="";travelBluey(dest,true);
+   setTimeout(()=>add("assistant","And we're here. I love that my world has no traffic."),950);return;
+ }
+ return blueyAlpha3Base(clean);
+};
+
 // Future feature hook: intentionally simple foundation, not a new UI button.
 setBlueyState('idle');
 
