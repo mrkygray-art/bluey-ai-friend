@@ -1,4 +1,4 @@
-// Bluey Alpha 47.7.2 — Clean Baseline / Quiet Home
+// Bluey Alpha 47.7.3 — Clean Baseline / Quiet Home
 (function(){
 'use strict';
 const HOME='home', HOLIDAY_CONVERSATION_MS=3*60*1000;
@@ -38,12 +38,19 @@ body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!i
 .stage .greeting{margin:12px auto 0!important;min-height:44px!important;padding:0 4px 4px!important;font-size:clamp(20px,2vw,30px)!important;line-height:1.4!important}
 .stage .status{margin:6px auto 0!important;min-height:34px!important;padding:2px 4px 5px!important;font-size:clamp(16px,1.55vw,21px)!important;line-height:1.45!important}
 .stage .nudge{margin:4px auto 0!important;min-height:30px!important;padding:2px 4px 5px!important;line-height:1.4!important}
-@media(max-width:700px){.stage{padding-top:12px!important;min-height:390px!important}.stage .bluey-depth-room{height:175px!important;min-height:175px!important}.stage .greeting{margin-top:10px!important;min-height:40px!important;font-size:22px!important;line-height:1.4!important}.stage .status{min-height:32px!important;font-size:17px!important;line-height:1.45!important}}
+/* Working mode used to start the transcript at 235px, which painted a white workspace over Bluey's greeting/status. Keep the complete stage above the transcript instead. */
+.app.working .stage{height:315px!important;min-height:315px!important;padding-top:10px!important;overflow:visible!important}
+.app.working .stage .bluey-depth-room{height:165px!important;min-height:165px!important}
+.app.working .stage .greeting{margin-top:4px!important;min-height:32px!important;font-size:20px!important;line-height:1.35!important}
+.app.working .stage .status{margin-top:2px!important;min-height:29px!important;font-size:17px!important;line-height:1.35!important}
+.app.working .stage .nudge{margin-top:2px!important;min-height:26px!important}
+.app.working .workspace{top:315px!important;z-index:20!important}
+@media(max-width:700px){.stage{padding-top:12px!important;min-height:390px!important}.stage .bluey-depth-room{height:175px!important;min-height:175px!important}.stage .greeting{margin-top:10px!important;min-height:40px!important;font-size:22px!important;line-height:1.4!important}.stage .status{min-height:32px!important;font-size:17px!important;line-height:1.45!important}.app.working .stage{height:285px!important;min-height:285px!important;padding-top:6px!important}.app.working .stage .bluey-depth-room{height:145px!important;min-height:145px!important}.app.working .stage .greeting{margin-top:3px!important;min-height:30px!important;font-size:18px!important}.app.working .stage .status{min-height:27px!important;font-size:16px!important}.app.working .workspace{top:285px!important}}
 `;
 document.head.appendChild(css);
 setTimeout(()=>{removePromptBuilder();if(room()===HOME)quietHome({clearHoliday:false});bindTapToTalk();stopAutonomousWorld();startHomeGuard()},100);
 setTimeout(()=>{removePromptBuilder();bindTapToTalk();if(room()===HOME)enforceHome()},700);
 setTimeout(()=>{removePromptBuilder();if(room()===HOME)enforceHome()},1800);
-window.BlueyQuietStage={version:'1.7.2',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,asksWorldTravel,removePromptBuilder,bindTapToTalk,scheduleHolidayReturn};
-console.info('[Bluey] Alpha 47.7.2 text visibility fix ready');
+window.BlueyQuietStage={version:'1.7.3',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,asksWorldTravel,removePromptBuilder,bindTapToTalk,scheduleHolidayReturn};
+console.info('[Bluey] Alpha 47.7.3 workspace/stage boundary fix ready');
 })();
