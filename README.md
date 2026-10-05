@@ -1,4 +1,4 @@
-# Bluey 0.9.0 — Character Engine
+# Bluey 0.9.1 — Character Engine
 
 Bluey's personality is now treated as a system rather than a collection of isolated animations.
 
@@ -28,3 +28,9 @@ Bluey never guilt-trips someone for leaving, never claims to be human, avoids co
 
 ## Protected
 Existing first-meeting behavior, birthday, seasonal scenes, rare-scene engine, holiday wardrobe, Chrome/Firefox microphone capture and transcription pipeline remain intact.
+
+## 0.9.1 refresh/home patch
+- Restores the text composer for returning visitors after refresh.
+- Bluey now treats “go home,” “where is home?” and “where do you live?” as character/lore prompts.
+- Home is the digital world; Bluey describes what he does there.
+- Bluey can describe imaginative travel as visiting places in the blink of an eye.

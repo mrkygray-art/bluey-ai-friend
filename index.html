@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.9.0</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.9.1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -487,7 +487,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.9.0 voice capture',{
+ console.log('Bluey 0.9.1 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -1149,6 +1149,37 @@ function expandedSeasonalScene(){
 setInterval(()=>{if(Math.random()<.32)expandedSeasonalScene()},90000);
 
 
+
+// Bluey 0.9.1 — returning-visitor composer recovery.
+// The welcome cinematic may hide the composer; returning visitors must always regain it.
+function blueyRestoreComposer(){
+ const candidates=[
+   document.querySelector('form'),
+   document.querySelector('.composer'),
+   document.querySelector('#composer'),
+   input?.closest('form'),
+   input?.parentElement
+ ].filter(Boolean);
+ candidates.forEach(el=>{
+   el.hidden=false;
+   el.style.removeProperty('display');
+   el.style.removeProperty('visibility');
+   el.style.removeProperty('opacity');
+   el.style.removeProperty('pointer-events');
+ });
+ if(input){
+   input.disabled=false;
+   input.hidden=false;
+   input.style.removeProperty('display');
+   input.style.removeProperty('visibility');
+   input.style.removeProperty('opacity');
+ }
+}
+if(!blueyFirstMeeting){
+ setTimeout(blueyRestoreComposer,350);
+ setTimeout(blueyRestoreComposer,1800);
+}
+
 // ---- Bluey 0.9 Character Engine ----
 const BLUEY_CHARACTER={
  motivation:"Figure things out with people rather than merely having answers.",
@@ -1215,8 +1246,14 @@ send=async function(text){
  if(/\b(imagine (you('| a)?re )?(on )?the moon|go to the moon)\b/i.test(clean)){
   add('user',clean);input.value='';blueyImagination('moon');setTimeout(()=>add('assistant',"Okay. This is AWESOME. The bouncing situation has improved dramatically."),700);return;
  }
- if(/\b(come home|back to earth|leave the moon)\b/i.test(clean)){
-  add('user',clean);input.value='';blueyImagination('home');setTimeout(()=>add('assistant',"Home again. Gravity is overrated."),550);return;
+ if(/\b(come home|go home|back to earth|leave the moon|where is home|where do you live)\b/i.test(clean)){
+  add('user',clean);input.value='';
+  const wasMoon=document.body.classList.contains('bluey-imagination-moon');
+  blueyImagination('home');
+  setTimeout(()=>add('assistant', wasMoon
+    ? "Back home. This is my home—the digital world. I live here, but I can travel and visit places in the blink of an eye. Moon, ocean, forest, city... imagination makes the trip pretty quick."
+    : "This is my home—the digital world. It’s where I listen, think, learn, and spend time with you. I don’t travel the way people do, but I can visit places in the blink of an eye. Give me somewhere to imagine, and off we go."),550);
+  return;
  }
  for(const f of loreFragments){
   if(clean.toLowerCase().includes(f[0])){
@@ -1248,7 +1285,7 @@ setBlueyState('idle');
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
- version:'0.9.0',
+ version:'0.9.1',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
  birthday:'July 7',
