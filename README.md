@@ -1,21 +1,26 @@
-# Bluey 0.6.3 — Character Motion Pass
+# Bluey 0.6.4 — Seasonal Wardrobe
 
-Built from the stable 0.6.2 voice baseline.
+Bluey remains a round, faceless character. Holiday personality comes from silhouette and accessories rather than eyes or a mouth.
 
-## Goal
-Make Bluey feel less like a UI indicator and more like a lovable animated character through motion and timing.
+## Holiday window
+Costumes automatically appear 7 days before each configured holiday and remain through the holiday.
 
-## Character behavior
-- Idle: uneven, gentle breathing/floating rather than mechanical bobbing.
-- Listening: alert, eager motion that visibly reacts while the mic is active.
-- Thinking: slower side-to-side pondering motion.
-- Speaking/responding: conversational rhythmic motion.
-- Attention: anticipation -> pop up -> overshoot -> settle.
-- Happy reaction: a small celebratory bounce after conversational activity.
-- Warmer randomized idle lines and playful thoughts.
-- Existing “I'm busy / not now” back-off behavior remains.
+## Initial U.S. wardrobe
+- Valentine's Day — heart/ribbon wrap
+- Memorial Day — subtle patriotic ribbon
+- Independence Day — red/white/blue celebration hat
+- Labor Day — subtle ribbon/badge treatment
+- Halloween — crooked witch hat
+- Thanksgiving — abstract autumn/turkey-feather fan and harvest band
+- Christmas — Santa-style hat
+- New Year's Day — gold confetti/party treatment
 
-## Important
-The stable 0.6.2 click behavior, 0.5.5 cross-browser microphone capture, and 0.5.4 transcription path are preserved.
+## Design rules
+- No face.
+- Bluey stays recognizably Bluey.
+- Costume elements never intercept clicks.
+- Holiday system uses local browser date; no external API is required.
+- Voice, microphone, transcription, state animation and conversation logic from the stable baseline remain intact.
 
-The character work uses general animation principles such as anticipation, squash/stretch, overshoot, asymmetry, and settle. It does not copy a specific studio character or animation.
+## Also included
+A reaction-only detector is added as foundation for short reactions such as 😂, ❤️, “lol”, and “haha” so future builds can favor a physical happy reaction over an unnecessary paragraph.
