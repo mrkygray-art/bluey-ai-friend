@@ -1,0 +1,25 @@
+// Bluey Alpha 46 — World Artifact Memory V1
+// Makes finished/active room projects feel physically present in Bluey's world.
+(function(){
+'use strict';
+const STORE='bluey.roomMemory.v2';
+function RI(){return window.BlueyRoomIntelligence}
+function WS(){return window.BlueyWorldStandard}
+function room(){return WS()?.current?.()||'home'}
+function mem(r=room()){return RI()?.memory?.(r)||null}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function artifactFor(r,p){if(!p?.name)return null;const n=p.name.toLowerCase();if(r==='workshop'&&n.includes('marble maze'))return {emoji:'🌀',title:'Our marble maze',id:'memory-marble-maze'};if(r==='workshop')return {emoji:p.status==='complete'?'✨':'🧩',title:p.name,id:'memory-workshop-project'};if(r==='garage')return {emoji:'🛠️',title:p.name,id:'memory-garage-project'};if(r==='observatory')return {emoji:'🔭',title:p.name,id:'memory-observatory-project'};if(r==='arcade')return {emoji:'🎯',title:p.name,id:'memory-arcade-project'};if(r==='forest')return {emoji:'🌱',title:p.name,id:'memory-forest-project'};if(r==='museum')return {emoji:'🏺',title:p.name,id:'memory-museum-project'};if(r==='aquarium')return {emoji:'🫧',title:p.name,id:'memory-aquarium-project'};if(r==='beach')return {emoji:'🏖️',title:p.name,id:'memory-beach-project'};return null}
+function stage(){return WS()?.stage?.()||document.querySelector('.bluey-stage,[data-bluey-stage],#bluey-stage')}
+function remove(){document.querySelectorAll('.bluey-memory-artifact').forEach(x=>x.remove())}
+function say(text){if(typeof window.add==='function'){add('assistant',text);if(Array.isArray(window.history))history.push({role:'assistant',content:text})}if(typeof window.speak==='function'&&(typeof window.blueyVoiceOn==='undefined'||window.blueyVoiceOn))speak(text,'curious')}
+function response(p){if(p.status==='complete')return `There it is — ${p.name}. 😄 We finished that one. I like that it still lives here.`;return `That’s our ${p.name}. ${p.nextStep?`We were going to ${p.nextStep}. `:''}Want to keep going?`}
+function render(){remove();const r=room(),m=mem(r),p=m?.project;if(!p)return;const a=artifactFor(r,p),S=stage();if(!a||!S)return;const el=document.createElement('button');el.type='button';el.className='bluey-memory-artifact';el.dataset.artifactId=a.id;el.setAttribute('aria-label',`${a.title}. ${p.status==='complete'?'Completed project':'Unfinished project'}`);el.innerHTML=`<span class="bluey-memory-artifact-emoji">${a.emoji}</span><span class="bluey-memory-artifact-title">${esc(a.title)}</span><span class="bluey-memory-artifact-state">${p.status==='complete'?'finished':'in progress'}</span>`;el.addEventListener('click',()=>{el.classList.add('bluey-memory-artifact-pop');setTimeout(()=>el.classList.remove('bluey-memory-artifact-pop'),500);say(response(p))});S.appendChild(el)}
+function refreshSoon(){setTimeout(render,180);setTimeout(render,850)}
+window.addEventListener('bluey:world',refreshSoon);
+window.addEventListener('storage',e=>{if(e.key===STORE)refreshSoon()});
+const oldPersist=RI()?.persist;if(RI()&&oldPersist&&!RI()._artifactPersistWrapped){RI()._artifactPersistWrapped=true;RI().persist=function(){const x=oldPersist.apply(this,arguments);refreshSoon();return x}}
+const css=document.createElement('style');css.textContent=`.bluey-memory-artifact{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:9;display:flex;align-items:center;gap:7px;max-width:min(300px,42vw);padding:8px 12px;border:1px solid rgba(40,120,160,.22);border-radius:18px;background:rgba(255,255,255,.82);box-shadow:0 8px 24px rgba(25,70,90,.14);color:#35566d;font:inherit;cursor:pointer;backdrop-filter:blur(8px);transition:transform .18s ease,box-shadow .18s ease}.bluey-memory-artifact:hover,.bluey-memory-artifact:focus-visible{transform:translateX(-50%) translateY(-4px);box-shadow:0 12px 30px rgba(25,70,90,.22);outline:2px solid rgba(28,174,232,.35)}.bluey-memory-artifact-emoji{font-size:23px;line-height:1}.bluey-memory-artifact-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.bluey-memory-artifact-state{font-size:10px;opacity:.62;text-transform:uppercase;letter-spacing:.04em}.bluey-memory-artifact-pop{animation:blueyArtifactPop .45s ease}@keyframes blueyArtifactPop{50%{transform:translateX(-50%) translateY(-7px) scale(1.05)}}@media(max-width:700px){.bluey-memory-artifact{bottom:10px;max-width:54vw;padding:7px 9px}.bluey-memory-artifact-title{font-size:11px}.bluey-memory-artifact-state{display:none}.bluey-memory-artifact-emoji{font-size:20px}}@media(prefers-reduced-motion:reduce){.bluey-memory-artifact{transition:none}.bluey-memory-artifact-pop{animation:none}}`;document.head.appendChild(css);
+setTimeout(render,500);
+window.BlueyWorldArtifactMemory={version:'1.0',render,artifactFor,response};
+console.info('[Bluey] Alpha 46 World Artifact Memory V1 ready');
+})();
