@@ -1,6 +1,9 @@
 // Alpha 40 — every room and short travel stop has tappable stage details.
-if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha40';
-if(window.blueyAbout)window.blueyAbout.version='1.0-alpha40';
+// Alpha 47 production baseline: Alpha 40 is the stable bootstrap that loads 41–46.
+window.BLUEY_RUNTIME_VERSION='1.0 Alpha 47';
+if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha47';
+if(window.blueyAbout)window.blueyAbout.version='1.0-alpha47';
+(function(){const badge=document.getElementById('bluey-version');if(badge)badge.textContent=window.BLUEY_RUNTIME_VERSION;document.title=window.BLUEY_RUNTIME_VERSION;})();
 
 BLUEY_OBJECTS.home=[
  {id:'home-marbles',icon:'🔮',names:['marble','marbles','marble jar'],title:'Bluey’s marble jar',short:'My marble jar. They are colorful, perfectly round, and I feel a little represented.',deeper:'I started collecting them because they look like tiny versions of me. Each one has its own colors and swirls.',rabbit:'Want to pick a marble and invent a story for it?'},
@@ -16,21 +19,23 @@ const blueyGenericPlay40=['Okay, you definitely noticed this one. 😄','I think
 inspectBlueyObject=function(obj,el){blueyStopDepthFlight();blueyStageActivity({front:true});blueyObjectFocus={obj,depth:0};clearTimeout(blueyRoomExpiry);blueyRoomExpiry=setTimeout(()=>{const nodes=[...(blueyVisibleObjects||[])];nodes.forEach(item=>item.classList.add('bluey-object-leaving'));setTimeout(()=>{nodes.forEach(item=>item.remove());blueyVisibleObjects=blueyVisibleObjects.filter(item=>!nodes.includes(item))},420)},42000);window.dispatchEvent(new CustomEvent('bluey:object',{detail:{id:obj.id,name:obj.title}}));let answer=blueyDynamicObjectReply40(obj);const remembered=window.BlueyRelationshipMemory?.callbackFor(obj.id);if(remembered)answer=remembered;setTimeout(()=>{add('assistant',answer);if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious')},260)};
 const blueyRoomInvitationBefore40=blueyRoomInvitation,blueyRoomInvitationCounts40=new Map();blueyRoomInvitation=function(room){const opening={home:'Welcome Home. There is a jar of marbles, my idea lamp, and a little welcome mat on the stage.',quiet:'This is the Quiet Place. I left a slow-falling leaf and a little sand timer here.',edge:'We are at The Edge. I put a tiny light and a marker beside me; I have only explored this far.'}[room];if(!opening)return blueyRoomInvitationBefore40(room);const count=(blueyRoomInvitationCounts40.get(room)||0)+1;blueyRoomInvitationCounts40.set(room,count);const endings=count===1?[' Tap anything that catches your eye.',' I left a few things for you to poke around.',' Pick whatever looks interesting.']:[' You know the room now — explore wherever you like.',' See anything you missed last time?'];return opening+endings[Math.floor(Math.random()*endings.length)]};
 (function(){const isMobile=()=>window.matchMedia('(max-width:700px)').matches;const button=document.createElement('button');button.type='button';button.className='bluey-explore-room';button.textContent='Explore room';button.setAttribute('aria-label','Explore Bluey’s room');document.body.appendChild(button);function hasObjects(){return !!document.querySelector('.stage .bluey-interactive-object,.stage .bluey-trip-object')}function collapse(){if(!isMobile())return;document.body.classList.remove('bluey-mobile-stage-exploring');document.body.classList.add('bluey-mobile-stage-collapsed');button.textContent='Explore room';button.setAttribute('aria-expanded','false')}function explore(){if(!isMobile()||!hasObjects())return;document.body.classList.remove('bluey-mobile-stage-collapsed');document.body.classList.add('bluey-mobile-stage-exploring');button.textContent='Back to chat';button.setAttribute('aria-expanded','true')}button.addEventListener('click',()=>document.body.classList.contains('bluey-mobile-stage-exploring')?collapse():explore());document.addEventListener('click',event=>{if(!isMobile()||event.target===button)return;if(event.target.closest('.bluey-interactive-object,.bluey-trip-object'))setTimeout(collapse,80)});window.BlueyMobileStage={explore,collapse}})();
-// Release runtime chain V4: capability-gated modules through world artifact memory.
+// Release runtime chain V5: capability-gated modules through world artifact memory.
 (function(){
  const MODULE_TIMEOUT=8000;
- function waitFor(ready,done,label){const started=Date.now();(function poll(){if(ready()){done();return}if(Date.now()-started>=MODULE_TIMEOUT){console.error('[Bluey RC] Capability timeout:',label);done(new Error(label+' capability timeout'));return}setTimeout(poll,40)})()}
- function load(src,attr,ready,next){if(ready()){next&&next();return}let script=document.querySelector(`script[${attr}]`);const advance=()=>waitFor(ready,err=>{if(err)return;next&&next()},src);if(script){advance();return}script=document.createElement('script');script.src=src;script.async=false;script.setAttribute(attr,'1');script.onload=advance;script.onerror=()=>console.error('[Bluey RC] Failed to load',src);document.body.appendChild(script)}
+ function waitFor(ready,done,label){const started=Date.now();(function poll(){if(ready()){done();return}if(Date.now()-started>=MODULE_TIMEOUT){console.error('[Bluey Alpha 47] Capability timeout:',label);done(new Error(label+' capability timeout'));return}setTimeout(poll,40)})()}
+ function load(src,attr,ready,next){if(ready()){next&&next();return}let script=document.querySelector(`script[${attr}]`);const advance=()=>waitFor(ready,err=>{if(err)return;next&&next()},src);if(script){advance();return}script=document.createElement('script');script.src=src;script.async=false;script.setAttribute(attr,'1');script.onload=advance;script.onerror=()=>console.error('[Bluey Alpha 47] Failed to load',src);document.body.appendChild(script)}
  load('/alpha41.js','data-bluey-alpha41',()=>!!window.BlueyRelationshipMemory,()=>
  load('/alpha42.js','data-bluey-alpha42',()=>!!window.BlueyObjectContinuity,()=>
  load('/alpha43.js','data-bluey-alpha43',()=>!!window.BlueyWorldStandard,()=>
  load('/alpha44.js','data-bluey-alpha44',()=>!!window.BlueyReleaseCandidate,()=>
  load('/alpha45.js','data-bluey-alpha45',()=>!!window.BlueyRoomIntelligence,()=>
  load('/alpha46.js','data-bluey-alpha46',()=>!!window.BlueyWorldArtifactMemory,()=>{
-   if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha46';
-   if(window.blueyAbout)window.blueyAbout.version='1.0-alpha46';
-   const badge=document.getElementById('bluey-version');if(badge)badge.textContent='Bluey 1.0 Alpha 46';
-   document.title='Bluey 1.0 Alpha 46';
-   console.info('[Bluey RC] Runtime chain ready: 41 → 42 → 43 → 44 → 45 → 46');
+   if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha47';
+   if(window.blueyAbout)window.blueyAbout.version='1.0-alpha47';
+   const badge=document.getElementById('bluey-version');if(badge)badge.textContent=window.BLUEY_RUNTIME_VERSION;
+   document.title=window.BLUEY_RUNTIME_VERSION;
+   window.BlueyAlpha47={version:window.BLUEY_RUNTIME_VERSION,runtimeChain:[41,42,43,44,45,46],brainLab:'2.1',ready:true};
+   window.dispatchEvent(new CustomEvent('bluey:alpha47-ready',{detail:window.BlueyAlpha47}));
+   console.info('[Bluey Alpha 47] Production baseline ready: 41 → 42 → 43 → 44 → 45 → 46 + Brain Lab V2.1');
  }))))))
 })();
