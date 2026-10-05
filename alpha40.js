@@ -29,5 +29,5 @@ const blueyRoomInvitationBefore40=blueyRoomInvitation,blueyRoomInvitationCounts4
    const badge=document.getElementById('bluey-version');if(badge)badge.textContent='Bluey 1.0 Alpha 45';
    document.title='Bluey 1.0 Alpha 45';
    console.info('[Bluey RC] Runtime chain ready: 41 → 42 → 43 → 44 → 45');
- })))););
+ })))))
 })();
