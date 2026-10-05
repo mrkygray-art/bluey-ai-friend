@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.6.1</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.6.2</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -206,7 +206,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.6.0 voice capture',{
+ console.log('Bluey 0.6.2 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -277,7 +277,7 @@ if('speechSynthesis'in window){speechSynthesis.getVoices();speechSynthesis.onvoi
 
 // ---- Bluey 0.6 personality + state layer ----
 const blueyOrb=document.getElementById('orb');
-let blueyState='idle', lastHumanActivity=Date.now(), idleStage=0, userAskedForSpace=false;
+let blueyState='idle', lastHumanActivity=Date.now(), personalityIdleStage=0, userAskedForSpace=false;
 const blueyIdleLines=[
  "Are you still there?",
  "What can I help you with?",
@@ -305,7 +305,7 @@ function blueyAttention(text){
  setTimeout(()=>{if(blueyState==='attention')setBlueyState('idle')},1600);
 }
 function noteHumanActivity(text=''){
- lastHumanActivity=Date.now(); idleStage=0;
+ lastHumanActivity=Date.now(); personalityIdleStage=0;
  if(/\b(busy|working on something else|leave me alone|give me a minute|give me some time|not now)\b/i.test(text)){
    userAskedForSpace=true;
    if(typeof tempStatus==='function')tempStatus("No problem. I'll be here when you need me.",6500);
@@ -316,11 +316,11 @@ function noteHumanActivity(text=''){
 setInterval(()=>{
  const quiet=Date.now()-lastHumanActivity;
  if(userAskedForSpace)return;
- if(quiet>120000 && idleStage<2){
-   idleStage=2;
+ if(quiet>120000 && personalityIdleStage<2){
+   personalityIdleStage=2;
    blueyAttention(blueyFunLines[Math.floor(Math.random()*blueyFunLines.length)]);
- } else if(quiet>60000 && idleStage<1){
-   idleStage=1;
+ } else if(quiet>60000 && personalityIdleStage<1){
+   personalityIdleStage=1;
    blueyAttention(blueyIdleLines[Math.floor(Math.random()*blueyIdleLines.length)]);
  }
 },5000);
@@ -349,7 +349,7 @@ document.addEventListener('submit',e=>{
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is an AI friend designed to listen, think, help, teach, and keep you company without getting in the way.',
- version:'0.6.1'
+ version:'0.6.2'
 };
 
 </script></body></html>
