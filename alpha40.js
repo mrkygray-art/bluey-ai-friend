@@ -20,38 +20,24 @@ const blueyRenderRoomObjectsBefore40=renderInteractiveObjects;
 renderInteractiveObjects=function(place){const result=blueyRenderRoomObjectsBefore40(place);blueyVisibleObjects.forEach(object=>blueyStage37.appendChild(object));return result};
 renderInteractiveObjects(blueyWorld||'home');
 
-// Object taps should feel like Bluey reacting, not like the same tooltip template every time.
+// Object interactions remember the visit and advance instead of looping a canned tooltip.
 const blueyObjectTapCounts40=new Map();
 const blueyObjectOpeners40=['Oh, this one.','You found one of my little things.','Ha — good pick.','I wondered if you would tap that.','This one has a story.','Ooh, you noticed it.'];
-const blueyObjectClosers40=['',' '+`There’s a little more to this one if you’re curious.`,' '+`That one makes me smile, in the very digital sense.`,' '+`You can ask me anything about it.`,' '+`We can follow that rabbit hole if you want.`];
+const blueyObjectClosers40=['',' There’s a little more to this one if you’re curious.',' That one makes me smile, in the very digital sense.',' You can ask me anything about it.',' We can follow that rabbit hole if you want.'];
+const blueyReturnLines40=['You came back to it.','Back again — I like your curiosity.','Still thinking about this one?','Okay, this one definitely has your attention.','We meet again.'];
+const blueyWaitLines40=['No rush. It’ll be here when you have a thought.','Still thinking? That’s okay. We don’t have to force the question.','We can leave that idea glowing in the background for a bit.','You don’t have to answer me just because I asked. Curiosity can sit for a minute.','I think we’ve interrogated this object enough for now. 😄 Bring me the thought it sparked when you’re ready.'];
 function blueyDynamicObjectReply40(obj){
  const count=(blueyObjectTapCounts40.get(obj.id)||0)+1;blueyObjectTapCounts40.set(obj.id,count);
- if(count===1){
-  const opener=blueyObjectOpeners40[Math.floor(Math.random()*blueyObjectOpeners40.length)];
-  const closer=blueyObjectClosers40[Math.floor(Math.random()*blueyObjectClosers40.length)];
-  return `${opener} ${obj.short}${closer}`.replace(/\s+/g,' ').trim();
- }
- if(count===2&&obj.deeper)return `${obj.deeper} ${obj.rabbit||''}`.trim();
- if(count>=3&&obj.rabbit)return obj.rabbit;
- return obj.deeper||obj.short;
+ if(count===1){const opener=blueyObjectOpeners40[Math.floor(Math.random()*blueyObjectOpeners40.length)];const closer=blueyObjectClosers40[Math.floor(Math.random()*blueyObjectClosers40.length)];return `${opener} ${obj.short}${closer}`.replace(/\s+/g,' ').trim()}
+ if(count===2&&obj.deeper){const returnLine=blueyReturnLines40[Math.floor(Math.random()*blueyReturnLines40.length)];return `${returnLine} ${obj.deeper} ${obj.rabbit||''}`.replace(/\s+/g,' ').trim()}
+ if(count===3){const returnLine=blueyReturnLines40[Math.floor(Math.random()*blueyReturnLines40.length)];return obj.rabbit?`${returnLine} ${obj.rabbit}`:`${returnLine} ${blueyWaitLines40[Math.floor(Math.random()*blueyWaitLines40.length)]}`}
+ return blueyWaitLines40[(count-4)%blueyWaitLines40.length];
 }
-inspectBlueyObject=function(obj,el){
- blueyStopDepthFlight();blueyStageActivity({front:true});blueyObjectFocus={obj,depth:0};
- clearTimeout(blueyRoomExpiry);
- blueyRoomExpiry=setTimeout(()=>{const nodes=[...(blueyVisibleObjects||[])];nodes.forEach(item=>item.classList.add('bluey-object-leaving'));setTimeout(()=>{nodes.forEach(item=>item.remove());blueyVisibleObjects=blueyVisibleObjects.filter(item=>!nodes.includes(item))},420)},42000);
- const answer=blueyDynamicObjectReply40(obj);
- setTimeout(()=>{add('assistant',answer);if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious')},260);
-};
+inspectBlueyObject=function(obj,el){blueyStopDepthFlight();blueyStageActivity({front:true});blueyObjectFocus={obj,depth:0};clearTimeout(blueyRoomExpiry);blueyRoomExpiry=setTimeout(()=>{const nodes=[...(blueyVisibleObjects||[])];nodes.forEach(item=>item.classList.add('bluey-object-leaving'));setTimeout(()=>{nodes.forEach(item=>item.remove());blueyVisibleObjects=blueyVisibleObjects.filter(item=>!nodes.includes(item))},420)},42000);const answer=blueyDynamicObjectReply40(obj);setTimeout(()=>{add('assistant',answer);if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious')},260)};
 
 const blueyRoomInvitationBefore40=blueyRoomInvitation;
 const blueyRoomInvitationCounts40=new Map();
-blueyRoomInvitation=function(room){
- const opening={home:'Welcome Home. There is a jar of marbles, my idea lamp, and a little welcome mat on the stage.',quiet:'This is the Quiet Place. I left a slow-falling leaf and a little sand timer here.',edge:'We are at The Edge. I put a tiny light and a marker beside me; I have only explored this far.'}[room];
- if(!opening)return blueyRoomInvitationBefore40(room);
- const count=(blueyRoomInvitationCounts40.get(room)||0)+1;blueyRoomInvitationCounts40.set(room,count);
- const endings=count===1?[' Tap anything that catches your eye.',' I left a few things for you to poke around.',' Pick whatever looks interesting.']:[' You know the room now — explore wherever you like.',' See anything you missed last time?',' I may be biased, but the objects have personality.'];
- return opening+endings[Math.floor(Math.random()*endings.length)];
-};
+blueyRoomInvitation=function(room){const opening={home:'Welcome Home. There is a jar of marbles, my idea lamp, and a little welcome mat on the stage.',quiet:'This is the Quiet Place. I left a slow-falling leaf and a little sand timer here.',edge:'We are at The Edge. I put a tiny light and a marker beside me; I have only explored this far.'}[room];if(!opening)return blueyRoomInvitationBefore40(room);const count=(blueyRoomInvitationCounts40.get(room)||0)+1;blueyRoomInvitationCounts40.set(room,count);const endings=count===1?[' Tap anything that catches your eye.',' I left a few things for you to poke around.',' Pick whatever looks interesting.']:[' You know the room now — explore wherever you like.',' See anything you missed last time?',' I may be biased, but the objects have personality.'];return opening+endings[Math.floor(Math.random()*endings.length)]};
 
 const BLUEY_TRAVEL_OBJECTS_40={
  beach:[{id:'beach-sun',title:'Beach sunshine',names:['sun','sunshine'],short:'That is the sun above the beach. Sunlight carries energy across space and warms Earth.',deeper:'Sunlight is electromagnetic radiation from the Sun. Earth receives only a small part of its total energy.',rabbit:'Want to wonder about tides or waves next?'},{id:'beach-wave',title:'A beach wave',names:['wave','shore','water'],short:'A wave rolling toward shore. The water moves in a curve while the wave carries energy forward.',deeper:'As a wave reaches shallow water, the seafloor slows its base and the top can curl forward.',rabbit:'Want to compare ocean waves with tides?'}],
