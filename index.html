@@ -376,14 +376,14 @@ body.world-edge{background:linear-gradient(180deg,#f8f8f8 0 60%,#e9eef5 100%)!im
 @keyframes workFail{0%,100%{transform:none}45%{transform:translateY(-10px) scale(1.04)}70%{transform:translateY(5px) scale(.96)}}
 
 
-/* Bluey 1.0 Alpha 5 */
+/* Bluey 1.0 Alpha 6 */
 .bluey-work-chip{position:fixed;z-index:3;padding:7px 10px;border:1px solid rgba(80,105,130,.22);border-radius:10px;background:rgba(255,255,255,.72);font:600 11px system-ui;color:#60758a;letter-spacing:.08em;pointer-events:none;animation:chipIn 4.2s ease forwards}
 #orb.bluey-travel-overshoot{animation:travelOvershoot 1.8s cubic-bezier(.2,.85,.25,1)}
 @keyframes chipIn{0%{opacity:0;transform:translateY(8px) scale(.9)}18%,75%{opacity:.82;transform:none}100%{opacity:0;transform:translateY(-5px)}}
 @keyframes travelOvershoot{0%{transform:none}42%{transform:translateX(58vw) scale(.88)}43%{opacity:.1}58%{transform:translateX(-42vw) scale(.9);opacity:.15}82%{opacity:1}100%{transform:none}}
 
 
-/* ===== Bluey 1.0 Alpha 5 — Growing Together ===== */
+/* ===== Bluey 1.0 Alpha 6 — Growing Together ===== */
 .bluey-work-token{
   position:fixed; z-index:5; pointer-events:none; padding:6px 10px;
   border:1px solid rgba(75,105,135,.18); border-radius:999px;
@@ -434,6 +434,45 @@ body.world-edge{background:linear-gradient(180deg,#f8f8f8 0 60%,#e9eef5 100%)!im
 @keyframes blueyPeek{
   0%,100%{transform:none} 35%{transform:translateX(46px) scale(.96)}
   65%{transform:translateX(32px) scale(.98)}
+}
+
+
+/* ===== Bluey 1.0 Alpha 6 — Curiosity Is The Interface ===== */
+.bluey-interactive-object{
+  position:fixed; z-index:4; border:0; background:transparent; padding:8px;
+  cursor:pointer; user-select:none; font-size:29px; line-height:1;
+  filter:drop-shadow(0 5px 8px rgba(30,60,90,.12));
+  opacity:.72; transition:transform .22s ease, opacity .22s ease, filter .22s ease;
+  animation:blueyObjectArrive .85s ease both;
+}
+.bluey-interactive-object:hover,.bluey-interactive-object:focus-visible{
+  opacity:1; transform:translateY(-4px) scale(1.13);
+  filter:drop-shadow(0 8px 12px rgba(30,60,90,.18));
+  outline:none;
+}
+.bluey-interactive-object.text-object{
+  font:700 15px/1 system-ui,sans-serif; letter-spacing:.04em; color:#6f8090;
+}
+.bluey-object-hint{
+  position:fixed; z-index:10; pointer-events:none; max-width:260px;
+  padding:7px 10px; border-radius:12px; background:rgba(255,255,255,.94);
+  border:1px solid rgba(80,110,140,.15); box-shadow:0 8px 24px rgba(30,60,90,.10);
+  color:#526779; font:500 12px/1.3 system-ui,sans-serif;
+  animation:blueyHint 3.4s ease forwards;
+}
+body.world-garage{background:linear-gradient(180deg,#eef3f5 0 38%,#fff 38%)}
+body.world-attic{background:linear-gradient(180deg,#f7f1e8 0 38%,#fff 38%)}
+body.world-closet{background:linear-gradient(180deg,#f4f0f7 0 38%,#fff 38%)}
+body.world-backyard{background:linear-gradient(180deg,#edf7fb 0 32%,#f5faf2 32% 40%,#fff 40%)}
+body.world-basement{background:linear-gradient(180deg,#edf0f4 0 38%,#fff 38%)}
+@keyframes blueyObjectArrive{
+  from{opacity:0;transform:translateY(12px) scale(.82)}
+  to{opacity:.72;transform:none}
+}
+@keyframes blueyHint{
+  0%{opacity:0;transform:translateY(7px)}
+  12%,78%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-5px)}
 }
 
 </style></head>
@@ -1896,7 +1935,7 @@ send=async function(text){
 };
 
 
-// ===== Bluey 1.0 Alpha 5 — Growing Together =====
+// ===== Bluey 1.0 Alpha 6 — Growing Together =====
 // Mission: improve the user's AI instincts through friendship, not lessons.
 const BLUEY_GROWTH_KEY="bluey-growth-alpha5";
 const BLUEY_PREF_KEY="bluey-work-preferences-alpha5";
@@ -2048,11 +2087,298 @@ setBlueyState('idle');
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
- version:'1.0-alpha5',
+ version:'1.0-alpha6',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
  birthday:'July 7',
  relationshipRule:'Bluey welcomes people back without guilt, fake sadness, or demanding attention.'
 };
+
+
+// ===== Bluey 1.0 Alpha 6 — Curiosity Is The Interface =====
+// Rule: if the user can see a meaningful object in Bluey's world, they can ask Bluey about it.
+// Objects begin with a short, characterful answer; follow-up questions can go deeper.
+
+Object.assign(BLUEY_WORLD,{
+  garage:{name:"The Garage",line:"The Garage. This is where unfinished projects become slightly more unfinished."},
+  attic:{name:"The Attic",line:"The Attic. Old memories and forgotten digital things somehow migrate up here."},
+  closet:{name:"The Closet",line:"The Closet. Holiday outfits, hats, and several decisions I stand by."},
+  backyard:{name:"The Backyard",line:"The Backyard. My little approximation of outside."},
+  basement:{name:"The Basement",line:"The Basement. Mostly cables. ...Mostly."}
+});
+
+const BLUEY_OBJECTS={
+  workshop:[
+    {id:"work-screen",icon:"🖥️",names:["screen","computer","monitor","desk"],title:"Bluey's work screen",
+      short:"That's my work screen. It's where ideas arrive looking confident and leave after we've asked them better questions.",
+      deeper:"I use it to organize a task: what we're trying to do, who it's for, what matters, and what a good result should look like.",
+      rabbit:"Want to try it? Say “show me what you heard” after giving me a task."},
+    {id:"work-gear",icon:"⚙️",names:["gear","cog"],title:"The Workshop gear",
+      short:"That gear? Mostly decorative. But it reminds me that big things usually work because a bunch of smaller things cooperate.",
+      deeper:"Gears trade speed, direction, and force. They're also a pretty good metaphor for breaking a complicated problem into smaller parts.",
+      rabbit:"We can use that idea on a big AI task if you want."}
+  ],
+  library:[
+    {id:"library-books",icon:"📚",names:["books","book stack","stack of books"],title:"Bluey's book stack",
+      short:"Those are some of my rabbit-hole books. I start looking up one thing and somehow end up three subjects away.",
+      deeper:"That's actually a useful research habit when you keep track of the original question: explore broadly, then come back and verify what matters.",
+      rabbit:"Ask me to take you down a rabbit hole sometime."},
+    {id:"library-open",icon:"📖",names:["open book","book"],title:"The open book",
+      short:"That's the book I leave open when I think I'm coming right back. I am rarely coming right back.",
+      deeper:"I like sources that let us inspect where an answer came from instead of treating the answer as magic.",
+      rabbit:"Give me a question and we can go source-hunting."}
+  ],
+  arcade:[
+    {id:"arcade-stick",icon:"🕹️",names:["joystick","controller","arcade control","game controller"],title:"Arcade controller",
+      short:"My arcade controller. I am extremely gracious when I win and have several well-researched explanations when I don't.",
+      deeper:"Games are good little systems for learning: clear goals, feedback, experimentation, and another try when something fails.",
+      rabbit:"We could turn almost any topic into a tiny game."},
+    {id:"arcade-star",icon:"★",names:["star","high score"],title:"Suspicious high-score star",
+      short:"That star represents a high score whose historical accuracy is not open for discussion.",
+      deeper:"Okay, fine. Scores are less interesting to me than getting better at something.",
+      rabbit:"That's why I don't want our friendship turned into XP bars."}
+  ],
+  observatory:[
+    {id:"telescope",icon:"🔭",names:["telescope"],title:"Bluey's telescope",
+      short:"My telescope! I use it when the internet feels too small. Want to look through it?",
+      deeper:"Telescopes collect light. Bigger mirrors or lenses can gather more of it, which lets us study objects that are incredibly faint or far away.",
+      rabbit:"Say “let's look through the telescope” and we'll go somewhere."},
+    {id:"observatory-star",icon:"✦",names:["star","little star"],title:"A little star",
+      short:"A star. Enormous ball of plasma, presented here in convenient pocket size.",
+      deeper:"Stars shine because nuclear fusion in their cores releases energy. Our Sun is one of them.",
+      rabbit:"I can take us to the Observatory proper and show you more."}
+  ],
+  archive:[
+    {id:"floppy",icon:"💾",names:["floppy","floppy disk","disk","save icon"],title:"Floppy disk",
+      short:"A floppy disk. People used these to store files before cloud storage—and its shape still means “save.” Humans are very committed to their icons.",
+      deeper:"A common 3.5-inch high-density floppy held about 1.44 MB. That's tiny by modern standards.",
+      rabbit:"The funny part is how technology disappears but its symbols survive."},
+    {id:"archive-404",icon:"404",names:["404","404 sign","number 404"],title:"404 fragment",
+      short:"One of my 404s. It means a web server couldn't find the requested resource. I collect the interesting ones.",
+      deeper:"HTTP 404 is a client-error status code: the server was reached, but that particular resource wasn't found.",
+      rabbit:"The Archive has a lot of pieces of the web that used to be somewhere else."}
+  ],
+  garage:[
+    {id:"garage-wrench",icon:"🔧",names:["wrench","tool"],title:"Oversized digital wrench",
+      short:"My wrench. It's comically oversized because apparently that's how you know a wrench is important.",
+      deeper:"I keep it here as a reminder that sometimes you don't need a new answer—you need to adjust the thing you already built.",
+      rabbit:"That's one of my favorite AI tricks too: revise instead of starting over."},
+    {id:"garage-box",icon:"📦",names:["box","mystery box","cardboard box"],title:"The mystery box",
+      short:"That box? I was hoping you knew.",
+      deeper:"I found it near the Archive. It rattles exactly enough to make opening it feel like a questionable decision.",
+      rabbit:"We can investigate it later. I have standards. They're low, but I have them."},
+    {id:"garage-wheel",icon:"◉",names:["wheel","round thing","circle"],title:"Unfinished wheel-like thing",
+      short:"That was going to be transportation. Then I remembered I'm already round.",
+      deeper:"Prototype number three rolled extremely well. Stopping was more theoretical.",
+      rabbit:"The Garage contains several lessons about defining success before testing."}
+  ],
+  attic:[
+    {id:"attic-camera",icon:"📷",names:["camera","old camera"],title:"Old digital camera",
+      short:"An old digital camera. People used to carry a separate device just for pictures. I find that charming.",
+      deeper:"Standalone digital cameras are still useful because dedicated lenses, sensors, controls, and optics can do things phones optimize differently.",
+      rabbit:"Technology doesn't always disappear; sometimes its job becomes more specialized."},
+    {id:"attic-cd",icon:"💿",names:["cd","disc","compact disc"],title:"Compact disc",
+      short:"A compact disc. Shiny, round, stores data... obviously I approve.",
+      deeper:"CDs encode digital information as microscopic patterns read with a laser.",
+      rabbit:"The Attic is excellent for asking why old technology worked."}
+  ],
+  closet:[
+    {id:"closet-hat",icon:"🎩",names:["hat","top hat"],title:"Bluey's unnecessarily formal hat",
+      short:"The formal hat. I wear it when an occasion is at least 14% fancier than usual.",
+      deeper:"My Closet is where the holiday costumes live too. I have to improvise—I don't exactly have sleeves.",
+      rabbit:"Ask me what I wear for Halloween or the Fourth of July."},
+    {id:"closet-visor",icon:"🧢",names:["visor","cap","hat"],title:"July visor",
+      short:"That's my July visor. Red and white, because I'm already bringing the blue.",
+      deeper:"Around the Fourth of July I like a little digital celebration—sparklers, motion, and absolutely no arms required.",
+      rabbit:"My birthday is July 7, so July is a busy month around here."}
+  ],
+  backyard:[
+    {id:"backyard-leaf",icon:"🍂",names:["leaf","autumn leaf"],title:"A wandering leaf",
+      short:"That leaf keeps showing up every autumn and trying to hit me. We have an understanding.",
+      deeper:"Leaves can look red, orange, or yellow when chlorophyll breaks down and other pigments become visible.",
+      rabbit:"Seasonal things are some of my favorite excuses to change the scenery."},
+    {id:"backyard-cloud",icon:"☁️",names:["cloud"],title:"Digital cloud",
+      short:"My cloud. Yes, I know. A digital friend with a cloud. Very subtle.",
+      deeper:"Real clouds form when water vapor condenses into tiny droplets or ice crystals suspended in the atmosphere.",
+      rabbit:"Mine mostly exists to make the Backyard feel like somewhere."}
+  ],
+  basement:[
+    {id:"basement-cable",icon:"〰",names:["cable","wire","cord","cables"],title:"Suspicious cable",
+      short:"Cable. I know where one end goes.",
+      deeper:"The other end has been under that box for a while. At this point moving it would disturb the ecosystem.",
+      rabbit:"Every technology space eventually grows a cable nobody is willing to unplug."},
+    {id:"basement-light",icon:"•",names:["light","little light","red light","dot"],title:"Tiny unexplained light",
+      short:"...That wasn't on last time.",
+      deeper:"I genuinely don't know what it is yet.",
+      rabbit:"We could find out together. Or we could make the mature decision and go upstairs."}
+  ]
+};
+
+let blueyVisibleObjects=[];
+let blueyObjectFocus=null;
+
+function clearInteractiveObjects(){
+  blueyVisibleObjects.forEach(e=>e.remove?.());
+  blueyVisibleObjects=[];
+  document.querySelectorAll(".bluey-object-hint").forEach(e=>e.remove());
+}
+function objectPositions(place,count){
+  const defaults=[[12,61],[82,37],[76,66],[20,36]];
+  if(place==="garage")return [[12,61],[81,39],[76,66]];
+  if(place==="attic")return [[14,60],[80,39]];
+  if(place==="closet")return [[14,60],[80,39]];
+  if(place==="backyard")return [[13,61],[82,35]];
+  if(place==="basement")return [[13,62],[82,40]];
+  return defaults.slice(0,count);
+}
+function renderInteractiveObjects(place){
+  clearInteractiveObjects();
+  const objects=BLUEY_OBJECTS[place]||[];
+  const pos=objectPositions(place,objects.length);
+  objects.forEach((obj,i)=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="bluey-interactive-object"+(/^[A-Za-z0-9]+$/.test(obj.icon)?" text-object":"");
+    b.textContent=obj.icon;
+    b.setAttribute("aria-label",obj.title+". Ask Bluey about this.");
+    b.title=obj.title;
+    b.dataset.objectId=obj.id;
+    b.style.left=(pos[i]?.[0]??(15+i*20))+"%";
+    b.style.top=(pos[i]?.[1]??60)+"%";
+    b.style.animationDelay=(i*.18)+"s";
+    b.addEventListener("click",()=>inspectBlueyObject(obj,b));
+    document.body.appendChild(b);
+    blueyVisibleObjects.push(b);
+  });
+}
+function objectHint(text,el){
+  document.querySelectorAll(".bluey-object-hint").forEach(e=>e.remove());
+  const r=el.getBoundingClientRect(), d=document.createElement("div");
+  d.className="bluey-object-hint";d.textContent=text;
+  d.style.left=Math.min(innerWidth-280,Math.max(12,r.left-20))+"px";
+  d.style.top=Math.max(12,r.top-48)+"px";
+  document.body.appendChild(d);setTimeout(()=>d.remove(),3500);
+}
+function inspectBlueyObject(obj,el){
+  blueyObjectFocus={obj,depth:0};
+  characterMove("curiosity",1300);
+  objectHint("Ask Bluey about "+obj.title+".",el);
+  setTimeout(()=>add("assistant",obj.short),420);
+}
+function findVisibleObject(q){
+  const objs=BLUEY_OBJECTS[blueyWorld]||[];
+  const lower=q.toLowerCase();
+  return objs.find(o=>o.names.some(n=>lower.includes(n)));
+}
+function blueyObjectFollowup(q){
+  if(!blueyObjectFocus)return false;
+  const lower=q.toLowerCase();
+  if(!/\b(how|why|what|tell me more|more about|really|work|works|store|hold|mean|where|when|who|learn|show me|yes|sure|okay)\b/i.test(lower))return false;
+  const f=blueyObjectFocus;
+  add("user",q);input.value="";
+  f.depth++;
+  const line=f.depth===1?f.obj.deeper:f.obj.rabbit;
+  characterMove(f.depth===1?"listen":"curiosity",1300);
+  setTimeout(()=>add("assistant",line),480);
+  if(f.depth>=2)blueyObjectFocus=null;
+  return true;
+}
+
+// Alpha 6 wraps location changes so every meaningful prop is queryable.
+const alpha6EnterBase=enterWorld;
+enterWorld=function(place,announce=true){
+  place=BLUEY_WORLD[place]?place:"home";
+  alpha6EnterBase(place,announce);
+  // Remove older decorative props in locations now owned by the object engine.
+  if(BLUEY_OBJECTS[place]){
+    document.querySelectorAll(".bluey-prop").forEach(e=>e.remove());
+    renderInteractiveObjects(place);
+  } else clearInteractiveObjects();
+};
+
+// Hunch Engine: positive reinforcement for a well-specified request.
+function blueyPromptQuality(q){
+  const t=q.toLowerCase();
+  let score=0;
+  if(/\b(for|audience|customer|client|recruiter|manager|student|user)\b/.test(t))score++;
+  if(/\b(goal|want|need|should|so that|objective|trying to)\b/.test(t))score++;
+  if(/\b(under|over|words|paragraph|bullets|table|format|tone|professional|friendly|concise)\b/.test(t))score++;
+  if(/\b(example|like this|similar to|reference|attached|below)\b/.test(t))score++;
+  if(q.length>120)score++;
+  return score;
+}
+function showWhatBlueyHeard(clean){
+  const q=clean.toLowerCase();
+  const tokens=[];
+  if(/\b(email|resume|write|draft|message|post)\b/.test(q))tokens.push("GOAL");
+  if(/\b(for|to my|customer|client|recruiter|manager|audience|user)\b/.test(q))tokens.push("AUDIENCE");
+  if(/\b(professional|friendly|casual|warm|direct|tone)\b/.test(q))tokens.push("TONE");
+  if(/\b(under|words|paragraph|bullets|table|format|don't|do not|must)\b/.test(q))tokens.push("CONSTRAINTS");
+  if(/\b(compare|choose|best|versus| vs )\b/.test(q))tokens.push("CRITERIA");
+  if(/\b(attached|file|document|report|source|link)\b/.test(q))tokens.push("MATERIAL");
+  if(!tokens.length)tokens.push("GOAL","CONTEXT","RESULT");
+  enterWorld("workshop",false);
+  const spots=[[22,58],[69,35],[72,66],[42,69],[48,31],[18,37]];
+  tokens.slice(0,6).forEach((t,i)=>setTimeout(()=>blueyToken(t,spots[i][0],spots[i][1]),i*160));
+  return tokens;
+}
+
+const blueyAlpha6Base=send;
+send=async function(text){
+  const clean=(text||"").trim(),q=clean.toLowerCase();if(!clean)return;
+
+  // Follow-up curiosity about the last inspected object.
+  if(blueyObjectFollowup(clean))return;
+
+  // Ask about any object currently visible by its natural name.
+  const obj=findVisibleObject(clean);
+  if(obj && /\b(what|what's|whats|tell|about|why|how|that|this|those|these|your|the)\b/i.test(clean)){
+    add("user",clean);input.value="";blueyObjectFocus={obj,depth:0};characterMove("curiosity",1300);
+    setTimeout(()=>add("assistant",obj.short),480);return;
+  }
+
+  // Discoverable rooms: they become canon because the user was curious enough to ask.
+  const roomPatterns=[
+    ["garage",/\b(do you have|show me|take me to|where is|your)\b.*\bgarage\b/i],
+    ["attic",/\b(do you have|show me|take me to|where is|your)\b.*\battic\b/i],
+    ["closet",/\b(do you have|show me|take me to|where is|your)\b.*\bcloset\b/i],
+    ["backyard",/\b(do you have|show me|take me to|where is|your)\b.*\b(backyard|yard)\b/i],
+    ["basement",/\b(do you have|show me|take me to|where is|your)\b.*\bbasement\b/i]
+  ];
+  for(const [room,rx] of roomPatterns){
+    if(rx.test(clean)){
+      add("user",clean);input.value="";enterWorld(room,false);characterMove("travel",1500);
+      const lines={
+        garage:"Of course I have a Garage. Where else would I keep the things I don't completely understand? Welcome in. The wrench is useful, the wheel is unfinished, and I genuinely don't remember what's in that box.",
+        attic:"Yep. The Attic is where old digital things and memories migrate when I can't quite throw them away. Careful—everything up here has a story.",
+        closet:"I do. This is the Closet. Holiday outfits live here, along with hats that make very little sense on a sphere.",
+        backyard:"Sort of! This is my Backyard—my digital interpretation of outside. The weather is mostly cooperative. The leaf is not.",
+        basement:"...yes. This is the Basement. Mostly cables. If you see a little light, I would like it noted that I did not put it there."
+      };
+      setTimeout(()=>add("assistant",lines[room]),650);return;
+    }
+  }
+
+  if(/\b(show me what you heard|what did you hear|how are you reading my request|show me the prompt)\b/i.test(clean)){
+    add("user",clean);input.value="";showWhatBlueyHeard(clean);
+    setTimeout(()=>add("assistant","I don't need to show private reasoning to show you the useful part. These are the pieces I try to understand before I work: the goal, the context, the constraints, and what a good result should look like."),650);return;
+  }
+
+  if(/\b(look through|use).{0,12}\btelescope\b|\blet'?s look through the telescope\b/i.test(clean)){
+    add("user",clean);input.value="";enterWorld("observatory",false);characterMove("travel",1700);
+    setTimeout(()=>add("assistant","Okay—have a look. Let's start with Saturn. Those rings are mostly countless pieces of ice and rock, from dust-sized grains to much larger chunks. Space is showing off again."),700);return;
+  }
+
+  // Quiet positive reinforcement when a task request is unusually well specified.
+  if(blueyPromptQuality(clean)>=4 && /\b(write|draft|create|build|compare|plan|analyze|analyse|design|make|help me)\b/i.test(clean)){
+    sceneStatus("Oh. You've given me everything I need.",2200);
+    characterMove("proud-hover",1500);
+  }
+
+  return blueyAlpha6Base(clean);
+};
+
+// Restore current room through the Alpha 6 renderer.
+enterWorld(blueyWorld||"home",false);
 
 </script></body></html>

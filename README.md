@@ -92,3 +92,34 @@ Try:
 - “That worked!”
 - “Show me what we’ve done together.”
 - “Show me your office.”
+
+
+## Bluey 1.0 Alpha 6 — Curiosity Is The Interface
+
+### World Object Engine
+Meaningful objects shown in Bluey's locations are now queryable. Users can ask naturally about the wrench, box, telescope, floppy disk, books, gear, cloud, cable, and other visible props. Answers deepen through follow-up curiosity rather than dumping a lesson up front.
+
+Design rule: **if you can see it, you can ask Bluey about it.**
+
+Objects can have:
+- a short Bluey-style explanation
+- a deeper factual/AI-literacy layer
+- a rabbit-hole invitation
+- lore/history
+- uncertainty when Bluey genuinely does not know
+
+### Discoverable rooms
+Bluey's world now includes:
+- Garage — experiments, prototypes, unfinished ideas
+- Attic — old technology and memories
+- Closet — holiday costumes and appearance
+- Backyard — seasons, nature and weather
+- Basement — cables and mysteries
+
+These rooms are discovered conversationally rather than through a giant navigation menu.
+
+### Hunch Engine expansion
+Well-specified task requests can receive subtle positive reinforcement instead of Bluey constantly correcting the user.
+
+### Task specification visualization
+“Bluey, show me what you heard” uses Workshop tokens to show task-level concepts such as GOAL, AUDIENCE, TONE, CONSTRAINTS, CRITERIA and MATERIAL. This is task specification, not private chain-of-thought.
