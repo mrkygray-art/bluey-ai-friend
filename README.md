@@ -1,24 +1,21 @@
-# Bluey 0.6.2 — JavaScript Startup Fix
+# Bluey 0.6.3 — Character Motion Pass
 
-## Root cause found
-0.6.0 added the personality/state layer with a second declaration of:
+Built from the stable 0.6.2 voice baseline.
 
-`let idleStage = 0`
+## Goal
+Make Bluey feel less like a UI indicator and more like a lovable animated character through motion and timing.
 
-The original Bluey code already had an `idleStage` variable in the same script. JavaScript treats that as a parse-time SyntaxError (`Identifier 'idleStage' has already been declared`).
+## Character behavior
+- Idle: uneven, gentle breathing/floating rather than mechanical bobbing.
+- Listening: alert, eager motion that visibly reacts while the mic is active.
+- Thinking: slower side-to-side pondering motion.
+- Speaking/responding: conversational rhythmic motion.
+- Attention: anticipation -> pop up -> overshoot -> settle.
+- Happy reaction: a small celebratory bounce after conversational activity.
+- Warmer randomized idle lines and playful thoughts.
+- Existing “I'm busy / not now” back-off behavior remains.
 
-Because the browser could not parse the script, **none of Bluey's JavaScript initialized**, including the click/listen handler. That is why changing pointer/click behavior in 0.6.1 did not solve it.
+## Important
+The stable 0.6.2 click behavior, 0.5.5 cross-browser microphone capture, and 0.5.4 transcription path are preserved.
 
-## Fix
-- Renamed the new personality timer state to `personalityIdleStage`.
-- Preserved the original idle system.
-- Preserved the 0.6 animation states.
-- Preserved the proven 0.5.5 microphone and 0.5.4 transcription pipeline.
-- Preserved stable click + keyboard activation.
-
-## First test
-1. Load 0.6.2.
-2. Click Bluey once — it should immediately enter listening mode.
-3. Speak.
-4. Click Bluey again — transcription should run and Bluey should answer.
-5. Then compare idle/listening/thinking movement in Chrome and Firefox.
+The character work uses general animation principles such as anticipation, squash/stretch, overshoot, asymmetry, and settle. It does not copy a specific studio character or animation.

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.6.2</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.6.3</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -39,6 +39,72 @@
 @keyframes blueySpeaking{0%,100%{transform:translate3d(0,-3px,0) scale(1.01)}50%{transform:translate3d(0,-11px,0) scale(1.055)}}
 @keyframes blueyAttention{0%,100%{transform:translate3d(0,0,0) scale(1)}35%{transform:translate3d(-7px,-10px,0) scale(1.06)}70%{transform:translate3d(7px,-6px,0) scale(1.035)}}
 @media (prefers-reduced-motion:reduce){#orb{animation:none!important}}
+
+/* Bluey 0.6.3 — character motion layer
+   Inspired by feature-animation principles: anticipation, overshoot, settle,
+   asymmetry, breathing and reaction — without imitating a specific character. */
+#orb{
+  transition:filter .22s ease;
+  cursor:pointer;
+}
+#orb.bluey-idle{
+  animation:blueyAliveIdle 4.6s cubic-bezier(.45,.05,.55,.95) infinite;
+}
+#orb.bluey-listening{
+  animation:blueyAliveListen 1.05s cubic-bezier(.36,.07,.19,.97) infinite;
+}
+#orb.bluey-thinking{
+  animation:blueyAliveThink 2.15s cubic-bezier(.45,.05,.55,.95) infinite;
+}
+#orb.bluey-speaking{
+  animation:blueyAliveSpeak .92s cubic-bezier(.34,1.25,.64,1) infinite;
+}
+#orb.bluey-attention{
+  animation:blueyAliveNotice 1.35s cubic-bezier(.34,1.45,.64,1) 1;
+}
+#orb.bluey-happy{
+  animation:blueyAliveHappy .72s cubic-bezier(.34,1.55,.64,1) 2;
+}
+@keyframes blueyAliveIdle{
+  0%,100%{transform:translate3d(0,0,0) scale(1) rotate(0)}
+  28%{transform:translate3d(-2px,-6px,0) scale(1.014) rotate(-.35deg)}
+  55%{transform:translate3d(2px,-10px,0) scale(1.025) rotate(.45deg)}
+  78%{transform:translate3d(0,-4px,0) scale(1.01) rotate(-.15deg)}
+}
+@keyframes blueyAliveListen{
+  0%{transform:translate3d(0,-3px,0) scale(1.025) rotate(0)}
+  22%{transform:translate3d(-5px,-9px,0) scale(1.055) rotate(-1.2deg)}
+  48%{transform:translate3d(2px,-13px,0) scale(1.075) rotate(.7deg)}
+  72%{transform:translate3d(5px,-8px,0) scale(1.05) rotate(1.1deg)}
+  100%{transform:translate3d(0,-3px,0) scale(1.025) rotate(0)}
+}
+@keyframes blueyAliveThink{
+  0%,100%{transform:translate3d(-7px,-5px,0) scale(.99) rotate(-1.1deg)}
+  30%{transform:translate3d(0,-11px,0) scale(1.015) rotate(.15deg)}
+  62%{transform:translate3d(8px,-7px,0) scale(1.005) rotate(1.15deg)}
+  82%{transform:translate3d(3px,-4px,0) scale(.995) rotate(.45deg)}
+}
+@keyframes blueyAliveSpeak{
+  0%,100%{transform:translate3d(0,-3px,0) scale(1.01)}
+  30%{transform:translate3d(-2px,-9px,0) scale(1.045) rotate(-.4deg)}
+  58%{transform:translate3d(2px,-13px,0) scale(1.065) rotate(.45deg)}
+  78%{transform:translate3d(0,-7px,0) scale(1.03)}
+}
+@keyframes blueyAliveNotice{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  20%{transform:translate3d(0,5px,0) scale(.965)}
+  43%{transform:translate3d(0,-18px,0) scale(1.105) rotate(-1.4deg)}
+  61%{transform:translate3d(4px,-10px,0) scale(1.055) rotate(1deg)}
+  79%{transform:translate3d(-2px,-6px,0) scale(1.025) rotate(-.4deg)}
+  100%{transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes blueyAliveHappy{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  35%{transform:translate3d(0,-17px,0) scale(1.105)}
+  58%{transform:translate3d(-4px,-7px,0) scale(1.045) rotate(-1.4deg)}
+  78%{transform:translate3d(4px,-10px,0) scale(1.06) rotate(1.2deg)}
+}
+
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
@@ -206,7 +272,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.6.2 voice capture',{
+ console.log('Bluey 0.6.3 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -279,24 +345,31 @@ if('speechSynthesis'in window){speechSynthesis.getVoices();speechSynthesis.onvoi
 const blueyOrb=document.getElementById('orb');
 let blueyState='idle', lastHumanActivity=Date.now(), personalityIdleStage=0, userAskedForSpace=false;
 const blueyIdleLines=[
- "Are you still there?",
- "What can I help you with?",
- "I'm here if you need me.",
+ "Hey... still with me?",
+ "I'm still here. What's on your mind?",
  "Need a hand with anything?",
- "Still thinking? I can hang out.",
- "Bluey thought: sometimes the best next step is the smallest one."
+ "No rush. I'm happy hanging out.",
+ "You got quiet on me. Everything good?",
+ "Want to figure something out together?"
 ];
 const blueyFunLines=[
- "Random Bluey thought: curiosity is a pretty good superpower.",
+ "Random Bluey thought: curiosity is a pretty great superpower.",
  "I wonder what we'll figure out next.",
- "Bluey thought: complicated things get easier when we take them one piece at a time.",
- "No rush. I'm good at waiting."
+ "Big problems are usually just a bunch of little problems wearing a trench coat.",
+ "I'm good at waiting. I don't even need snacks.",
+ "You know what's fun? Finally figuring out the thing that was driving you crazy.",
+ "I have absolutely nowhere else I need to be."
 ];
 function setBlueyState(state){
  if(!blueyOrb)return;
  blueyState=state;
- blueyOrb.classList.remove('bluey-listening','bluey-thinking','bluey-speaking','bluey-attention');
- if(state!=='idle')blueyOrb.classList.add('bluey-'+state);
+ blueyOrb.classList.remove('bluey-idle','bluey-listening','bluey-thinking','bluey-speaking','bluey-attention','bluey-happy');
+ blueyOrb.classList.add('bluey-'+state);
+}
+function blueyHappyReaction(){
+ if(!blueyOrb)return;
+ setBlueyState('happy');
+ setTimeout(()=>{if(blueyState==='happy')setBlueyState('idle')},1500);
 }
 function blueyAttention(text){
  if(userAskedForSpace)return;
@@ -345,11 +418,26 @@ document.addEventListener('submit',e=>{
  if(input)noteHumanActivity(input.value||'');
 },true);
 
+
+// Character reaction: a new assistant reply earns a quick happy settle.
+// This is intentionally visual only; it does not alter conversation or voice logic.
+let blueyReplyTimer=null;
+const conversationObserver=new MutationObserver(()=>{
+ clearTimeout(blueyReplyTimer);
+ blueyReplyTimer=setTimeout(()=>{
+   if(blueyState!=='listening' && blueyState!=='thinking') blueyHappyReaction();
+ },180);
+});
+const conversationRoot=document.querySelector('main')||document.body;
+conversationObserver.observe(conversationRoot,{childList:true,subtree:true});
+
 // Future feature hook: intentionally simple foundation, not a new UI button.
+setBlueyState('idle');
+
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is an AI friend designed to listen, think, help, teach, and keep you company without getting in the way.',
- version:'0.6.2'
+ version:'0.6.3'
 };
 
 </script></body></html>
