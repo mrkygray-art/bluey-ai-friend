@@ -1,41 +1,16 @@
-// Bluey Alpha 44 — Release Candidate QA Guardrails V1
-// Feature freeze layer: diagnostics, world integrity checks, and regression visibility.
+// Bluey Alpha 44 — Release Candidate QA Guardrails V2
 (function(){
 'use strict';
-if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha44-rc1';
-if(window.blueyAbout)window.blueyAbout.version='1.0-alpha44-rc1';
+if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha44-rc2';if(window.blueyAbout)window.blueyAbout.version='1.0-alpha44-rc2';
 const EXPECTED=['home','observatory','garage','arcade','workshop','beach','forest','museum','aquarium','quiet','edge'];
-function report(){
- const world=window.BlueyWorldStandard;
- const rooms=world?.rooms||{};
- const checks={
-  worldEngine:!!world,
-  relationshipMemory:!!window.BlueyRelationshipMemory,
-  objectContinuity:!!window.BlueyObjectContinuity,
-  mobileStage:!!window.BlueyMobileStage,
-  sendFunction:typeof window.send==='function',
-  enterWorldFunction:typeof window.enterWorld==='function',
-  renderObjectsFunction:typeof window.renderInteractiveObjects==='function',
-  stage:!!window.blueyStage37,
-  missingRooms:EXPECTED.filter(r=>!rooms[r]),
-  emptyPrimaryRooms:['observatory','garage','arcade','workshop','beach','forest','museum','aquarium'].filter(r=>!(rooms[r]?.objects?.length)),
-  currentWorld:window.blueyWorld||null,
-  currentObjectCount:Array.isArray(window.blueyVisibleObjects)?window.blueyVisibleObjects.length:0
- };
- checks.pass=checks.worldEngine&&checks.relationshipMemory&&checks.objectContinuity&&checks.sendFunction&&checks.enterWorldFunction&&checks.renderObjectsFunction&&checks.stage&&!checks.missingRooms.length&&!checks.emptyPrimaryRooms.length;
- return checks;
-}
-function smoke(){
- const r=report();
- console.group('[Bluey Alpha 44 RC] smoke test');
- Object.entries(r).forEach(([k,v])=>console.log(k,v));
- console.groupEnd();
- return r;
-}
-function worldAudit(){
- const rooms=window.BlueyWorldStandard?.rooms||{};
- return Object.fromEntries(Object.entries(rooms).map(([name,cfg])=>[name,{objects:(cfg.objects||[]).map(o=>({id:o.id,title:o.title,names:o.names||[]})),objectCount:(cfg.objects||[]).length}]));
-}
-window.BlueyReleaseCandidate={version:'44-RC1',report,smoke,worldAudit,featureFreeze:true};
-setTimeout(()=>{const r=smoke();if(!r.pass)console.warn('[Bluey Alpha 44 RC] Release blocker detected',r);else console.info('[Bluey Alpha 44 RC] Core integrity PASS');},1200);
+function report(){const world=window.BlueyWorldStandard,rooms=world?.rooms||{};const c={worldEngine:!!world,relationshipMemory:!!window.BlueyRelationshipMemory,objectContinuity:!!window.BlueyObjectContinuity,mobileStage:!!window.BlueyMobileStage,sendFunction:typeof window.send==='function',enterWorldFunction:typeof window.enterWorld==='function',renderObjectsFunction:typeof window.renderInteractiveObjects==='function',stage:!!window.blueyStage37,missingRooms:EXPECTED.filter(r=>!rooms[r]),emptyPrimaryRooms:['observatory','garage','arcade','workshop','beach','forest','museum','aquarium'].filter(r=>!(rooms[r]?.objects?.length)),currentWorld:window.blueyWorld||null,currentObjectCount:Array.isArray(window.blueyVisibleObjects)?window.blueyVisibleObjects.length:0,userAgent:navigator.userAgent,viewport:`${innerWidth}×${innerHeight}`,touch:'ontouchstart'in window||navigator.maxTouchPoints>0};c.pass=c.worldEngine&&c.relationshipMemory&&c.objectContinuity&&c.sendFunction&&c.enterWorldFunction&&c.renderObjectsFunction&&c.stage&&!c.missingRooms.length&&!c.emptyPrimaryRooms.length;return c}
+function smoke(){const r=report();console.group('[Bluey Alpha 44 RC2] smoke test');Object.entries(r).forEach(([k,v])=>console.log(k,v));console.groupEnd();return r}
+function worldAudit(){const rooms=window.BlueyWorldStandard?.rooms||{};return Object.fromEntries(Object.entries(rooms).map(([name,cfg])=>[name,{objects:(cfg.objects||[]).map(o=>({id:o.id,title:o.title,names:o.names||[]})),objectCount:(cfg.objects||[]).length}]))}
+async function regressWorlds(){const start=window.blueyWorld||'home',results=[];for(const room of EXPECTED){try{window.enterWorld?.(room,false);await new Promise(r=>setTimeout(r,80));const cfg=window.BlueyWorldStandard?.rooms?.[room];const expected=cfg?.objects?.length||0;const visible=document.querySelectorAll('.stage .bluey-interactive-object,.stage .bluey-trip-object').length;results.push({room,expected,visible,pass:expected===0||visible>0})}catch(e){results.push({room,pass:false,error:String(e)})}}try{window.enterWorld?.(start,false)}catch(_){}return results}
+function showPanel(){let p=document.getElementById('bluey-rc-panel');if(p){p.remove();return}const r=report();p=document.createElement('div');p.id='bluey-rc-panel';p.innerHTML=`<div class="rc-head"><b>Bluey Alpha 44 RC2</b><button aria-label="Close QA">×</button></div><div class="rc-status ${r.pass?'pass':'fail'}">${r.pass?'CORE PASS':'RELEASE BLOCKER'}</div><div>World engine: ${r.worldEngine?'✓':'✗'} &nbsp; Memory: ${r.relationshipMemory?'✓':'✗'} &nbsp; Continuity: ${r.objectContinuity?'✓':'✗'}</div><div>Rooms missing: ${r.missingRooms.length?r.missingRooms.join(', '):'none'}</div><div>Empty primary rooms: ${r.emptyPrimaryRooms.length?r.emptyPrimaryRooms.join(', '):'none'}</div><div>Viewport: ${r.viewport} &nbsp; Touch: ${r.touch?'yes':'no'}</div><button class="rc-run">Run world regression</button><pre class="rc-results">Ready.</pre>`;document.body.appendChild(p);p.querySelector('.rc-head button').onclick=()=>p.remove();p.querySelector('.rc-run').onclick=async()=>{const out=p.querySelector('.rc-results');out.textContent='Testing worlds…';const results=await regressWorlds();const bad=results.filter(x=>!x.pass);out.textContent=results.map(x=>`${x.pass?'✓':'✗'} ${x.room}: ${x.visible??'-'} visible / ${x.expected??'-'} expected`).join('\n')+`\n\n${bad.length?'BLOCKERS: '+bad.map(x=>x.room).join(', '):'WORLD REGRESSION PASS'}`}}
+const style=document.createElement('style');style.textContent=`#bluey-rc-panel{position:fixed;right:12px;bottom:12px;z-index:99999;width:min(390px,calc(100vw - 24px));max-height:70vh;overflow:auto;background:#111b27;color:#eaf6ff;border:1px solid #54718a;border-radius:14px;padding:14px;font:13px/1.45 system-ui;box-shadow:0 10px 40px #0007}#bluey-rc-panel .rc-head{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin-bottom:9px}#bluey-rc-panel button{border:1px solid #69839a;border-radius:9px;background:#203448;color:#fff;padding:7px 10px;cursor:pointer}#bluey-rc-panel .rc-head button{border:0;background:none;font-size:22px;padding:0 4px}.rc-status{font-weight:800;margin:7px 0}.rc-status.pass{color:#8cf0a9}.rc-status.fail{color:#ff9c9c}.rc-run{margin:10px 0}.rc-results{white-space:pre-wrap;background:#0a1119;padding:9px;border-radius:8px;max-height:220px;overflow:auto}@media(max-width:520px){#bluey-rc-panel{right:6px;bottom:6px;width:calc(100vw - 12px);max-height:62vh}}`;document.head.appendChild(style);
+window.BlueyReleaseCandidate={version:'44-RC2',report,smoke,worldAudit,regressWorlds,showPanel,featureFreeze:true};
+// Hidden QA access: Ctrl+Shift+B on desktop, or add ?blueyqa=1 on any browser.
+addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='b')showPanel()});if(new URLSearchParams(location.search).get('blueyqa')==='1')setTimeout(showPanel,900);
+setTimeout(()=>{const r=smoke();if(!r.pass)console.warn('[Bluey Alpha 44 RC2] Release blocker detected',r);else console.info('[Bluey Alpha 44 RC2] Core integrity PASS')},1200);
 })();
