@@ -1,0 +1,47 @@
+/* Alpha 8: Bluey's world belongs in the stage, with room to move. */
+.stage{isolation:isolate;touch-action:pan-y}
+.rig{z-index:4;will-change:transform,filter;transform-origin:50% 58%}
+.stage .bluey-prop,.stage .bluey-interactive-object,.stage .bluey-work-chip,
+.stage .bluey-world-object,.stage .bluey-world-bit,.stage .bluey-marble,
+.stage .bluey-pixel-one,.stage .bluey-starfield,.stage .bluey-edge-mark{
+ position:absolute!important;
+}
+.stage .bluey-interactive-object{z-index:5}
+.stage .bluey-prop,.stage .bluey-work-chip,.stage .bluey-world-object{z-index:2}
+.stage .bluey-starfield{inset:0!important}
+.stage .bluey-edge-mark{right:7%;top:38%;z-index:1}
+.stage.bluey-stage-active .rig{z-index:8}
+.stage.bluey-stage-wandering .rig{animation:blueyStageWander 5.1s cubic-bezier(.42,0,.58,1) both}
+.stage .rig.bluey-stage-front{animation:blueyStageFront 2.3s cubic-bezier(.2,.9,.25,1) both;z-index:9}
+.stage.bluey-stage-active .greeting,.stage.bluey-stage-active .status,.stage.bluey-stage-active .nudge{position:relative;z-index:2}
+@keyframes blueyStageWander{
+ 0%{transform:translate3d(0,0,0) scale(1)}
+ 9%{transform:translate3d(-4vw,-3px,0) scale(.96)}
+ 20%{transform:translate3d(-31vw,-4px,0) scale(.83);filter:blur(.25px) drop-shadow(0 7px 12px rgba(0,140,220,.18))}
+ 27%{transform:translate3d(-31vw,-4px,0) scale(.83)}
+ 48%{transform:translate3d(0,-20px,0) scale(1.04)}
+ 70%{transform:translate3d(31vw,-3px,0) scale(.84);filter:blur(.2px) drop-shadow(0 7px 12px rgba(0,140,220,.18))}
+ 77%{transform:translate3d(31vw,-3px,0) scale(.84)}
+ 91%{transform:translate3d(4vw,-10px,0) scale(.96)}
+ 100%{transform:translate3d(0,0,0) scale(1);filter:none}
+}
+@keyframes blueyStageFront{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  17%{transform:translate3d(0,9px,0) scale(.91)}
+  36%{transform:translate3d(0,-25px,0) scale(1.12)}
+  52%{transform:translate3d(0,-3px,0) scale(1.02)}
+  67%{transform:translate3d(-9px,-15px,0) scale(1.08) rotate(-2deg)}
+  82%{transform:translate3d(9px,-12px,0) scale(1.06) rotate(2deg)}
+  100%{transform:translate3d(0,0,0) scale(1)}
+}
+@media(max-width:520px){
+ .stage.bluey-stage-wandering .rig{animation-name:blueyStageWanderMobile}
+ @keyframes blueyStageWanderMobile{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  20%{transform:translate3d(-26vw,-3px,0) scale(.83)}
+  48%{transform:translate3d(0,-15px,0) scale(1.03)}
+  72%{transform:translate3d(26vw,-3px,0) scale(.84)}
+  100%{transform:translate3d(0,0,0) scale(1)}
+ }
+}
+@media(prefers-reduced-motion:reduce){.stage.bluey-stage-wandering .rig,.stage .rig.bluey-stage-front{animation:none!important;transform:none!important}}

@@ -1,0 +1,11 @@
+#bluey-tools{width:min(780px,calc(100% - 28px));margin:0 auto 7px;display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;color:#667684;font:13px/1.2 system-ui,sans-serif}
+#bluey-tools button{border:1px solid #dce7ee;background:#f5fbff;color:#147bb0;border-radius:999px;padding:7px 10px;font:inherit;cursor:pointer}
+#bluey-tools button[aria-pressed="true"]{background:#e7f5ff;border-color:#9bcfea;color:#086ea8}
+#bluey-tools .bluey-tool-group{display:flex;gap:6px;align-items:center}
+#bluey-upload-icon{font-size:17px;font-weight:700;color:#0796dc;line-height:1}
+#bluey-files{font-size:12px;color:#768897;max-width:52vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bluey-suggestion{display:inline-flex;align-items:center;gap:8px;border:1px solid #cde5f2;background:#f3fbff;border-radius:14px;padding:8px 11px;margin:-9px 0 20px;color:#547083;font:14px/1.35 system-ui,sans-serif}
+.bluey-suggestion button{border:0;border-radius:9px;background:#0c8fca;color:white;padding:6px 9px;font:inherit;cursor:pointer}
+.bluey-download{display:inline-flex;align-items:center;gap:7px;margin:-6px 0 22px;padding:10px 14px;border-radius:14px;background:#eaf7fd;color:#0877ad;text-decoration:none;font:600 15px system-ui,sans-serif}
+.bluey-object-fade{opacity:0!important;transform:translateY(-8px) scale(.85)!important;transition:opacity .8s,transform .8s!important;pointer-events:none!important}
+@media(max-width:520px){#bluey-tools{font-size:12px}#bluey-tools button{padding:7px 9px}.composer{gap:6px}.composer input{font-size:16px}}
