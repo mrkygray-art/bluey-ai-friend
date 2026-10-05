@@ -16,104 +16,57 @@ BLUEY_OBJECTS.edge=[
  {id:'edge-marker',icon:'⋮',names:['marker','sign','edge marker'],title:'The Edge marker',short:'My little marker says “this is where I stopped.” It is more honest than pretending I have seen everything.',deeper:'A clear boundary can be useful: it tells us what is known and where a new question begins.',rabbit:'We can explore the next question together, one small step at a time.'}
 ];
 
-// Attach room props to the stage itself, so they stay beside Bluey when the chat opens.
 const blueyRenderRoomObjectsBefore40=renderInteractiveObjects;
 renderInteractiveObjects=function(place){
  const result=blueyRenderRoomObjectsBefore40(place);
  blueyVisibleObjects.forEach(object=>blueyStage37.appendChild(object));
  return result;
 };
-
-// Give the starting Home scene its objects on the first page load too.
 renderInteractiveObjects(blueyWorld||'home');
 
 const blueyRoomInvitationBefore40=blueyRoomInvitation;
 blueyRoomInvitation=function(room){
- const opening={
-  home:'Welcome Home. There is a jar of marbles, my idea lamp, and a little welcome mat on the stage.',
-  quiet:'This is the Quiet Place. I left a slow-falling leaf and a little sand timer here.',
-  edge:'We are at The Edge. I put a tiny light and a marker beside me; I have only explored this far.'
- }[room];
+ const opening={home:'Welcome Home. There is a jar of marbles, my idea lamp, and a little welcome mat on the stage.',quiet:'This is the Quiet Place. I left a slow-falling leaf and a little sand timer here.',edge:'We are at The Edge. I put a tiny light and a marker beside me; I have only explored this far.'}[room];
  if(!opening)return blueyRoomInvitationBefore40(room);
  return `${opening} Tap an object to ask me about it. Want to know more about any of them?`;
 };
 
-// Digital sightseeing locations use the same accessible, tappable stage objects.
 const BLUEY_TRAVEL_OBJECTS_40={
- beach:[
-  {id:'beach-sun',title:'Beach sunshine',names:['sun','sunshine'],short:'That is the sun above the beach. Sunlight carries energy across space and warms Earth.',deeper:'Sunlight is electromagnetic radiation from the Sun. Earth receives only a small part of its total energy.',rabbit:'Want to wonder about tides or waves next?'},
-  {id:'beach-wave',title:'A beach wave',names:['wave','shore','water'],short:'A wave rolling toward shore. The water moves in a curve while the wave carries energy forward.',deeper:'As a wave reaches shallow water, the seafloor slows its base and the top can curl forward.',rabbit:'Want to compare ocean waves with tides?'}
- ],
- ocean:[
-  {id:'ocean-current',title:'Ocean current',names:['current','wave','water'],short:'A current carries water through the ocean. Some currents move heat around the planet.',deeper:'Winds, differences in temperature and salinity, and Earth’s rotation all help drive ocean circulation.',rabbit:'Want to follow where warm and cold water travel?'},
-  {id:'ocean-shell',title:'A tiny shell',names:['shell','seashell'],short:'A little shell. It is a sturdy home built by a sea animal, left behind when the animal grew or moved on.',deeper:'Many mollusks make shells from calcium carbonate, adding material as they grow.',rabbit:'Want to find out how a shell gets its pattern?'}
- ],
- museum:[
-  {id:'museum-artifact',title:'Museum artifact',names:['artifact','display','object'],short:'A museum artifact is a clue about how someone lived, worked, made things, or saw the world.',deeper:'Curators use an object’s materials, age, location, and context to help interpret it. One object rarely tells the whole story.',rabbit:'Want to practice asking an artifact a few good questions?'},
-  {id:'museum-sketch',title:'Gallery sketch',names:['sketch','painting','art'],short:'A little gallery sketch. Art can show us what an artist noticed, even when it does not explain everything.',deeper:'Looking closely at color, shape, material, and composition gives us a place to start before guessing at meaning.',rabbit:'What detail catches your eye first?'}
- ],
- aquarium:[
-  {id:'aquarium-jelly',title:'Floating jelly',names:['jellyfish','jelly'],short:'A jellyfish drifting by. It has no bones, and its body is mostly water.',deeper:'Jellyfish move by contracting their bell-shaped bodies, though currents do much of the traveling.',rabbit:'Want to compare how a jellyfish and a fish move?'},
-  {id:'aquarium-current',title:'Aquarium current',names:['current','water'],short:'The water is moving gently here. Currents help carry warmth, food, and tiny drifting organisms.',deeper:'In the ocean, currents can move water across huge distances; in a tank, pumps keep water circulating.',rabbit:'Want to follow a drop of water on an imaginary trip?'}
- ],
- city:[
-  {id:'city-tower',title:'City tower',names:['tower','building','buildings'],short:'A city tower. Buildings stack useful spaces upward when ground space is limited.',deeper:'Engineers balance a building’s weight, wind loads, materials, and foundations to keep it stable.',rabbit:'Want to spot what makes one building different from another?'},
-  {id:'city-street',title:'City street',names:['street','road'],short:'A city street connects homes, shops, and people moving through the day.',deeper:'Street design can affect safety, noise, travel time, and how easy it is to reach places without a car.',rabbit:'What would make this street nicer for the people who use it?'}
- ],
- forest:[
-  {id:'forest-tree',title:'Forest tree',names:['tree','pine','forest'],short:'A tree gathers light, water, and carbon dioxide to grow. It also makes room for other life.',deeper:'Leaves use photosynthesis to store some sunlight’s energy in sugars. Roots and fungi can form helpful partnerships.',rabbit:'Want to follow one drop of water from root to leaf?'},
-  {id:'forest-leaf',title:'Forest leaf',names:['leaf','leaves'],short:'A leaf is a tiny solar-powered workshop for the plant.',deeper:'Chlorophyll absorbs light for photosynthesis; other pigments become easier to see when chlorophyll breaks down.',rabbit:'Want to compare the colors and shapes of a few leaves?'}
- ],
- space:[
-  {id:'space-star',title:'A distant star',names:['star','stars'],short:'A star is a huge, hot ball of gas that shines because of energy made in its core.',deeper:'Our Sun is a star. Its light takes about eight minutes to reach Earth.',rabbit:'Want to pick a constellation and trace its pattern?'},
-  {id:'space-planet',title:'A wandering planet',names:['planet','moon'],short:'A planet travels around a star. From here it looks like a tiny point, but it may be a whole world.',deeper:'Planets reflect light from their stars. Their size, atmosphere, and distance can make them very different places.',rabbit:'Which planet should we zoom toward in our imagination?'},
-  {id:'space-dust',title:'Cosmic dust',names:['dust','nebula'],short:'Cosmic dust is made of tiny solid grains drifting between stars. New stars and planets can form in clouds of gas and dust.',deeper:'These grains can contain elements made in earlier stars, so some planet-building material has a long history.',rabbit:'Want to trace how stardust can become part of a planet?'}
- ]
+ beach:[{id:'beach-sun',title:'Beach sunshine',names:['sun','sunshine'],short:'That is the sun above the beach. Sunlight carries energy across space and warms Earth.',deeper:'Sunlight is electromagnetic radiation from the Sun. Earth receives only a small part of its total energy.',rabbit:'Want to wonder about tides or waves next?'},{id:'beach-wave',title:'A beach wave',names:['wave','shore','water'],short:'A wave rolling toward shore. The water moves in a curve while the wave carries energy forward.',deeper:'As a wave reaches shallow water, the seafloor slows its base and the top can curl forward.',rabbit:'Want to compare ocean waves with tides?'}],
+ ocean:[{id:'ocean-current',title:'Ocean current',names:['current','wave','water'],short:'A current carries water through the ocean. Some currents move heat around the planet.',deeper:'Winds, differences in temperature and salinity, and Earth’s rotation all help drive ocean circulation.',rabbit:'Want to follow where warm and cold water travel?'},{id:'ocean-shell',title:'A tiny shell',names:['shell','seashell'],short:'A little shell. It is a sturdy home built by a sea animal, left behind when the animal grew or moved on.',deeper:'Many mollusks make shells from calcium carbonate, adding material as they grow.',rabbit:'Want to find out how a shell gets its pattern?'}],
+ museum:[{id:'museum-artifact',title:'Museum artifact',names:['artifact','display','object'],short:'A museum artifact is a clue about how someone lived, worked, made things, or saw the world.',deeper:'Curators use an object’s materials, age, location, and context to help interpret it. One object rarely tells the whole story.',rabbit:'Want to practice asking an artifact a few good questions?'},{id:'museum-sketch',title:'Gallery sketch',names:['sketch','painting','art'],short:'A little gallery sketch. Art can show us what an artist noticed, even when it does not explain everything.',deeper:'Looking closely at color, shape, material, and composition gives us a place to start before guessing at meaning.',rabbit:'What detail catches your eye first?'}],
+ aquarium:[{id:'aquarium-jelly',title:'Floating jelly',names:['jellyfish','jelly'],short:'A jellyfish drifting by. It has no bones, and its body is mostly water.',deeper:'Jellyfish move by contracting their bell-shaped bodies, though currents do much of the traveling.',rabbit:'Want to compare how a jellyfish and a fish move?'},{id:'aquarium-current',title:'Aquarium current',names:['current','water'],short:'The water is moving gently here. Currents help carry warmth, food, and tiny drifting organisms.',deeper:'In the ocean, currents can move water across huge distances; in a tank, pumps keep water circulating.',rabbit:'Want to follow a drop of water on an imaginary trip?'}],
+ city:[{id:'city-tower',title:'City tower',names:['tower','building','buildings'],short:'A city tower. Buildings stack useful spaces upward when ground space is limited.',deeper:'Engineers balance a building’s weight, wind loads, materials, and foundations to keep it stable.',rabbit:'Want to spot what makes one building different from another?'},{id:'city-street',title:'City street',names:['street','road'],short:'A city street connects homes, shops, and people moving through the day.',deeper:'Street design can affect safety, noise, travel time, and how easy it is to reach places without a car.',rabbit:'What would make this street nicer for the people who use it?'}],
+ forest:[{id:'forest-tree',title:'Forest tree',names:['tree','pine','forest'],short:'A tree gathers light, water, and carbon dioxide to grow. It also makes room for other life.',deeper:'Leaves use photosynthesis to store some sunlight’s energy in sugars. Roots and fungi can form helpful partnerships.',rabbit:'Want to follow one drop of water from root to leaf?'},{id:'forest-leaf',title:'Forest leaf',names:['leaf','leaves'],short:'A leaf is a tiny solar-powered workshop for the plant.',deeper:'Chlorophyll absorbs light for photosynthesis; other pigments become easier to see when chlorophyll breaks down.',rabbit:'Want to compare the colors and shapes of a few leaves?'}],
+ space:[{id:'space-star',title:'A distant star',names:['star','stars'],short:'A star is a huge, hot ball of gas that shines because of energy made in its core.',deeper:'Our Sun is a star. Its light takes about eight minutes to reach Earth.',rabbit:'Want to pick a constellation and trace its pattern?'},{id:'space-planet',title:'A wandering planet',names:['planet','moon'],short:'A planet travels around a star. From here it looks like a tiny point, but it may be a whole world.',deeper:'Planets reflect light from their stars. Their size, atmosphere, and distance can make them very different places.',rabbit:'Which planet should we zoom toward in our imagination?'},{id:'space-dust',title:'Cosmic dust',names:['dust','nebula'],short:'Cosmic dust is made of tiny solid grains drifting between stars. New stars and planets can form in clouds of gas and dust.',deeper:'These grains can contain elements made in earlier stars, so some planet-building material has a long history.',rabbit:'Want to trace how stardust can become part of a planet?'}]
 };
 let blueyTravelObjects40=[];
 let blueyTravelDestination40=null;
 const blueyEnterWorldBefore40=enterWorld;
-enterWorld=function(place,announce=true){
- blueyTravelDestination40=null;
- return blueyEnterWorldBefore40(place,announce);
-};
+enterWorld=function(place,announce=true){blueyTravelDestination40=null;return blueyEnterWorldBefore40(place,announce)};
 const blueyTravelBefore40=travelBluey;
 travelBluey=function(destination,announce=true){
- clearInteractiveObjects();
- const result=blueyTravelBefore40(destination,announce);
- const place=BLUEY_TRAVEL_STOPS[destination]?destination:'space';
- blueyTravelDestination40=place;
- const props=worldDecor.filter(item=>item.classList.contains('bluey-prop'));
- const descriptions=BLUEY_TRAVEL_OBJECTS_40[place]||[];
- blueyTravelObjects40=[];
- props.slice(0,descriptions.length).forEach((prop,index)=>{
-  const object=descriptions[index];
-  prop.classList.add('bluey-trip-object');
-  prop.setAttribute('role','button');prop.setAttribute('tabindex','0');
-  prop.setAttribute('aria-label',`${object.title}. Activate to explore.`);prop.title=object.title;
-  prop.addEventListener('click',()=>inspectBlueyObject(object,prop));
-  prop.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspectBlueyObject(object,prop)}});
-  blueyStage37.appendChild(prop);blueyTravelObjects40.push(prop);
- });
- return result;
+ clearInteractiveObjects();const result=blueyTravelBefore40(destination,announce);const place=BLUEY_TRAVEL_STOPS[destination]?destination:'space';blueyTravelDestination40=place;
+ const props=worldDecor.filter(item=>item.classList.contains('bluey-prop'));const descriptions=BLUEY_TRAVEL_OBJECTS_40[place]||[];blueyTravelObjects40=[];
+ props.slice(0,descriptions.length).forEach((prop,index)=>{const object=descriptions[index];prop.classList.add('bluey-trip-object');prop.setAttribute('role','button');prop.setAttribute('tabindex','0');prop.setAttribute('aria-label',`${object.title}. Activate to explore.`);prop.title=object.title;prop.addEventListener('click',()=>inspectBlueyObject(object,prop));prop.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspectBlueyObject(object,prop)}});blueyStage37.appendChild(prop);blueyTravelObjects40.push(prop)});return result;
 };
-
-window.BlueyRoomObjects={
- list:()=>Object.fromEntries(Object.entries(BLUEY_OBJECTS).map(([room,objects])=>[room,objects.map(({id,title})=>({id,title}))])),
- current:()=>blueyTravelDestination40?BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label:(BLUEY_WORLD[blueyWorld]?.name||blueyWorld),
- inspect:id=>{const object=(BLUEY_OBJECTS[blueyWorld]||[]).find(item=>item.id===id);if(!object)return false;const node=blueyVisibleObjects.find(item=>item.dataset.objectId===id);inspectBlueyObject(object,node||blueyOrb);return true}
-};
-
+window.BlueyRoomObjects={list:()=>Object.fromEntries(Object.entries(BLUEY_OBJECTS).map(([room,objects])=>[room,objects.map(({id,title})=>({id,title}))])),current:()=>blueyTravelDestination40?BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label:(BLUEY_WORLD[blueyWorld]?.name||blueyWorld),inspect:id=>{const object=(BLUEY_OBJECTS[blueyWorld]||[]).find(item=>item.id===id);if(!object)return false;const node=blueyVisibleObjects.find(item=>item.dataset.objectId===id);inspectBlueyObject(object,node||blueyOrb);return true}};
 const blueySendBeforeTravelLocation40=send;
-send=async function(text){
- const question=String(text||'').trim();
- if(blueyTravelDestination40&&/\b(where are you|where are we|where am i|what place is this|what do you see here)\b/i.test(question)){
-  add('user',question);history.push({role:'user',content:question});input.value='';
-  const place=BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label;
-  const answer=`I’m at ${place}, on a little digital sightseeing stop. Tap one of the things on the stage and we can explore it together.`;
-  add('assistant',answer);history.push({role:'assistant',content:answer});behavior('curious');
-  if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious');
-  return;
- }
- return blueySendBeforeTravelLocation40(question);
-};
+send=async function(text){const question=String(text||'').trim();if(blueyTravelDestination40&&/\b(where are you|where are we|where am i|what place is this|what do you see here)\b/i.test(question)){add('user',question);history.push({role:'user',content:question});input.value='';const place=BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label;const answer=`I’m at ${place}, on a little digital sightseeing stop. Tap one of the things on the stage and we can explore it together.`;add('assistant',answer);history.push({role:'assistant',content:answer});behavior('curious');if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious');return}return blueySendBeforeTravelLocation40(question)};
+
+// Mobile Stage V1 Phase 2 — let users intentionally reopen Bluey's room after props clear.
+(function(){
+ const isMobile=()=>window.matchMedia('(max-width:700px)').matches;
+ const button=document.createElement('button');
+ button.type='button';button.className='bluey-explore-room';button.textContent='Explore room';button.setAttribute('aria-label','Explore Bluey’s room');
+ document.body.appendChild(button);
+ function hasObjects(){return !!document.querySelector('.stage .bluey-interactive-object,.stage .bluey-trip-object')}
+ function collapse(){if(!isMobile())return;document.body.classList.remove('bluey-mobile-stage-exploring');document.body.classList.add('bluey-mobile-stage-collapsed');button.textContent='Explore room';button.setAttribute('aria-expanded','false')}
+ function explore(){if(!isMobile()||!hasObjects())return;document.body.classList.remove('bluey-mobile-stage-collapsed');document.body.classList.add('bluey-mobile-stage-exploring');button.textContent='Back to chat';button.setAttribute('aria-expanded','true')}
+ button.addEventListener('click',()=>document.body.classList.contains('bluey-mobile-stage-exploring')?collapse():explore());
+ document.addEventListener('click',event=>{if(!isMobile()||event.target===button)return;if(event.target.closest('.bluey-interactive-object,.bluey-trip-object'))setTimeout(collapse,80)});
+ const observer=new MutationObserver(()=>{if(!isMobile())return;if(document.querySelector('.app.working')&&hasObjects()&&!document.body.classList.contains('bluey-mobile-stage-exploring'))collapse()});
+ observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],childList:true});
+ window.addEventListener('resize',()=>{if(!isMobile()){document.body.classList.remove('bluey-mobile-stage-collapsed','bluey-mobile-stage-exploring')}else if(document.querySelector('.app.working')&&hasObjects())collapse()});
+ window.BlueyMobileStage={explore,collapse};
+})();
