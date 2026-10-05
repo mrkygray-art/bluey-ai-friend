@@ -77,7 +77,9 @@ async function blueyChatWithPhotos(text,photos){
  try{
   const r=await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({messages:history.slice(-20),attachments:photos})});
   const d=await r.json();if(!r.ok)throw new Error(d.error||'Bluey could not look at that yet.');
-  if(d.imagesReceived!==photos.length)throw new Error(`I received ${Number(d.imagesReceived)||0} of ${photos.length} photos. Your photo is still here—please try sending it again.`);
+  if(!d.photoApiVersion)throw new Error('The live server did not confirm your photo. Update api/chat.js from the current bundle and redeploy. Your photo is still here.');
+  if(d.imagesSubmitted!==photos.length)throw new Error(`The server received ${Number(d.imagesSubmitted)||0} of ${photos.length} photo uploads. Your photo is still here—please try again after the server update.`);
+  if(d.imagesReceived!==photos.length)throw new Error(`The server received ${Number(d.imagesReceived)||0} readable images from ${photos.length} photo uploads. Your photo is still here—please try another image format or upload again.`);
   statusEl.textContent=`Bluey received ${d.imagesReceived} photo${d.imagesReceived===1?'':'s'}.`;add('assistant',d.reply);history.push({role:'assistant',content:d.reply});behavior(d.behavior);if(blueyVoiceOn)speak(d.reply,d.behavior);blueyPlaySound('reply');blueyShowSuggestion(d.spellingSuggestion);
   blueyRecentPhotos=photos;blueyPhotos=[];blueySyncControls();
   setTimeout(()=>{if(statusEl.textContent===`Bluey received ${d.imagesReceived} photo${d.imagesReceived===1?'':'s'}.`)statusEl.textContent=''},3500);

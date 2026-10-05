@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 11 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 12 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -166,3 +166,11 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 - All assistant chat messages, including local character replies and file-creation confirmations, use the Voice setting. Existing direct speech calls are deduplicated so a reply is not restarted twice.
 - The browser speech engine is resumed on the user's send action and when Bluey speaks, improving playback reliability on mobile browsers.
 - Alpha 10's refresh-ready composer, photo preview and image-receipt confirmation remain included, along with Alpha 7–9 tools and character features.
+
+
+## Bluey 1.0 Alpha 12 — Photo handoff diagnostics
+
+- The screenshot showed the Alpha 11 page retained the photo, but the live chat server did not return the image receipt fields. This indicates the page and `/api/chat` were out of sync.
+- The chat endpoint now reports how many photo uploads arrived, how many passed image validation, and its photo API version. The page gives a specific message when the live endpoint is outdated or rejects an image.
+- To deploy photo support, upload the complete Alpha 12 project, including the `api` folder and `api/chat.js`, then redeploy. Updating only `index.html` and browser scripts will leave the photo API on its older version.
+- Alpha 10 composer and preview fixes, Alpha 11 voice routing and version badge, and the earlier document, stage, and response features remain included.
