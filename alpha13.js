@@ -15,3 +15,15 @@ blueyVoiceButton.addEventListener('click',()=>{
   }
  },2500);
 });
+
+// Alpha 43 bootstrap: load World Truth only after the existing static Alpha modules
+// have finished, so it can safely wrap the final room/object/send engines.
+window.addEventListener('load',()=>{
+ if(document.querySelector('script[data-bluey-alpha43]'))return;
+ const script=document.createElement('script');
+ script.src='/alpha43.js';
+ script.dataset.blueyAlpha43='true';
+ script.onload=()=>console.info('[Bluey] Alpha 43 bootstrap loaded');
+ script.onerror=()=>console.error('[Bluey] Alpha 43 failed to load');
+ document.body.appendChild(script);
+},{once:true});
