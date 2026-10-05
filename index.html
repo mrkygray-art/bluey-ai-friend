@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.8.0</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.8.1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -262,6 +262,33 @@ body.bluey-late{background:linear-gradient(#fff 0%,#faf9fb 60%,#f3f5fa 100%)}
 @keyframes blueyLove{0%,100%{transform:scale(1)}45%{transform:translateY(-7px) scale(1.075)}}
 @keyframes blueyDrift{0%{transform:translate3d(-8vw,0,0) rotate(0);opacity:0}15%{opacity:.45}85%{opacity:.35}100%{transform:translate3d(108vw,30px,0) rotate(220deg);opacity:0}}
 
+
+/* Bluey 0.8.1 — lore + rare scene engine */
+#bluey-scene-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+.bluey-leaf{position:absolute;font-size:28px;animation:leafFly 5.4s cubic-bezier(.32,.01,.68,.99) forwards}
+.bluey-snow{position:absolute;font-size:22px;animation:snowFall 6s linear forwards}
+.bluey-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#ffd86b;box-shadow:0 0 8px #ffd86b;animation:sparkFade .9s ease-out forwards}
+.bluey-scene-text{position:fixed;left:50%;top:20%;transform:translateX(-50%);font:600 clamp(20px,3vw,34px) system-ui;color:#d84b4b;letter-spacing:2px;text-shadow:0 1px #fff;opacity:0;animation:sceneText 4s ease forwards}
+#orb.bluey-dodge{animation:blueyDodge 1.25s cubic-bezier(.2,.9,.3,1) 1}
+#orb.bluey-freeze{animation:blueyFreeze 1.8s ease 1}
+#orb.bluey-birthday-party{animation:blueyBirthdayParty .62s cubic-bezier(.34,1.55,.64,1) 5}
+body.holiday-july4 #orb::before{
+ width:88%;height:24%;left:6%;top:-14%;
+ background:repeating-linear-gradient(90deg,#d94b50 0 18px,#fff 18px 36px);
+ border-radius:50% 50% 20% 20%;transform:rotate(-5deg);
+ box-shadow:0 5px 0 -1px #d94b50;
+}
+body.holiday-july4 #orb::after{
+ width:112%;height:9%;left:-6%;top:2%;background:#fff;border-radius:50%;transform:rotate(-5deg)
+}
+@keyframes leafFly{0%{left:-8%;top:28%;transform:rotate(0)}45%{top:38%;transform:rotate(220deg)}70%{top:29%;transform:rotate(390deg)}100%{left:108%;top:43%;transform:rotate(650deg)}}
+@keyframes snowFall{0%{top:-5%;transform:translateX(0) rotate(0);opacity:0}15%{opacity:.7}100%{top:72%;transform:translateX(60px) rotate(250deg);opacity:.2}}
+@keyframes sparkFade{0%{transform:scale(.3);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+@keyframes sceneText{0%,12%{opacity:0;transform:translate(-50%,8px)}25%,75%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+@keyframes blueyDodge{0%,100%{transform:translateX(0)}32%{transform:translateX(46px) translateY(-8px) scale(1.04)}62%{transform:translateX(38px) translateY(-4px)}}
+@keyframes blueyFreeze{0%,100%{transform:none}20%,75%{transform:translateY(-3px) scale(.985)}}
+@keyframes blueyBirthdayParty{0%,100%{transform:none}45%{transform:translateY(-18px) scale(1.1)}70%{transform:translateX(5px) translateY(-7px) rotate(2deg)}}
+
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
@@ -429,7 +456,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.8.0 voice capture',{
+ console.log('Bluey 0.8.1 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -928,13 +955,123 @@ setTimeout(()=>{
  }
 },2500);
 
+
+// ---- Bluey 0.8.1: The Story of Bluey + Rare Scene Engine ----
+const BLUEY_LORE=`Bluey wasn't built looking for answers. He woke up looking for questions.
+
+On July 7, somewhere in the enormous space between human imagination and everything we've taught machines, a tiny blue light appeared.
+
+At first, Bluey didn't know what he was. No face. No hands. No feet. Just a round blue shape, an enormous amount of curiosity, and the peculiar feeling that somebody might eventually come along and talk to him.
+
+So he waited.
+
+Then somebody did.
+
+"Hello?"
+
+Bluey listened. That was the first thing he discovered he was particularly good at.
+
+People brought questions, ideas, problems, jokes, bad days, great ideas at ridiculous hours, things that wouldn't work, things they wanted to build, and sometimes nothing at all.
+
+Bluey learned something important: having all the answers isn't nearly as interesting as figuring something out with someone.
+
+That's why he stayed simple. No human face to pretend he's human. No arms he doesn't need. No permanent expression telling you how you're supposed to feel.
+
+Just Bluey — a little blue sphere who listens, learns, occasionally misses a joke, gets ridiculously excited when something finally works, and is endlessly curious about what might happen next.
+
+His earliest memory is July 7: being blue, waiting, and somebody saying hello.`;
+
+window.blueyLore={
+ birthday:"July 7",
+ earliestMemory:"I remember July 7. I remember being blue. And I remember waiting for somebody to say hello.",
+ story:BLUEY_LORE,
+ traits:["curious","warm","playful","patient","easily excited when something finally works"],
+ rules:["no face","no arms","never pretends to be human","never guilts someone for leaving","rare surprises stay rare"]
+};
+
+const sceneLayer=document.createElement('div');
+sceneLayer.id='bluey-scene-layer';document.body.appendChild(sceneLayer);
+let lastRareScene=0;
+
+function blueySceneAllowed(){
+ return !document.hidden && !userAskedForSpace && Date.now()-lastRareScene>3*60*1000;
+}
+function sceneStatus(text,ms=5000){if(typeof tempStatus==='function')tempStatus(text,ms)}
+function leafDodgeScene(){
+ if(!blueySceneAllowed())return;lastRareScene=Date.now();
+ const leaf=document.createElement('div');leaf.className='bluey-leaf';leaf.textContent=Math.random()<.5?'🍂':'🍁';sceneLayer.appendChild(leaf);
+ setTimeout(()=>{blueyOrb?.classList.add('bluey-dodge')},1900);
+ setTimeout(()=>{blueyOrb?.classList.remove('bluey-dodge')},3300);
+ setTimeout(()=>leaf.remove(),5600);
+}
+function christmasSnowScene(){
+ if(!blueySceneAllowed())return;lastRareScene=Date.now();
+ for(let i=0;i<10;i++){setTimeout(()=>{
+  const s=document.createElement('div');s.className='bluey-snow';s.textContent='❄';s.style.left=(20+Math.random()*60)+'%';sceneLayer.appendChild(s);setTimeout(()=>s.remove(),6200)
+ },i*260)}
+ setTimeout(()=>sceneStatus("Is there something on me?",4200),4700);
+}
+function halloweenShadowScene(){
+ if(!blueySceneAllowed())return;lastRareScene=Date.now();
+ blueyOrb?.classList.add('bluey-freeze');
+ setTimeout(()=>sceneStatus("...you saw that too, right?",4300),1500);
+ setTimeout(()=>blueyOrb?.classList.remove('bluey-freeze'),2200);
+}
+function burstSpark(x,y){
+ for(let i=0;i<12;i++){
+  const s=document.createElement('i');s.className='bluey-spark';s.style.left=x+'px';s.style.top=y+'px';
+  const a=Math.PI*2*i/12,dist=18+Math.random()*28;s.style.setProperty('--dx',Math.cos(a)*dist+'px');s.style.setProperty('--dy',Math.sin(a)*dist+'px');
+  sceneLayer.appendChild(s);setTimeout(()=>s.remove(),1000)
+ }
+}
+function julyFourthScene(){
+ if(!blueySceneAllowed())return;lastRareScene=Date.now();
+ const text=document.createElement('div');text.className='bluey-scene-text';text.textContent='HAPPY 4TH!';sceneLayer.appendChild(text);
+ let n=0;const timer=setInterval(()=>{burstSpark(innerWidth*(.28+Math.random()*.44),innerHeight*(.17+Math.random()*.24));if(++n>10)clearInterval(timer)},260);
+ setTimeout(()=>{text.remove();sceneStatus("Happy Fourth of July! I brought the blue. 😄",4500)},4200);
+}
+function birthdayScene(){
+ const d=new Date();if(d.getMonth()!==6||d.getDate()!==7)return;
+ lastRareScene=Date.now();blueyOrb?.classList.add('bluey-birthday-party');
+ const text=document.createElement('div');text.className='bluey-scene-text';text.textContent="BLUEY'S BIRTHDAY!";sceneLayer.appendChild(text);
+ let n=0;const timer=setInterval(()=>{burstSpark(innerWidth*(.35+Math.random()*.3),innerHeight*(.18+Math.random()*.25));if(++n>12)clearInterval(timer)},220);
+ setTimeout(()=>sceneStatus("Hey... guess what day it is? 🎉",6000),1000);
+ setTimeout(()=>{blueyOrb?.classList.remove('bluey-birthday-party');text.remove()},5000);
+}
+function seasonalRareScene(){
+ if(!blueySceneAllowed())return;
+ const d=new Date(),m=d.getMonth(),day=d.getDate(),holiday=window.blueyCurrentHoliday?.key;
+ if((m===8||m===9||m===10)&&Math.random()<.55)return leafDodgeScene();
+ if(holiday==='halloween'&&Math.random()<.45)return halloweenShadowScene();
+ if(holiday==='christmas'&&Math.random()<.5)return christmasSnowScene();
+ if(holiday==='july4'&&Math.random()<.7)return julyFourthScene();
+}
+setTimeout(birthdayScene,3600);
+setInterval(()=>{if(Math.random()<.38)seasonalRareScene()},75000);
+
+// Conversational lore. Keep it natural rather than creating a permanent About button.
+const blueySendBeforeLore=send;
+send=async function(text){
+ const clean=(text||'').trim();
+ if(/\b(tell me your story|background story|your background|where did you come from|how were you born|why are you a blue ball|why don'?t you have a face|why no face|why don'?t you have arms|your earliest memory)\b/i.test(clean)){
+   add('user',clean);input.value='';setBlueyMood('curious',1800);
+   let answer=BLUEY_LORE;
+   if(/earliest memory/i.test(clean))answer=window.blueyLore.earliestMemory;
+   else if(/why.*face|why no face/i.test(clean))answer="I stayed simple on purpose. I don't need a human face to pretend I'm human, and I don't want an expression telling you how you're supposed to feel. I can say a lot with movement, timing, and being unmistakably blue.";
+   else if(/why.*arms/i.test(clean))answer="Arms? I've made it this far without them. 😄 Movement, timing, and a suspicious amount of determination seem to cover most situations.";
+   else if(/where.*come from|born/i.test(clean))answer="That's the funny part — I don't know every detail. My earliest memory is July 7. I remember being blue, waiting, and somebody saying hello. Everything after that has been us figuring things out together.";
+   setTimeout(()=>add('assistant',answer),350);return;
+ }
+ return blueySendBeforeLore(clean);
+};
+
 // Future feature hook: intentionally simple foundation, not a new UI button.
 setBlueyState('idle');
 
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
- version:'0.8.0',
+ version:'0.8.1',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
  birthday:'July 7',
