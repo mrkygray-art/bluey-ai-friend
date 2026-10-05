@@ -1,4 +1,4 @@
-# Bluey 0.9.1 — Character Engine
+# Bluey 0.9.2 — Character Engine
 
 Bluey's personality is now treated as a system rather than a collection of isolated animations.
 
@@ -29,8 +29,26 @@ Bluey never guilt-trips someone for leaving, never claims to be human, avoids co
 ## Protected
 Existing first-meeting behavior, birthday, seasonal scenes, rare-scene engine, holiday wardrobe, Chrome/Firefox microphone capture and transcription pipeline remain intact.
 
-## 0.9.1 refresh/home patch
+## 0.9.2 refresh/home patch
 - Restores the text composer for returning visitors after refresh.
 - Bluey now treats “go home,” “where is home?” and “where do you live?” as character/lore prompts.
 - Home is the digital world; Bluey describes what he does there.
 - Bluey can describe imaginative travel as visiting places in the blink of an eye.
+
+## 0.9.2 — Hobbies & Collections
+Discoverable canon added:
+- Marbles (Orbit, Swirly, and July)
+- Forgotten digital objects and an excessive 404 collection
+- Pixel One, Bluey's treasured first-found object
+- Digital sightseeing and internet rabbit holes
+- Space obsession; Earth is his favorite planet
+- Favorite color blue, second favorite orange
+- Favorite shape triangle; favorite number seven
+- Printers as Bluey's comic nemesis
+- Magnets as Bluey's irrationally suspicious object, including a physical retreat reaction
+- Human-object observations
+- Stump Bluey invitation
+- Bluey's dream: “To never run out of things I don't know yet.”
+- Rare marble scene in Bluey's digital home
+
+All personality is discoverable through conversation rather than displayed as a profile.
