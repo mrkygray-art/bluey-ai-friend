@@ -1,37 +1,56 @@
-// Bluey Alpha 47.5 — Quiet Stage enforcement
-// Home is always white + Bluey. Objects are temporary and only appear after an explicit conversational request.
+// Bluey Alpha 47.7.3 — Clean Baseline / Quiet Home
 (function(){
 'use strict';
-const HOME='home';
-let revealTimer=null,homeGuard=null;
+const HOME='home', HOLIDAY_CONVERSATION_MS=3*60*1000;
+let revealTimer=null,homeGuard=null,holidayReturnTimer=null,conversationStarted=false;
 const stage=()=>window.blueyStage37||document.querySelector('.stage');
 const orb=()=>document.querySelector('#orb');
 const room=()=>window.BlueyWorldStandard?.current?.()||window.BlueyWorldState?.room||document.body.dataset.blueyWorld||window.blueyWorld||HOME;
-function objectNodes(){const S=stage();return S?[...S.querySelectorAll('.bluey-interactive-object,.bluey-trip-object,.bluey-object,.bluey-memory-artifact')]:[]}
-function clearObjects(){clearTimeout(revealTimer);objectNodes().forEach(n=>n.remove());if(Array.isArray(window.blueyVisibleObjects))window.blueyVisibleObjects=window.blueyVisibleObjects.filter(n=>n?.isConnected)}
-function clearScenery(){const S=stage();if(!S)return;S.querySelectorAll('.bluey-scenery-43,.roomLabel43,.stars43').forEach(n=>n.remove())}
-function quietHome(){const S=stage();if(!S)return;document.body.dataset.blueyWorld=HOME;S.dataset.blueyWorld=HOME;S.style.setProperty('background','#fff','important');clearScenery();clearObjects()}
-function revealObjects(which=room(),ttl=42000){clearObjects();window.renderInteractiveObjects?.(which);const S=stage();if(Array.isArray(window.blueyVisibleObjects)&&S)window.blueyVisibleObjects.forEach(n=>{if(n&&!n.isConnected)S.appendChild(n)});window.BlueyWorldStandard?.layoutObjects?.(which);if(ttl>0)revealTimer=setTimeout(clearObjects,ttl);return objectNodes().length}
+const holidayClasses=()=>[...document.body.classList].filter(c=>c.startsWith('holiday-'));
+function allWorldObjects(){return [...document.querySelectorAll('.bluey-interactive-object,.bluey-trip-object,.bluey-object,.bluey-memory-artifact,.bluey-prop,.bluey-keepsake,.bluey-work-token,.bluey-work-chip,.bluey-world-object,.bluey-orbit,.bluey-edge-mark,.bluey-starfield,.bluey-object-hint')];}
+function clearObjects(){clearTimeout(revealTimer);allWorldObjects().forEach(n=>n.remove());if(Array.isArray(window.blueyVisibleObjects))window.blueyVisibleObjects=[];}
+function clearScenery(){document.querySelectorAll('.bluey-scenery-43,.roomLabel43,.stars43,#bluey-scene-layer').forEach(n=>n.remove())}
+function quietHome(opts={}){const S=stage();if(!S)return;document.body.dataset.blueyWorld=HOME;S.dataset.blueyWorld=HOME;S.style.setProperty('background','#fff','important');clearScenery();clearObjects();if(opts.clearHoliday)holidayClasses().forEach(c=>document.body.classList.remove(c))}
+function revealObjects(which=room(),ttl=42000){clearObjects();window.renderInteractiveObjects?.(which);const S=stage();if(Array.isArray(window.blueyVisibleObjects)&&S)window.blueyVisibleObjects.forEach(n=>{if(n&&!n.isConnected)S.appendChild(n)});window.BlueyWorldStandard?.layoutObjects?.(which);if(ttl>0)revealTimer=setTimeout(clearObjects,ttl);return allWorldObjects().length}
 function asksToSeeObjects(text){const q=String(text||'').toLowerCase();return /\b(what(?:'s| is) (?:in|inside)|what do you have|show me (?:what|your|the)|what(?:'s| is) here|look around|explore|objects?|things? (?:are|do you have)|what is in your|show (?:me )?(?:around|your room|your home|the room))\b/.test(q)}
 function asksHome(text){const q=String(text||'').toLowerCase();return /\b(go|take me|come|return|back|visit|show me)\b.*\b(home|house)\b|\b(go|come|head) home\b/.test(q)}
-function topicMovedOn(text){const q=String(text||'').toLowerCase();if(!q||asksToSeeObjects(q))return false;return /\b(help me|write|email|question|explain|plan|solve|troubleshoot|picture|photo|new topic|something else|resume|code|calculate|research)\b/.test(q)}
-function forceHome(){try{window.enterWorld?.(HOME,false)}catch(_){};setTimeout(quietHome,20);setTimeout(quietHome,100);setTimeout(quietHome,350)}
+function asksWorldTravel(text){const q=String(text||'').toLowerCase();return /\b(go|take me|visit|show me|let'?s go|head|travel|come)\b.*\b(library|office|workshop|garage|arcade|observatory|archive|quiet place|edge|attic|closet|backyard|basement)\b|\b(show me your world|where can we go|places in your world)\b/.test(q)}
+function topicMovedOn(text){const q=String(text||'').toLowerCase();if(!q||asksToSeeObjects(q)||asksWorldTravel(q))return false;return /\b(help me|write|email|question|explain|plan|solve|troubleshoot|picture|photo|new topic|something else|resume|code|calculate|research)\b/.test(q)}
+function forceHome(clearHoliday=false){try{window.enterWorld?.(HOME,false)}catch(_){};setTimeout(()=>quietHome({clearHoliday}),20);setTimeout(()=>quietHome({clearHoliday}),100);setTimeout(()=>quietHome({clearHoliday}),350)}
+function scheduleHolidayReturn(){if(conversationStarted||!holidayClasses().length)return;conversationStarted=true;clearTimeout(holidayReturnTimer);holidayReturnTimer=setTimeout(()=>{if(room()===HOME)forceHome(true)},HOLIDAY_CONVERSATION_MS)}
 const previousSend=window.send;
-window.send=async function(t){const text=String(t||'').trim();if(text&&asksHome(text)){clearObjects();forceHome()}else if(text&&asksToSeeObjects(text)){setTimeout(()=>revealObjects(room()),220)}else if(text&&topicMovedOn(text)){clearObjects()}return previousSend.apply(this,arguments)};
-window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();clearObjects();if(r===HOME){setTimeout(quietHome,20);setTimeout(quietHome,160)}});
-window.addEventListener('bluey:alpha47-ready',()=>{if(room()===HOME)quietHome()});
-
-function isBuildPromptControl(el){const s=[el.textContent,el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.id,el.className].filter(Boolean).join(' ').toLowerCase();return /build\s*prompt|prompt\s*builder|buildprompt/.test(s)}
-function simplifyControls(){document.querySelectorAll('button,a,[role="button"],input[type="button"]').forEach(el=>{if(isBuildPromptControl(el)){el.style.setProperty('display','none','important');el.hidden=true;el.setAttribute('aria-hidden','true');el.tabIndex=-1}})}
-function enforceHome(){if(room()!==HOME)return;const S=stage();if(!S)return;S.style.setProperty('background','#fff','important');clearScenery();clearObjects()}
-function startHomeGuard(){clearInterval(homeGuard);homeGuard=setInterval(()=>{simplifyControls();enforceHome()},500)}
-
+window.send=async function(t){const text=String(t||'').trim();if(text)scheduleHolidayReturn();if(text&&asksHome(text)){clearObjects();forceHome(true)}else if(text&&asksToSeeObjects(text)){setTimeout(()=>revealObjects(room()),220)}else if(text&&topicMovedOn(text)){clearObjects()}return previousSend.apply(this,arguments)};
+window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();clearObjects();if(r===HOME){setTimeout(()=>quietHome({clearHoliday:conversationStarted}),20);setTimeout(()=>quietHome({clearHoliday:conversationStarted}),160)}});
+function removePromptBuilder(){const direct=document.querySelector('#bluey-prompt-start');if(direct)direct.remove();document.querySelectorAll('button,a,[role="button"],input[type="button"]').forEach(el=>{const s=[el.textContent,el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.id,el.className].filter(Boolean).join(' ').toLowerCase();if(/build\s*(?:a\s*)?prompt|prompt\s*builder|buildprompt|bluey-prompt/.test(s))el.remove()})}
+function enforceHome(){if(room()!==HOME)return;const S=stage();if(!S)return;S.style.setProperty('background','#fff','important');clearScenery();clearObjects();if(conversationStarted)holidayClasses().forEach(c=>document.body.classList.remove(c))}
+function stopAutonomousWorld(){if(window.blueyAdventure)window.blueyAdventure=()=>{};if(window.orbitVisit)window.orbitVisit=()=>{};if(window.livingWorldPulse)window.livingWorldPulse=()=>{}}
+function startHomeGuard(){clearInterval(homeGuard);homeGuard=setInterval(()=>{removePromptBuilder();if(room()===HOME)enforceHome()},350)}
 let tapBusy=false;
-async function tapToTalk(e){if(e){e.preventDefault();e.stopPropagation()}if(tapBusy)return;tapBusy=true;const O=orb();try{if(typeof window.listen!=='function')throw new Error('listen-unavailable');O?.classList.add('bluey-listening');await window.listen()}catch(err){console.warn('[Bluey] tap-to-talk failed',err);O?.classList.remove('bluey-listening');if(typeof window.tempStatus==='function')window.tempStatus('I can’t start the microphone here yet. Check this site’s microphone permission, then tap me again.',8500)}finally{setTimeout(()=>{tapBusy=false},220)}}
+async function tapToTalk(e){if(e){e.preventDefault();e.stopPropagation()}if(tapBusy)return;tapBusy=true;try{if(typeof window.listen!=='function')throw new Error('listen-unavailable');await window.listen()}catch(err){console.warn('[Bluey] tap-to-talk failed',err);if(typeof window.tempStatus==='function')window.tempStatus('I can’t start the microphone here yet. Check this site’s microphone permission, then tap me again.',8500)}finally{setTimeout(()=>{tapBusy=false},220)}}
 function bindTapToTalk(){const O=orb();if(!O)return false;O.setAttribute('role','button');O.setAttribute('tabindex','0');O.setAttribute('aria-label','Talk to Bluey');O.style.touchAction='manipulation';O.onclick=tapToTalk;O.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')tapToTalk(e)};return true}
-const css=document.createElement('style');css.textContent=`body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!important}.bluey-explore-room{display:none!important}#orb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}`;document.head.appendChild(css);
-setTimeout(()=>{if(room()===HOME)quietHome();simplifyControls();bindTapToTalk();startHomeGuard()},450);
-setTimeout(()=>{simplifyControls();bindTapToTalk();enforceHome()},1500);
-window.BlueyQuietStage={version:'1.4',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,simplifyControls,bindTapToTalk};
-console.info('[Bluey] Alpha 47.5 blank Home enforcement ready');
+const css=document.createElement('style');css.textContent=`
+body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!important}
+#bluey-prompt-start,.bluey-prompt-tool,.bluey-explore-room{display:none!important}
+#orb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.stage{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;box-sizing:border-box!important;padding-top:clamp(16px,3vh,36px)!important;overflow:visible!important;min-height:430px!important;height:auto!important}
+.stage .bluey-depth-room{position:relative!important;inset:auto!important;width:100%!important;height:clamp(190px,25vh,230px)!important;min-height:190px!important;flex:0 0 auto!important;overflow:visible!important}
+.stage .greeting,.stage .status,.stage .nudge{position:relative!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;transform:none!important;display:block!important;box-sizing:border-box!important;height:auto!important;max-height:none!important;overflow:visible!important;white-space:normal!important;text-overflow:clip!important;clip:auto!important;clip-path:none!important;width:min(92vw,760px)!important;text-align:center!important;z-index:30!important}
+.stage .greeting{margin:12px auto 0!important;min-height:44px!important;padding:0 4px 4px!important;font-size:clamp(20px,2vw,30px)!important;line-height:1.4!important}
+.stage .status{margin:6px auto 0!important;min-height:34px!important;padding:2px 4px 5px!important;font-size:clamp(16px,1.55vw,21px)!important;line-height:1.45!important}
+.stage .nudge{margin:4px auto 0!important;min-height:30px!important;padding:2px 4px 5px!important;line-height:1.4!important}
+/* Working mode used to start the transcript at 235px, which painted a white workspace over Bluey's greeting/status. Keep the complete stage above the transcript instead. */
+.app.working .stage{height:315px!important;min-height:315px!important;padding-top:10px!important;overflow:visible!important}
+.app.working .stage .bluey-depth-room{height:165px!important;min-height:165px!important}
+.app.working .stage .greeting{margin-top:4px!important;min-height:32px!important;font-size:20px!important;line-height:1.35!important}
+.app.working .stage .status{margin-top:2px!important;min-height:29px!important;font-size:17px!important;line-height:1.35!important}
+.app.working .stage .nudge{margin-top:2px!important;min-height:26px!important}
+.app.working .workspace{top:315px!important;z-index:20!important}
+@media(max-width:700px){.stage{padding-top:12px!important;min-height:390px!important}.stage .bluey-depth-room{height:175px!important;min-height:175px!important}.stage .greeting{margin-top:10px!important;min-height:40px!important;font-size:22px!important;line-height:1.4!important}.stage .status{min-height:32px!important;font-size:17px!important;line-height:1.45!important}.app.working .stage{height:285px!important;min-height:285px!important;padding-top:6px!important}.app.working .stage .bluey-depth-room{height:145px!important;min-height:145px!important}.app.working .stage .greeting{margin-top:3px!important;min-height:30px!important;font-size:18px!important}.app.working .stage .status{min-height:27px!important;font-size:16px!important}.app.working .workspace{top:285px!important}}
+`;
+document.head.appendChild(css);
+setTimeout(()=>{removePromptBuilder();if(room()===HOME)quietHome({clearHoliday:false});bindTapToTalk();stopAutonomousWorld();startHomeGuard()},100);
+setTimeout(()=>{removePromptBuilder();bindTapToTalk();if(room()===HOME)enforceHome()},700);
+setTimeout(()=>{removePromptBuilder();if(room()===HOME)enforceHome()},1800);
+window.BlueyQuietStage={version:'1.7.3',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,asksWorldTravel,removePromptBuilder,bindTapToTalk,scheduleHolidayReturn};
+console.info('[Bluey] Alpha 47.7.3 workspace/stage boundary fix ready');
 })();
