@@ -1,6 +1,6 @@
 {
   "name": "bluey-ai-friend",
-  "version": "1.0.0-alpha.15",
+  "version": "1.0.0-alpha.36",
   "private": true,
   "dependencies": {
     "docx": "^9.7.1",
