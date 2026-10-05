@@ -14,6 +14,7 @@ function blueySyncControls(){
  blueySoundsButton.textContent='Sounds: '+(blueySoundsOn?'On':'Off');blueySoundsButton.setAttribute('aria-pressed',String(blueySoundsOn));
  const count=blueyPhotos.length||blueyRecentPhotos.length;
  blueyFileLabel.textContent=count?`${count} photo${count===1?'':'s'} ${blueyPhotos.length?'ready':'remembered'}`:'';
+ if(typeof blueyRenderPhotoPreview==='function')blueyRenderPhotoPreview();
 }
 blueySyncControls();
 blueyVoiceButton.addEventListener('click',()=>{blueyVoiceOn=!blueyVoiceOn;localStorage.setItem('bluey-voice-on',String(blueyVoiceOn));if(!blueyVoiceOn&&'speechSynthesis'in window)speechSynthesis.cancel();blueySyncControls();});
@@ -72,12 +73,14 @@ async function blueyCreateDocument(text,format,photos){
  }catch(e){console.error('Bluey document error',e);statusEl.textContent=e.message||'I hit a snag making that file. Try again in a moment.';behavior('unsure')}
 }
 async function blueyChatWithPhotos(text,photos){
- touchActivity();detectQuietIntent(text);add('user',text);history.push({role:'user',content:text});input.value='';behavior('thinking');blueyPlaySound('think');statusEl.textContent='Looking closely…';
+ touchActivity();detectQuietIntent(text);add('user',text);history.push({role:'user',content:text});input.value='';behavior('thinking');blueyPlaySound('think');statusEl.textContent=`Sending ${photos.length} photo${photos.length===1?'':'s'} to Bluey…`;
  try{
   const r=await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({messages:history.slice(-20),attachments:photos})});
   const d=await r.json();if(!r.ok)throw new Error(d.error||'Bluey could not look at that yet.');
-  statusEl.textContent='';add('assistant',d.reply);history.push({role:'assistant',content:d.reply});behavior(d.behavior);if(blueyVoiceOn)speak(d.reply,d.behavior);blueyPlaySound('reply');blueyShowSuggestion(d.spellingSuggestion);
+  if(d.imagesReceived!==photos.length)throw new Error(`I received ${Number(d.imagesReceived)||0} of ${photos.length} photos. Your photo is still here—please try sending it again.`);
+  statusEl.textContent=`Bluey received ${d.imagesReceived} photo${d.imagesReceived===1?'':'s'}.`;add('assistant',d.reply);history.push({role:'assistant',content:d.reply});behavior(d.behavior);if(blueyVoiceOn)speak(d.reply,d.behavior);blueyPlaySound('reply');blueyShowSuggestion(d.spellingSuggestion);
   blueyRecentPhotos=photos;blueyPhotos=[];blueySyncControls();
+  setTimeout(()=>{if(statusEl.textContent===`Bluey received ${d.imagesReceived} photo${d.imagesReceived===1?'':'s'}.`)statusEl.textContent=''},3500);
  }catch(e){console.error('Bluey photo chat error',e);statusEl.textContent=e.message||'I had trouble with that photo. Let’s try again.';behavior('unsure')}
 }
 send=async function(text){

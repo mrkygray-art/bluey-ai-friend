@@ -149,3 +149,11 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 - The AI uses the conversation to avoid repeating recent wording, examples, and jokes. It can answer repeat questions from a new angle without changing facts.
 - A gentle per-turn style nudge helps Bluey vary his answer shape while keeping requested formats and serious answers clear.
 - The existing Alpha 7 and Alpha 8 document tools, photo support, voice and sound controls, room stage, and motion are retained.
+
+## Bluey 1.0 Alpha 10 — Photos and a ready-to-chat screen
+
+- The message box, photo button, and voice/sound controls remain available after a refresh, before the first message.
+- Selected photos show a thumbnail and can be removed before sending. Bluey keeps recent photos available for follow-up questions during the same page session.
+- Photo replies now confirm how many images reached the vision request. If the count does not match, Bluey shows an error and keeps the selected images so they can be retried.
+- The chat endpoint attaches supported image data to the latest user message and returns the accepted image count.
+- Alpha 7 document creation, Alpha 8 stage behavior, and Alpha 9 response variation are retained.
