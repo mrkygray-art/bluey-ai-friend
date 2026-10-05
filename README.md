@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha — The Living World
+# Bluey 1.0 Alpha 2 — The Living World
 
 Bluey now has a world and a life, not just an interface.
 
@@ -28,3 +28,19 @@ Bluey's digital home stays visually simple. Places are atmospheric states rather
 
 ## Existing systems preserved
 Voice/transcription, Chrome/Firefox microphone behavior, holidays, birthday, seasonal rare scenes, Character Engine, dances, collections, Pixel One, marbles, imagination and personality canon remain in place.
+
+## Alpha 2 — Environmental Storytelling
+- Each world now has a small visual vocabulary rather than becoming a conventional room.
+- Library: books/bookmark.
+- Archive: floppy disk, 404 and hourglass.
+- Observatory: sparse stars/orbital marks.
+- Workshop: gear and geometric build pieces.
+- Arcade: pixel shapes and a subtle HIGH SCORE cue.
+- Quiet Place: intentionally minimal.
+- The Edge: remains dramatically sparse.
+- Arrival copy is location-specific.
+- “Where are we?” is now location-aware.
+- Rare location-specific physical gags added.
+
+### Thinking travel
+Bluey distinguishes **conversation** from **thinking**. Casual conversation leaves him where he is. More substantial “how/why/explain/debug/build/solve” questions can trigger a brief visual trip from Home to the Library or Workshop while he works on the answer, followed by a return Home. This is presentation behavior only and does not replace the normal answer pipeline.
