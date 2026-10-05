@@ -1,37 +1,43 @@
-// Bluey Alpha 47.5 — Quiet Stage enforcement
-// Home is always white + Bluey. Objects are temporary and only appear after an explicit conversational request.
+// Bluey Alpha 47.6 — Clean Baseline / Quiet Home
+// Default experience: white Home + Bluey. World travel only happens when the user asks.
+// Holiday presentation is allowed during the seven-day lead-in, then quietly returns to white Home after conversation begins.
 (function(){
 'use strict';
 const HOME='home';
-let revealTimer=null,homeGuard=null;
+const HOLIDAY_CONVERSATION_MS=3*60*1000;
+let revealTimer=null,homeGuard=null,holidayReturnTimer=null;
+let conversationStarted=false;
 const stage=()=>window.blueyStage37||document.querySelector('.stage');
 const orb=()=>document.querySelector('#orb');
 const room=()=>window.BlueyWorldStandard?.current?.()||window.BlueyWorldState?.room||document.body.dataset.blueyWorld||window.blueyWorld||HOME;
+const holidayClasses=()=>[...document.body.classList].filter(c=>c.startsWith('holiday-'));
 function objectNodes(){const S=stage();return S?[...S.querySelectorAll('.bluey-interactive-object,.bluey-trip-object,.bluey-object,.bluey-memory-artifact')]:[]}
 function clearObjects(){clearTimeout(revealTimer);objectNodes().forEach(n=>n.remove());if(Array.isArray(window.blueyVisibleObjects))window.blueyVisibleObjects=window.blueyVisibleObjects.filter(n=>n?.isConnected)}
-function clearScenery(){const S=stage();if(!S)return;S.querySelectorAll('.bluey-scenery-43,.roomLabel43,.stars43').forEach(n=>n.remove())}
-function quietHome(){const S=stage();if(!S)return;document.body.dataset.blueyWorld=HOME;S.dataset.blueyWorld=HOME;S.style.setProperty('background','#fff','important');clearScenery();clearObjects()}
+function clearScenery(){const S=stage();if(!S)return;S.querySelectorAll('.bluey-scenery-43,.roomLabel43,.stars43,.bluey-world-object,.bluey-orbit').forEach(n=>n.remove())}
+function clearLegacyWorldDecor(){document.querySelectorAll('.bluey-starfield,.bluey-edge-mark,.bluey-world-object,.bluey-orbit,#bluey-scene-layer').forEach(n=>n.remove())}
+function quietHome(opts={}){const S=stage();if(!S)return;document.body.dataset.blueyWorld=HOME;S.dataset.blueyWorld=HOME;S.style.setProperty('background','#fff','important');clearScenery();clearLegacyWorldDecor();clearObjects();if(opts.clearHoliday)holidayClasses().forEach(c=>document.body.classList.remove(c))}
 function revealObjects(which=room(),ttl=42000){clearObjects();window.renderInteractiveObjects?.(which);const S=stage();if(Array.isArray(window.blueyVisibleObjects)&&S)window.blueyVisibleObjects.forEach(n=>{if(n&&!n.isConnected)S.appendChild(n)});window.BlueyWorldStandard?.layoutObjects?.(which);if(ttl>0)revealTimer=setTimeout(clearObjects,ttl);return objectNodes().length}
 function asksToSeeObjects(text){const q=String(text||'').toLowerCase();return /\b(what(?:'s| is) (?:in|inside)|what do you have|show me (?:what|your|the)|what(?:'s| is) here|look around|explore|objects?|things? (?:are|do you have)|what is in your|show (?:me )?(?:around|your room|your home|the room))\b/.test(q)}
 function asksHome(text){const q=String(text||'').toLowerCase();return /\b(go|take me|come|return|back|visit|show me)\b.*\b(home|house)\b|\b(go|come|head) home\b/.test(q)}
-function topicMovedOn(text){const q=String(text||'').toLowerCase();if(!q||asksToSeeObjects(q))return false;return /\b(help me|write|email|question|explain|plan|solve|troubleshoot|picture|photo|new topic|something else|resume|code|calculate|research)\b/.test(q)}
-function forceHome(){try{window.enterWorld?.(HOME,false)}catch(_){};setTimeout(quietHome,20);setTimeout(quietHome,100);setTimeout(quietHome,350)}
+function asksWorldTravel(text){const q=String(text||'').toLowerCase();return /\b(go|take me|visit|show me|let'?s go|head|travel|come)\b.*\b(library|office|workshop|garage|arcade|observatory|archive|quiet place|edge|attic|closet|backyard|basement)\b|\b(show me your world|where can we go|places in your world)\b/.test(q)}
+function topicMovedOn(text){const q=String(text||'').toLowerCase();if(!q||asksToSeeObjects(q)||asksWorldTravel(q))return false;return /\b(help me|write|email|question|explain|plan|solve|troubleshoot|picture|photo|new topic|something else|resume|code|calculate|research)\b/.test(q)}
+function forceHome(clearHoliday=false){try{window.enterWorld?.(HOME,false)}catch(_){};setTimeout(()=>quietHome({clearHoliday}),20);setTimeout(()=>quietHome({clearHoliday}),100);setTimeout(()=>quietHome({clearHoliday}),350)}
+function scheduleHolidayReturn(){if(conversationStarted||!holidayClasses().length)return;conversationStarted=true;clearTimeout(holidayReturnTimer);holidayReturnTimer=setTimeout(()=>{if(room()===HOME)forceHome(true)},HOLIDAY_CONVERSATION_MS)}
 const previousSend=window.send;
-window.send=async function(t){const text=String(t||'').trim();if(text&&asksHome(text)){clearObjects();forceHome()}else if(text&&asksToSeeObjects(text)){setTimeout(()=>revealObjects(room()),220)}else if(text&&topicMovedOn(text)){clearObjects()}return previousSend.apply(this,arguments)};
-window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();clearObjects();if(r===HOME){setTimeout(quietHome,20);setTimeout(quietHome,160)}});
-window.addEventListener('bluey:alpha47-ready',()=>{if(room()===HOME)quietHome()});
-
+window.send=async function(t){const text=String(t||'').trim();if(text)scheduleHolidayReturn();if(text&&asksHome(text)){clearObjects();forceHome(true)}else if(text&&asksToSeeObjects(text)){setTimeout(()=>revealObjects(room()),220)}else if(text&&topicMovedOn(text)){clearObjects()}return previousSend.apply(this,arguments)};
+window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();clearObjects();if(r===HOME){setTimeout(()=>quietHome({clearHoliday:conversationStarted}),20);setTimeout(()=>quietHome({clearHoliday:conversationStarted}),160)}});
+window.addEventListener('bluey:alpha47-ready',()=>{if(room()===HOME)quietHome({clearHoliday:false})});
 function isBuildPromptControl(el){const s=[el.textContent,el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.id,el.className].filter(Boolean).join(' ').toLowerCase();return /build\s*prompt|prompt\s*builder|buildprompt/.test(s)}
 function simplifyControls(){document.querySelectorAll('button,a,[role="button"],input[type="button"]').forEach(el=>{if(isBuildPromptControl(el)){el.style.setProperty('display','none','important');el.hidden=true;el.setAttribute('aria-hidden','true');el.tabIndex=-1}})}
-function enforceHome(){if(room()!==HOME)return;const S=stage();if(!S)return;S.style.setProperty('background','#fff','important');clearScenery();clearObjects()}
-function startHomeGuard(){clearInterval(homeGuard);homeGuard=setInterval(()=>{simplifyControls();enforceHome()},500)}
-
+function enforceHome(){if(room()!==HOME)return;const S=stage();if(!S)return;S.style.setProperty('background','#fff','important');clearScenery();clearLegacyWorldDecor();clearObjects();if(conversationStarted)holidayClasses().forEach(c=>document.body.classList.remove(c))}
+function stopAutonomousWorld(){if(window.blueyAdventure)window.blueyAdventure=()=>{};if(window.orbitVisit)window.orbitVisit=()=>{};if(window.livingWorldPulse)window.livingWorldPulse=()=>{}}
+function startHomeGuard(){clearInterval(homeGuard);homeGuard=setInterval(()=>{simplifyControls();if(room()===HOME)enforceHome()},500)}
 let tapBusy=false;
 async function tapToTalk(e){if(e){e.preventDefault();e.stopPropagation()}if(tapBusy)return;tapBusy=true;const O=orb();try{if(typeof window.listen!=='function')throw new Error('listen-unavailable');O?.classList.add('bluey-listening');await window.listen()}catch(err){console.warn('[Bluey] tap-to-talk failed',err);O?.classList.remove('bluey-listening');if(typeof window.tempStatus==='function')window.tempStatus('I can’t start the microphone here yet. Check this site’s microphone permission, then tap me again.',8500)}finally{setTimeout(()=>{tapBusy=false},220)}}
 function bindTapToTalk(){const O=orb();if(!O)return false;O.setAttribute('role','button');O.setAttribute('tabindex','0');O.setAttribute('aria-label','Talk to Bluey');O.style.touchAction='manipulation';O.onclick=tapToTalk;O.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')tapToTalk(e)};return true}
-const css=document.createElement('style');css.textContent=`body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!important}.bluey-explore-room{display:none!important}#orb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}`;document.head.appendChild(css);
-setTimeout(()=>{if(room()===HOME)quietHome();simplifyControls();bindTapToTalk();startHomeGuard()},450);
-setTimeout(()=>{simplifyControls();bindTapToTalk();enforceHome()},1500);
-window.BlueyQuietStage={version:'1.4',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,simplifyControls,bindTapToTalk};
-console.info('[Bluey] Alpha 47.5 blank Home enforcement ready');
+const css=document.createElement('style');css.textContent=`body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!important}.bluey-explore-room,.bluey-prompt-tool,#bluey-prompt-start{display:none!important}#orb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}`;document.head.appendChild(css);
+setTimeout(()=>{if(room()===HOME)quietHome({clearHoliday:false});simplifyControls();bindTapToTalk();stopAutonomousWorld();startHomeGuard()},450);
+setTimeout(()=>{simplifyControls();bindTapToTalk();if(room()===HOME)enforceHome()},1500);
+window.BlueyQuietStage={version:'1.5',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,asksWorldTravel,simplifyControls,bindTapToTalk,scheduleHolidayReturn};
+console.info('[Bluey] Alpha 47.6 clean baseline ready');
 })();
