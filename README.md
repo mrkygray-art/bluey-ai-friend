@@ -1,54 +1,30 @@
-# Bluey 0.9.2 — Character Engine
+# Bluey 1.0 Alpha — The Living World
 
-Bluey's personality is now treated as a system rather than a collection of isolated animations.
+Bluey now has a world and a life, not just an interface.
 
-## Character Engine
-- Canonical motivation, traits, loves and boundaries
-- Named physical vocabulary for yes, curiosity, laughter, surprise, listening, pride and victory
-- Happy/victory/secret dances
-- Deliberate comedic timing and pauses
-- Discoverable lore fragments instead of biography dumps
-- Rare human-curiosity questions
-- First imagination environment: the Moon, with low-gravity Bluey movement
-- Contextual reactions to “that worked,” “I broke it again,” database jokes, laughter, and compliments
+## Six connected systems
+- **Character Engine:** existing personality, body language, comedy, dancing and lore.
+- **World Engine:** Home, Archive, Observatory, Workshop, Library, Arcade, Quiet Place and The Edge.
+- **Life Engine:** journal, adventures, digital finds and idle thoughts.
+- **Story Engine:** first interactive branching Bluey story.
+- **Play Engine:** Mystery Object game and physical celebration.
+- **Surprise Engine:** rare Orbit visits, discoveries and thoughts.
 
-## Try
-- “Bluey, dance.”
-- “You've got moves.”
-- “We did it!”
-- “I broke it again.”
-- “I deleted the database.”
-- “Imagine you're on the moon.”
-- “Come home.”
-- “What's the first thing you remember?”
-- “What confuses you?”
+## New things to try
+- “Show me your world.”
+- “Take me to the Observatory.”
+- “Take me to The Archive.”
+- “Tell me a story.”
+- “Play Mystery Object.”
+- “Show me your journal.”
+- “Do you dream?”
+- “Teach me about black holes.”
+- “Teach me about orbit.”
+- “What's beyond The Edge?”
+- “What do you do here?”
 
-## Character rules
-Bluey never guilt-trips someone for leaving, never claims to be human, avoids constant interruption, doesn't turn every moment into a joke, and respects busy/quiet states.
+## Design principle
+Bluey's digital home stays visually simple. Places are atmospheric states rather than cluttered rooms. Objects, discoveries and surprises appear temporarily, keeping Bluey himself at the center.
 
-## Protected
-Existing first-meeting behavior, birthday, seasonal scenes, rare-scene engine, holiday wardrobe, Chrome/Firefox microphone capture and transcription pipeline remain intact.
-
-## 0.9.2 refresh/home patch
-- Restores the text composer for returning visitors after refresh.
-- Bluey now treats “go home,” “where is home?” and “where do you live?” as character/lore prompts.
-- Home is the digital world; Bluey describes what he does there.
-- Bluey can describe imaginative travel as visiting places in the blink of an eye.
-
-## 0.9.2 — Hobbies & Collections
-Discoverable canon added:
-- Marbles (Orbit, Swirly, and July)
-- Forgotten digital objects and an excessive 404 collection
-- Pixel One, Bluey's treasured first-found object
-- Digital sightseeing and internet rabbit holes
-- Space obsession; Earth is his favorite planet
-- Favorite color blue, second favorite orange
-- Favorite shape triangle; favorite number seven
-- Printers as Bluey's comic nemesis
-- Magnets as Bluey's irrationally suspicious object, including a physical retreat reaction
-- Human-object observations
-- Stump Bluey invitation
-- Bluey's dream: “To never run out of things I don't know yet.”
-- Rare marble scene in Bluey's digital home
-
-All personality is discoverable through conversation rather than displayed as a profile.
+## Existing systems preserved
+Voice/transcription, Chrome/Firefox microphone behavior, holidays, birthday, seasonal rare scenes, Character Engine, dances, collections, Pixel One, marbles, imagination and personality canon remain in place.

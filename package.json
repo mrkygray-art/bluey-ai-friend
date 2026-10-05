@@ -1,6 +1,6 @@
 {
   "name": "bluey-ai-friend",
-  "version": "0.9.2",
+  "version": "1.0.0-alpha.1",
   "private": true,
   "dependencies": {
     "formidable": "^3.5.4",
