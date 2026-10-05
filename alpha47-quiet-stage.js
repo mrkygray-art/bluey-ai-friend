@@ -1,4 +1,4 @@
-// Bluey Alpha 47.6.1 — Clean Baseline / Quiet Home
+// Bluey Alpha 47.7.1 — Clean Baseline / Quiet Home
 // Default: Bluey on white, then greeting/status directly beneath him. Easter eggs stay hidden until explicitly requested.
 (function(){
 'use strict';
@@ -33,16 +33,17 @@ const css=document.createElement('style');css.textContent=`
 body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!important}
 #bluey-prompt-start,.bluey-prompt-tool,.bluey-explore-room{display:none!important}
 #orb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.stage{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;box-sizing:border-box!important;padding-top:clamp(22px,5vh,58px)!important}
-.stage .bluey-depth-room{position:relative!important;inset:auto!important;width:100%!important;height:clamp(125px,20vh,190px)!important;min-height:125px!important;flex:0 0 auto!important}
-.stage .greeting{position:relative!important;inset:auto!important;transform:none!important;margin:8px auto 0!important;width:min(92vw,760px)!important;text-align:center!important;font-size:clamp(20px,2vw,30px)!important;line-height:1.2!important;z-index:20!important}
-.stage .status{position:relative!important;inset:auto!important;transform:none!important;margin:8px auto 0!important;width:min(92vw,760px)!important;text-align:center!important;line-height:1.35!important;z-index:20!important}
-.stage .nudge{position:relative!important;inset:auto!important;transform:none!important;margin:6px auto 0!important;width:min(92vw,760px)!important;text-align:center!important;z-index:20!important}
+.stage{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;box-sizing:border-box!important;padding-top:clamp(18px,4vh,44px)!important;overflow:visible!important}
+.stage .bluey-depth-room{position:relative!important;inset:auto!important;width:100%!important;height:clamp(205px,29vh,260px)!important;min-height:205px!important;flex:0 0 auto!important;overflow:visible!important}
+.stage .greeting{position:relative!important;inset:auto!important;transform:none!important;margin:10px auto 0!important;width:min(92vw,760px)!important;min-height:1.35em!important;height:auto!important;overflow:visible!important;text-align:center!important;font-size:clamp(20px,2vw,30px)!important;line-height:1.35!important;z-index:20!important}
+.stage .status{position:relative!important;inset:auto!important;transform:none!important;margin:8px auto 0!important;width:min(92vw,760px)!important;min-height:1.5em!important;height:auto!important;overflow:visible!important;text-align:center!important;line-height:1.45!important;z-index:20!important}
+.stage .nudge{position:relative!important;inset:auto!important;transform:none!important;margin:6px auto 0!important;width:min(92vw,760px)!important;min-height:1.5em!important;height:auto!important;overflow:visible!important;text-align:center!important;line-height:1.4!important;z-index:20!important}
+@media(max-width:700px){.stage{padding-top:14px!important}.stage .bluey-depth-room{height:190px!important;min-height:190px!important}.stage .greeting{margin-top:8px!important;font-size:22px!important;line-height:1.35!important}.stage .status{font-size:17px!important;line-height:1.4!important}}
 `;
 document.head.appendChild(css);
 setTimeout(()=>{removePromptBuilder();if(room()===HOME)quietHome({clearHoliday:false});bindTapToTalk();stopAutonomousWorld();startHomeGuard()},100);
 setTimeout(()=>{removePromptBuilder();bindTapToTalk();if(room()===HOME)enforceHome()},700);
 setTimeout(()=>{removePromptBuilder();if(room()===HOME)enforceHome()},1800);
-window.BlueyQuietStage={version:'1.6',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,asksWorldTravel,removePromptBuilder,bindTapToTalk,scheduleHolidayReturn};
-console.info('[Bluey] Alpha 47.6.1 clean baseline ready');
+window.BlueyQuietStage={version:'1.7.1',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,asksWorldTravel,removePromptBuilder,bindTapToTalk,scheduleHolidayReturn};
+console.info('[Bluey] Alpha 47.7.1 quiet stage text spacing ready');
 })();
