@@ -38,6 +38,7 @@ export default async function handler(req,res){
     const messages=Array.isArray(req.body?.messages)?req.body.messages:[];
     let lastUserIndex=-1;
     for(let i=messages.length-1;i>=0;i--)if(messages[i]?.role!=="assistant"){lastUserIndex=i;break}
+    const imagesSubmitted=Array.isArray(req.body?.attachments)?req.body.attachments.length:0;
     const attachments=Array.isArray(req.body?.attachments)
       ?req.body.attachments.filter(a=>typeof a?.dataUrl==="string"&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(a.dataUrl)).slice(0,5)
       :[];
@@ -108,7 +109,9 @@ export default async function handler(req,res){
       reply:String(parsed.reply||""),
       behavior:String(parsed.behavior||"explaining"),
       spellingSuggestion:typeof parsed.spellingSuggestion==="string"?parsed.spellingSuggestion:null,
-      imagesReceived:attachments.length
+      imagesSubmitted,
+      imagesReceived:attachments.length,
+      photoApiVersion:"alpha12"
     });
   }catch(e){
     console.error("Bluey server error",e);
