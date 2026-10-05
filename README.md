@@ -1,24 +1,30 @@
-# Bluey 0.8.2 — Expanded World
+# Bluey 0.9.0 — Character Engine
 
-## Story refinement
-Bluey's conversational story no longer emphasizes “no face.” He simply describes himself as a simple blue orb whose movement, timing, personality and conversation are how he expresses himself.
+Bluey's personality is now treated as a system rather than a collection of isolated animations.
 
-## Rare seasonal scenes
-Existing:
-- Autumn leaf dodge
-- Halloween mystery
-- Christmas snow
-- July 4 visor + sparkler celebration
-- July 7 birthday celebration
+## Character Engine
+- Canonical motivation, traits, loves and boundaries
+- Named physical vocabulary for yes, curiosity, laughter, surprise, listening, pride and victory
+- Happy/victory/secret dances
+- Deliberate comedic timing and pauses
+- Discoverable lore fragments instead of biography dumps
+- Rare human-curiosity questions
+- First imagination environment: the Moon, with low-gravity Bluey movement
+- Contextual reactions to “that worked,” “I broke it again,” database jokes, laughter, and compliments
 
-Added:
-- Valentine's Day: drifting hearts and a warm reaction
-- Memorial Day: restrained, quiet remembrance moment
-- Labor Day: small proud movement and appreciation
-- Thanksgiving: autumn leaves and a gratitude callback to Bluey's origin story
-- New Year's: spark bursts and a “what should we figure out next?” moment
-- Spring: rare drifting blossom/petal encounter
+## Try
+- “Bluey, dance.”
+- “You've got moves.”
+- “We did it!”
+- “I broke it again.”
+- “I deleted the database.”
+- “Imagine you're on the moon.”
+- “Come home.”
+- “What's the first thing you remember?”
+- “What confuses you?”
 
-Scenes remain intentionally rare, stop when the tab is hidden, and are suppressed when the user asks Bluey for space.
+## Character rules
+Bluey never guilt-trips someone for leaving, never claims to be human, avoids constant interruption, doesn't turn every moment into a joke, and respects busy/quiet states.
 
-The stable microphone/transcription pipeline remains unchanged.
+## Protected
+Existing first-meeting behavior, birthday, seasonal scenes, rare-scene engine, holiday wardrobe, Chrome/Firefox microphone capture and transcription pipeline remain intact.
