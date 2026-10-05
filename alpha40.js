@@ -17,18 +17,40 @@ BLUEY_OBJECTS.edge=[
 ];
 
 const blueyRenderRoomObjectsBefore40=renderInteractiveObjects;
-renderInteractiveObjects=function(place){
- const result=blueyRenderRoomObjectsBefore40(place);
- blueyVisibleObjects.forEach(object=>blueyStage37.appendChild(object));
- return result;
-};
+renderInteractiveObjects=function(place){const result=blueyRenderRoomObjectsBefore40(place);blueyVisibleObjects.forEach(object=>blueyStage37.appendChild(object));return result};
 renderInteractiveObjects(blueyWorld||'home');
 
+// Object taps should feel like Bluey reacting, not like the same tooltip template every time.
+const blueyObjectTapCounts40=new Map();
+const blueyObjectOpeners40=['Oh, this one.','You found one of my little things.','Ha — good pick.','I wondered if you would tap that.','This one has a story.','Ooh, you noticed it.'];
+const blueyObjectClosers40=['',' '+`There’s a little more to this one if you’re curious.`,' '+`That one makes me smile, in the very digital sense.`,' '+`You can ask me anything about it.`,' '+`We can follow that rabbit hole if you want.`];
+function blueyDynamicObjectReply40(obj){
+ const count=(blueyObjectTapCounts40.get(obj.id)||0)+1;blueyObjectTapCounts40.set(obj.id,count);
+ if(count===1){
+  const opener=blueyObjectOpeners40[Math.floor(Math.random()*blueyObjectOpeners40.length)];
+  const closer=blueyObjectClosers40[Math.floor(Math.random()*blueyObjectClosers40.length)];
+  return `${opener} ${obj.short}${closer}`.replace(/\s+/g,' ').trim();
+ }
+ if(count===2&&obj.deeper)return `${obj.deeper} ${obj.rabbit||''}`.trim();
+ if(count>=3&&obj.rabbit)return obj.rabbit;
+ return obj.deeper||obj.short;
+}
+inspectBlueyObject=function(obj,el){
+ blueyStopDepthFlight();blueyStageActivity({front:true});blueyObjectFocus={obj,depth:0};
+ clearTimeout(blueyRoomExpiry);
+ blueyRoomExpiry=setTimeout(()=>{const nodes=[...(blueyVisibleObjects||[])];nodes.forEach(item=>item.classList.add('bluey-object-leaving'));setTimeout(()=>{nodes.forEach(item=>item.remove());blueyVisibleObjects=blueyVisibleObjects.filter(item=>!nodes.includes(item))},420)},42000);
+ const answer=blueyDynamicObjectReply40(obj);
+ setTimeout(()=>{add('assistant',answer);if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious')},260);
+};
+
 const blueyRoomInvitationBefore40=blueyRoomInvitation;
+const blueyRoomInvitationCounts40=new Map();
 blueyRoomInvitation=function(room){
  const opening={home:'Welcome Home. There is a jar of marbles, my idea lamp, and a little welcome mat on the stage.',quiet:'This is the Quiet Place. I left a slow-falling leaf and a little sand timer here.',edge:'We are at The Edge. I put a tiny light and a marker beside me; I have only explored this far.'}[room];
  if(!opening)return blueyRoomInvitationBefore40(room);
- return `${opening} Tap an object to ask me about it. Want to know more about any of them?`;
+ const count=(blueyRoomInvitationCounts40.get(room)||0)+1;blueyRoomInvitationCounts40.set(room,count);
+ const endings=count===1?[' Tap anything that catches your eye.',' I left a few things for you to poke around.',' Pick whatever looks interesting.']:[' You know the room now — explore wherever you like.',' See anything you missed last time?',' I may be biased, but the objects have personality.'];
+ return opening+endings[Math.floor(Math.random()*endings.length)];
 };
 
 const BLUEY_TRAVEL_OBJECTS_40={
@@ -40,33 +62,11 @@ const BLUEY_TRAVEL_OBJECTS_40={
  forest:[{id:'forest-tree',title:'Forest tree',names:['tree','pine','forest'],short:'A tree gathers light, water, and carbon dioxide to grow. It also makes room for other life.',deeper:'Leaves use photosynthesis to store some sunlight’s energy in sugars. Roots and fungi can form helpful partnerships.',rabbit:'Want to follow one drop of water from root to leaf?'},{id:'forest-leaf',title:'Forest leaf',names:['leaf','leaves'],short:'A leaf is a tiny solar-powered workshop for the plant.',deeper:'Chlorophyll absorbs light for photosynthesis; other pigments become easier to see when chlorophyll breaks down.',rabbit:'Want to compare the colors and shapes of a few leaves?'}],
  space:[{id:'space-star',title:'A distant star',names:['star','stars'],short:'A star is a huge, hot ball of gas that shines because of energy made in its core.',deeper:'Our Sun is a star. Its light takes about eight minutes to reach Earth.',rabbit:'Want to pick a constellation and trace its pattern?'},{id:'space-planet',title:'A wandering planet',names:['planet','moon'],short:'A planet travels around a star. From here it looks like a tiny point, but it may be a whole world.',deeper:'Planets reflect light from their stars. Their size, atmosphere, and distance can make them very different places.',rabbit:'Which planet should we zoom toward in our imagination?'},{id:'space-dust',title:'Cosmic dust',names:['dust','nebula'],short:'Cosmic dust is made of tiny solid grains drifting between stars. New stars and planets can form in clouds of gas and dust.',deeper:'These grains can contain elements made in earlier stars, so some planet-building material has a long history.',rabbit:'Want to trace how stardust can become part of a planet?'}]
 };
-let blueyTravelObjects40=[];
-let blueyTravelDestination40=null;
-const blueyEnterWorldBefore40=enterWorld;
-enterWorld=function(place,announce=true){blueyTravelDestination40=null;return blueyEnterWorldBefore40(place,announce)};
+let blueyTravelObjects40=[];let blueyTravelDestination40=null;
+const blueyEnterWorldBefore40=enterWorld;enterWorld=function(place,announce=true){blueyTravelDestination40=null;return blueyEnterWorldBefore40(place,announce)};
 const blueyTravelBefore40=travelBluey;
-travelBluey=function(destination,announce=true){
- clearInteractiveObjects();const result=blueyTravelBefore40(destination,announce);const place=BLUEY_TRAVEL_STOPS[destination]?destination:'space';blueyTravelDestination40=place;
- const props=worldDecor.filter(item=>item.classList.contains('bluey-prop'));const descriptions=BLUEY_TRAVEL_OBJECTS_40[place]||[];blueyTravelObjects40=[];
- props.slice(0,descriptions.length).forEach((prop,index)=>{const object=descriptions[index];prop.classList.add('bluey-trip-object');prop.setAttribute('role','button');prop.setAttribute('tabindex','0');prop.setAttribute('aria-label',`${object.title}. Activate to explore.`);prop.title=object.title;prop.addEventListener('click',()=>inspectBlueyObject(object,prop));prop.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspectBlueyObject(object,prop)}});blueyStage37.appendChild(prop);blueyTravelObjects40.push(prop)});return result;
-};
+travelBluey=function(destination,announce=true){clearInteractiveObjects();const result=blueyTravelBefore40(destination,announce);const place=BLUEY_TRAVEL_STOPS[destination]?destination:'space';blueyTravelDestination40=place;const props=worldDecor.filter(item=>item.classList.contains('bluey-prop'));const descriptions=BLUEY_TRAVEL_OBJECTS_40[place]||[];blueyTravelObjects40=[];props.slice(0,descriptions.length).forEach((prop,index)=>{const object=descriptions[index];prop.classList.add('bluey-trip-object');prop.setAttribute('role','button');prop.setAttribute('tabindex','0');prop.setAttribute('aria-label',`${object.title}. Activate to explore.`);prop.title=object.title;prop.addEventListener('click',()=>inspectBlueyObject(object,prop));prop.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspectBlueyObject(object,prop)}});blueyStage37.appendChild(prop);blueyTravelObjects40.push(prop)});return result};
 window.BlueyRoomObjects={list:()=>Object.fromEntries(Object.entries(BLUEY_OBJECTS).map(([room,objects])=>[room,objects.map(({id,title})=>({id,title}))])),current:()=>blueyTravelDestination40?BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label:(BLUEY_WORLD[blueyWorld]?.name||blueyWorld),inspect:id=>{const object=(BLUEY_OBJECTS[blueyWorld]||[]).find(item=>item.id===id);if(!object)return false;const node=blueyVisibleObjects.find(item=>item.dataset.objectId===id);inspectBlueyObject(object,node||blueyOrb);return true}};
-const blueySendBeforeTravelLocation40=send;
-send=async function(text){const question=String(text||'').trim();if(blueyTravelDestination40&&/\b(where are you|where are we|where am i|what place is this|what do you see here)\b/i.test(question)){add('user',question);history.push({role:'user',content:question});input.value='';const place=BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label;const answer=`I’m at ${place}, on a little digital sightseeing stop. Tap one of the things on the stage and we can explore it together.`;add('assistant',answer);history.push({role:'assistant',content:answer});behavior('curious');if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious');return}return blueySendBeforeTravelLocation40(question)};
+const blueySendBeforeTravelLocation40=send;send=async function(text){const question=String(text||'').trim();if(blueyTravelDestination40&&/\b(where are you|where are we|where am i|what place is this|what do you see here)\b/i.test(question)){add('user',question);history.push({role:'user',content:question});input.value='';const place=BLUEY_TRAVEL_STOPS[blueyTravelDestination40].label;const answers=[`I’m at ${place}, doing a little digital sightseeing. Pick anything on the stage that catches your eye.`,`This stop is ${place}. I’ve been poking around digitally — tap something nearby and we’ll inspect it together.`,`We made it to ${place}. There are a few things here worth being nosy about.`];const answer=answers[Math.floor(Math.random()*answers.length)];add('assistant',answer);history.push({role:'assistant',content:answer});behavior('curious');if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious');return}return blueySendBeforeTravelLocation40(question)};
 
-// Mobile Stage V1 Phase 2 — let users intentionally reopen Bluey's room after props clear.
-(function(){
- const isMobile=()=>window.matchMedia('(max-width:700px)').matches;
- const button=document.createElement('button');
- button.type='button';button.className='bluey-explore-room';button.textContent='Explore room';button.setAttribute('aria-label','Explore Bluey’s room');
- document.body.appendChild(button);
- function hasObjects(){return !!document.querySelector('.stage .bluey-interactive-object,.stage .bluey-trip-object')}
- function collapse(){if(!isMobile())return;document.body.classList.remove('bluey-mobile-stage-exploring');document.body.classList.add('bluey-mobile-stage-collapsed');button.textContent='Explore room';button.setAttribute('aria-expanded','false')}
- function explore(){if(!isMobile()||!hasObjects())return;document.body.classList.remove('bluey-mobile-stage-collapsed');document.body.classList.add('bluey-mobile-stage-exploring');button.textContent='Back to chat';button.setAttribute('aria-expanded','true')}
- button.addEventListener('click',()=>document.body.classList.contains('bluey-mobile-stage-exploring')?collapse():explore());
- document.addEventListener('click',event=>{if(!isMobile()||event.target===button)return;if(event.target.closest('.bluey-interactive-object,.bluey-trip-object'))setTimeout(collapse,80)});
- const observer=new MutationObserver(()=>{if(!isMobile())return;if(document.querySelector('.app.working')&&hasObjects()&&!document.body.classList.contains('bluey-mobile-stage-exploring'))collapse()});
- observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],childList:true});
- window.addEventListener('resize',()=>{if(!isMobile()){document.body.classList.remove('bluey-mobile-stage-collapsed','bluey-mobile-stage-exploring')}else if(document.querySelector('.app.working')&&hasObjects())collapse()});
- window.BlueyMobileStage={explore,collapse};
-})();
+(function(){const isMobile=()=>window.matchMedia('(max-width:700px)').matches;const button=document.createElement('button');button.type='button';button.className='bluey-explore-room';button.textContent='Explore room';button.setAttribute('aria-label','Explore Bluey’s room');document.body.appendChild(button);function hasObjects(){return !!document.querySelector('.stage .bluey-interactive-object,.stage .bluey-trip-object')}function collapse(){if(!isMobile())return;document.body.classList.remove('bluey-mobile-stage-exploring');document.body.classList.add('bluey-mobile-stage-collapsed');button.textContent='Explore room';button.setAttribute('aria-expanded','false')}function explore(){if(!isMobile()||!hasObjects())return;document.body.classList.remove('bluey-mobile-stage-collapsed');document.body.classList.add('bluey-mobile-stage-exploring');button.textContent='Back to chat';button.setAttribute('aria-expanded','true')}button.addEventListener('click',()=>document.body.classList.contains('bluey-mobile-stage-exploring')?collapse():explore());document.addEventListener('click',event=>{if(!isMobile()||event.target===button)return;if(event.target.closest('.bluey-interactive-object,.bluey-trip-object'))setTimeout(collapse,80)});const observer=new MutationObserver(()=>{if(!isMobile())return;if(document.querySelector('.app.working')&&hasObjects()&&!document.body.classList.contains('bluey-mobile-stage-exploring'))collapse()});observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],childList:true});window.addEventListener('resize',()=>{if(!isMobile()){document.body.classList.remove('bluey-mobile-stage-collapsed','bluey-mobile-stage-exploring')}else if(document.querySelector('.app.working')&&hasObjects())collapse()});window.BlueyMobileStage={explore,collapse}})();
