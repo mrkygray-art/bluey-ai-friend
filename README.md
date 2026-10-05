@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 12 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 13 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -174,3 +174,9 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 - The chat endpoint now reports how many photo uploads arrived, how many passed image validation, and its photo API version. The page gives a specific message when the live endpoint is outdated or rejects an image.
 - To deploy photo support, upload the complete Alpha 12 project, including the `api` folder and `api/chat.js`, then redeploy. Updating only `index.html` and browser scripts will leave the photo API on its older version.
 - Alpha 10 composer and preview fixes, Alpha 11 voice routing and version badge, and the earlier document, stage, and response features remain included.
+
+## Bluey 1.0 Alpha 13 — Mobile voice check
+
+- Turning Voice on plays a short test line so the user can confirm audio on the current device.
+- Speech playback errors are shown in the page with practical phone volume and text-to-speech checks instead of only going to the browser console.
+- The existing Alpha 12 photo API handoff and photo analysis remain included. Deploy the full bundle so the updated page, `alpha13.js`, and `api/chat.js` are all live together.
