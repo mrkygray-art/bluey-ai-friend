@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.7.1</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.8.0</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -236,6 +236,32 @@ body.holiday-memorial #orb::after,body.holiday-labor #orb::after{
  78%{transform:translate3d(4px,-10px,0) scale(1.055) rotate(.8deg)}
 }
 
+
+/* Bluey 0.8 — Life, rituals, sleep, micro-reactions and tiny-world ambience */
+#orb.bluey-sleepy{animation:blueySleepy 7.5s ease-in-out infinite;filter:saturate(.82) brightness(.97)}
+#orb.bluey-wake{animation:blueyWake .95s cubic-bezier(.34,1.55,.64,1) 1}
+#orb.bluey-proud{animation:blueyProud 1.15s cubic-bezier(.34,1.35,.64,1) 1}
+#orb.bluey-wobble{animation:blueyWobble .62s ease-in-out 2}
+#orb.bluey-love{animation:blueyLove 1.8s ease-in-out 1;filter:drop-shadow(0 0 25px rgba(45,168,230,.48))}
+#orb.bluey-birthday::before{
+ content:"";width:78%;height:52%;left:11%;top:-39%;
+ background:repeating-linear-gradient(70deg,#f0c94f 0 13px,#69bde7 13px 26px,#f08ca8 26px 39px);
+ clip-path:polygon(50% 0,100% 100%,0 100%);transform:rotate(5deg);
+}
+#orb.bluey-birthday::after{
+ content:"";width:86%;height:11%;left:7%;top:-1%;background:#f0c94f;border-radius:50%;
+ box-shadow:42px -53px 0 -28px #fff;
+}
+body.bluey-evening{background:linear-gradient(#fff 0%,#fff 65%,#fbf8f2 100%)}
+body.bluey-late{background:linear-gradient(#fff 0%,#faf9fb 60%,#f3f5fa 100%)}
+.bluey-world-bit{position:fixed;pointer-events:none;z-index:1;opacity:.5;animation:blueyDrift 8s linear forwards}
+@keyframes blueySleepy{0%,100%{transform:translate3d(0,1px,0) scale(.975)}50%{transform:translate3d(0,-3px,0) scale(.99)}}
+@keyframes blueyWake{0%{transform:translate3d(0,4px,0) scale(.92)}35%{transform:translate3d(0,-17px,0) scale(1.1)}65%{transform:translate3d(-3px,-7px,0) scale(1.04)}100%{transform:none}}
+@keyframes blueyProud{0%,100%{transform:none}45%{transform:translate3d(0,-8px,0) scale(1.115)}72%{transform:translate3d(0,-5px,0) scale(1.06)}}
+@keyframes blueyWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg) translateX(-3px)}75%{transform:rotate(5deg) translateX(3px)}}
+@keyframes blueyLove{0%,100%{transform:scale(1)}45%{transform:translateY(-7px) scale(1.075)}}
+@keyframes blueyDrift{0%{transform:translate3d(-8vw,0,0) rotate(0);opacity:0}15%{opacity:.45}85%{opacity:.35}100%{transform:translate3d(108vw,30px,0) rotate(220deg);opacity:0}}
+
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
@@ -403,7 +429,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.7.1 voice capture',{
+ console.log('Bluey 0.8.0 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -798,15 +824,121 @@ setTimeout(()=>{
  else blueyReturningMeet();
 },420);
 
+
+// ---- Bluey 0.8 Life & Memory foundation ----
+const BLUEY_BIRTHDAY={month:6,day:7,label:"July 7"};
+const BLUEY_PREFS_KEY='bluey_relationship_prefs_v1';
+let blueyTapTimes=[], blueySleepTimer=null, blueySleeping=false;
+let blueySessionStart=Date.now(), blueyLastRitual='';
+
+function blueyPrefs(){
+ try{return JSON.parse(localStorage.getItem(BLUEY_PREFS_KEY)||'{}')}catch(e){return{}}
+}
+function saveBlueyPrefs(v){try{localStorage.setItem(BLUEY_PREFS_KEY,JSON.stringify(v))}catch(e){}}
+
+function blueyTimeRitual(){
+ const hr=new Date().getHours();
+ if(hr>=5&&hr<11)return {mood:'warm',line:["Good morning. What are we getting into?","Morning! Ready when you are."][Math.floor(Math.random()*2)]};
+ if(hr>=18&&hr<22){document.body.classList.add('bluey-evening');return {mood:'warm',line:["Hey. How's your evening going?","Evening! What's on your mind?"][Math.floor(Math.random()*2)]};}
+ if(hr>=22||hr<5){document.body.classList.add('bluey-late');return {mood:'quiet',line:["You're up late. I'm here if you need me.","Late-night Bluey reporting for duty. Quietly."][Math.floor(Math.random()*2)]};}
+ return null;
+}
+function blueyBirthdayCheck(){
+ const d=new Date(), birthday=(d.getMonth()===BLUEY_BIRTHDAY.month&&d.getDate()===BLUEY_BIRTHDAY.day);
+ if(birthday&&blueyOrb){
+  blueyOrb.classList.add('bluey-birthday');
+  setTimeout(()=>{if(typeof tempStatus==='function')tempStatus("It's my birthday! July 7. I brought the hat. 🎉",9000)},1700);
+ }
+ return birthday;
+}
+function blueyMicroReaction(kind){
+ if(!blueyOrb)return;
+ const map={love:'bluey-love',proud:'bluey-proud',wake:'bluey-wake',wobble:'bluey-wobble'};
+ const cls=map[kind]; if(!cls)return;
+ blueyOrb.classList.add(cls);
+ setTimeout(()=>blueyOrb.classList.remove(cls),kind==='love'?1900:1300);
+}
+function blueySleep(){
+ if(userAskedForSpace||document.hidden)return;
+ blueySleeping=true;setBlueyState('quiet');
+ blueyOrb?.classList.add('bluey-sleepy');
+}
+function blueyWake(){
+ if(!blueySleeping)return;
+ blueySleeping=false;blueyOrb?.classList.remove('bluey-sleepy');
+ blueyMicroReaction('wake');
+ setTimeout(()=>setBlueyState('idle'),1000);
+}
+function resetBlueySleep(){
+ clearTimeout(blueySleepTimer);
+ blueyWake();
+ blueySleepTimer=setTimeout(blueySleep,5*60*1000);
+}
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,resetBlueySleep,{passive:true}));
+resetBlueySleep();
+
+// Easter egg: rapid repeated taps make Bluey wobble instead of becoming needy.
+blueyOrb?.addEventListener('click',()=>{
+ const now=Date.now();blueyTapTimes=blueyTapTimes.filter(t=>now-t<1800);blueyTapTimes.push(now);
+ if(blueyTapTimes.length>=5){blueyTapTimes=[];blueyMicroReaction('wobble');setTimeout(()=>tempStatus?.("Okay, okay — I'm awake! 😄",3500),250)}
+});
+
+// Contextual micro-reactions from visible user language.
+document.addEventListener('submit',e=>{
+ const el=e.target?.querySelector?.('input[type="text"],textarea');const t=(el?.value||'').trim();
+ if(/^(😂|🤣|lol+|haha+)/i.test(t))blueyHappyReaction?.();
+ if(/^(❤️|❤|💙|💕|💖)/u.test(t))blueyMicroReaction('love');
+ if(/\b(good job|nice job|you did it|smart bluey|great job)\b/i.test(t))blueyMicroReaction('proud');
+},true);
+
+// Tiny world: rare seasonal ambience, deliberately subtle.
+function blueyWorldMoment(){
+ if(document.hidden||Math.random()>.35)return;
+ const h=window.blueyCurrentHoliday?.key; if(!h)return;
+ const el=document.createElement('div');el.className='bluey-world-bit';
+ el.style.left='-5vw';el.style.top=(15+Math.random()*55)+'vh';
+ el.style.fontSize=(14+Math.random()*12)+'px';
+ el.textContent=h==='halloween'?'🍂':h==='christmas'?'❄':h==='newyear'?'✦':h==='thanksgiving'?'🍂':h==='valentine'?'♥':'✦';
+ document.body.appendChild(el);setTimeout(()=>el.remove(),8500);
+}
+setInterval(blueyWorldMoment,45000);
+
+// Relationship philosophy hooks. Nothing personal is silently persisted.
+// Future memory UI/service should use these explicit commands/consent gates.
+window.blueyRelationship={
+ birthday:'July 7',
+ principles:{
+  rememberMeaningfulNotEverything:true,
+  explicitRememberCommand:true,
+  explicitForgetCommand:true,
+  noGuiltForAbsence:true,
+  noFakeSadness:true,
+  respectBusyState:true
+ },
+ permissionGranted:()=>!!blueyPrefs().memoryPermission,
+ setMemoryPermission:(allowed)=>{const p=blueyPrefs();p.memoryPermission=!!allowed;saveBlueyPrefs(p);return p.memoryPermission}
+};
+
+// Ritual appears occasionally, not on every visit.
+setTimeout(()=>{
+ blueyBirthdayCheck();
+ if(!blueyFirstMeeting && Math.random()<.45){
+   const r=blueyTimeRitual();
+   if(r&&typeof tempStatus==='function'){blueyLastRitual=r.line;setBlueyMood(r.mood,2200);tempStatus(r.line,6500)}
+ }
+},2500);
+
 // Future feature hook: intentionally simple foundation, not a new UI button.
 setBlueyState('idle');
 
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
- version:'0.7.1',
+ version:'0.8.0',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
- presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet']
+ presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
+ birthday:'July 7',
+ relationshipRule:'Bluey welcomes people back without guilt, fake sadness, or demanding attention.'
 };
 
 </script></body></html>
