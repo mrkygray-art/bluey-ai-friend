@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 39 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 40 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -258,3 +258,16 @@ Compatibility status: source syntax and the Alpha 38 attachment/send behavior ha
 6. Tap Bluey to try microphone input; allow permission and confirm transcription, or verify that typed chat remains available when mic input is unsupported.
 
 Upload the complete Alpha 39 bundle, including all `alpha*.js`, `alpha*.css`, and `api/` files. The server prompt and API routes are part of the compatibility and capability behavior.
+
+## Bluey 1.0 Alpha 40 — Every room has something to explore
+
+- All established rooms now have clickable items: Home, Workshop/office, House, Bedroom, Garage, Attic, Closet, Backyard, Basement, Library, Arcade, Observatory, Archive, Quiet Place, and The Edge.
+- The beach, ocean, museum, aquarium, city, forest, and space sightseeing stops also have clickable stage props. Each item opens a short explanation and can lead to a follow-up question. Stage objects are keyboard-focusable, announced with labels, and stay in Bluey's stage instead of drifting into the conversation area.
+- Home, Quiet Place, and The Edge now have their own objects; they were the missing rooms in the clickable collection.
+- Bluey correctly names his temporary sightseeing stop if you ask where he is while traveling.
+
+### What Bluey remembers today
+
+- A browser-local `bluey-alpha36-conversation` entry saves the latest 100 visible user/Bluey text messages in that browser's local storage and restores them after refresh. **New chat** clears that transcript. Uploaded photo data is not saved in the transcript.
+- A separate `bluey_met_v1` flag lets the same browser show a returning-visitor greeting. It does not identify a person or save their name. A different browser, device, or cleared browser storage looks like a first visit.
+- Voice/Sounds choices, world preferences, and Bluey's small in-world journal/progress records are also local to that browser. There is no account sign-in, shared user identity, or cross-device personal memory in this build. The memory-permission foundation does not yet save personal details.

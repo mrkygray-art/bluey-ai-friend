@@ -1,0 +1,5 @@
+/* Alpha 40: clickable room and travel props live inside Bluey's stage. */
+.stage .bluey-interactive-object{position:absolute!important;z-index:7!important;pointer-events:auto;touch-action:manipulation}
+.stage .bluey-trip-object{position:absolute!important;z-index:6!important;pointer-events:auto;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 5px 8px rgba(20,75,110,.2));outline-offset:5px}
+.stage .bluey-trip-object:focus-visible{outline:3px solid #4ab7e5;opacity:1;transform:scale(1.12)}
+.stage .bluey-interactive-object:focus-visible{outline:3px solid #4ab7e5;outline-offset:4px}
