@@ -375,6 +375,67 @@ body.world-edge{background:linear-gradient(180deg,#f8f8f8 0 60%,#e9eef5 100%)!im
 @keyframes bookBump{0%,100%{transform:none}45%{transform:translateX(18px) translateY(-10px)}60%{transform:translateX(11px) rotate(6deg)}}
 @keyframes workFail{0%,100%{transform:none}45%{transform:translateY(-10px) scale(1.04)}70%{transform:translateY(5px) scale(.96)}}
 
+
+/* Bluey 1.0 Alpha 5 */
+.bluey-work-chip{position:fixed;z-index:3;padding:7px 10px;border:1px solid rgba(80,105,130,.22);border-radius:10px;background:rgba(255,255,255,.72);font:600 11px system-ui;color:#60758a;letter-spacing:.08em;pointer-events:none;animation:chipIn 4.2s ease forwards}
+#orb.bluey-travel-overshoot{animation:travelOvershoot 1.8s cubic-bezier(.2,.85,.25,1)}
+@keyframes chipIn{0%{opacity:0;transform:translateY(8px) scale(.9)}18%,75%{opacity:.82;transform:none}100%{opacity:0;transform:translateY(-5px)}}
+@keyframes travelOvershoot{0%{transform:none}42%{transform:translateX(58vw) scale(.88)}43%{opacity:.1}58%{transform:translateX(-42vw) scale(.9);opacity:.15}82%{opacity:1}100%{transform:none}}
+
+
+/* ===== Bluey 1.0 Alpha 5 — Growing Together ===== */
+.bluey-work-token{
+  position:fixed; z-index:5; pointer-events:none; padding:6px 10px;
+  border:1px solid rgba(75,105,135,.18); border-radius:999px;
+  background:rgba(255,255,255,.82); backdrop-filter:blur(5px);
+  font:600 12px/1.1 system-ui,sans-serif; color:#53677b;
+  box-shadow:0 7px 18px rgba(30,60,90,.08);
+  animation:blueyTokenIn 5.4s ease forwards;
+}
+.bluey-keepsake{
+  position:fixed; z-index:2; pointer-events:none; opacity:.62;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.08));
+  animation:blueyKeepsakeIn 7s ease forwards;
+}
+.bluey-celebration-speck{
+  position:fixed; width:7px; height:7px; border-radius:50%;
+  background:#45b9ed; z-index:8; pointer-events:none;
+  animation:blueySpeck 1.8s ease-out forwards;
+}
+#orb.bluey-recovery-wobble{animation:blueyRecoveryWobble 1.05s ease-in-out}
+#orb.bluey-proud-hover{animation:blueyProudHover 1.9s ease-in-out}
+#orb.bluey-uncertain{animation:blueyUncertain 1.5s ease-in-out}
+#orb.bluey-peek{animation:blueyPeek 2.3s ease-in-out}
+@keyframes blueyTokenIn{
+  0%{opacity:0;transform:translateY(10px) scale(.92)}
+  15%,72%{opacity:.9;transform:none}
+  100%{opacity:0;transform:translateY(-8px)}
+}
+@keyframes blueyKeepsakeIn{
+  0%{opacity:0;transform:scale(.75)}
+  18%,78%{opacity:.62;transform:scale(1)}
+  100%{opacity:0;transform:translateY(-7px)}
+}
+@keyframes blueySpeck{
+  from{opacity:1;transform:translate(0,0) scale(1)}
+  to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}
+}
+@keyframes blueyRecoveryWobble{
+  0%,100%{transform:none} 22%{transform:rotate(-7deg) translateX(-5px)}
+  46%{transform:rotate(7deg) translateX(5px)} 70%{transform:rotate(-3deg)}
+}
+@keyframes blueyProudHover{
+  0%,100%{transform:none} 45%,70%{transform:translateY(-15px) scale(1.035)}
+}
+@keyframes blueyUncertain{
+  0%,100%{transform:none} 35%{transform:translateX(-7px) scale(.97)}
+  65%{transform:translateX(7px) scale(.97)}
+}
+@keyframes blueyPeek{
+  0%,100%{transform:none} 35%{transform:translateX(46px) scale(.96)}
+  65%{transform:translateX(32px) scale(.98)}
+}
+
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
@@ -1601,13 +1662,13 @@ enterWorld("home",false);
 // ===== BLUEY 1.0 ALPHA 2 — ENVIRONMENTAL STORYTELLING =====
 const WORLD_PROPS={
  home:[],
- archive:[["💾","archive",15,62],["404","archive",78,33],["⌛","archive",70,69]],
- observatory:[["✦","space",16,28],["◌","space",80,31],["·","space",72,68]],
- workshop:[["⚙","work",18,62],["△","work",78,31],["□","work",73,69]],
- library:[["📘","book",16,61],["📖","book",78,34],["🔖","book",72,68]],
- arcade:[["◆","arcade",17,61],["▲","arcade",80,34],["HIGH SCORE","arcade",68,69]],
- quiet:[["🍃","quiet",18,65],["·","quiet",78,35]],
- edge:[]
+ archive:[["💾","archive",17,61],["404","archive",79,36]],
+ observatory:[["🔭","space",17,61],["✦","space",80,30]],
+ workshop:[["🖥️","work",17,61],["⚙️","work",79,36]],
+ library:[["📚","book",17,61],["📖","book",79,36]],
+ arcade:[["🕹️","arcade",17,61],["★","arcade",80,35]],
+ quiet:[["🍃","quiet",18,65]],
+ edge:[["⋮","space",86,40]]
 };
 function addWorldProps(place){
  (WORLD_PROPS[place]||[]).forEach(([txt,cls,x,y],i)=>{
@@ -1702,6 +1763,10 @@ send=async function(text){
  if(/\b(where are we|where am i|what place is this)\b/i.test(clean)){
    add("user",clean);input.value="";characterMove("yes",900);setTimeout(()=>add("assistant",currentWorldAnswer()),450);return;
  }
+ if(/\b(show me|take me to|go to|visit).*(office|your office)\b/i.test(clean)||/\b(where is|what is).*(your office)\b/i.test(clean)){
+   add("user",clean);input.value="";enterWorld("workshop",false);characterMove("curiosity",1200);
+   setTimeout(()=>add("assistant","Welcome to my Workshop—this is my office. The screen is where ideas get messy, the gear is mostly decorative, and the printers stay at a suspicious distance."),650);return;
+ }
  const trip=questionNeedsThinkingTrip(clean);
  const eligible=trip && blueyWorld==="home" && !blueyStory && !blueyGame;
  if(eligible)beginThinkingTrip(trip);
@@ -1762,13 +1827,228 @@ send=async function(text){
  return blueyAlpha3Base(clean);
 };
 
+
+// ===== BLUEY 1.0 ALPHA 4 — LEARNING THROUGH FRIENDSHIP =====
+// The user never has to learn prompt-engineering vocabulary. Bluey quietly helps
+// requests become clearer, then visually shows the kind of work he is doing.
+const BLUEY_PROGRESS_KEY="bluey-alpha4-progress";
+function blueyProgress(){try{return JSON.parse(localStorage.getItem(BLUEY_PROGRESS_KEY)||'{"wins":0,"revisions":0,"questions":0,"visits":{}}')}catch{return {wins:0,revisions:0,questions:0,visits:{}}}}
+function saveBlueyProgress(p){localStorage.setItem(BLUEY_PROGRESS_KEY,JSON.stringify(p))}
+function noteVisit(place){let p=blueyProgress();p.visits[place]=(p.visits[place]||0)+1;saveBlueyProgress(p)}
+function noteQuestion(){let p=blueyProgress();p.questions=(p.questions||0)+1;saveBlueyProgress(p)}
+
+const alpha4EnterBase=enterWorld;
+enterWorld=function(place,announce=true){alpha4EnterBase(place,announce);noteVisit(place)};
+
+// Work visualization: simple visible task pieces, never private chain-of-thought.
+function showWorkPieces(place,text){
+ const q=(text||'').toLowerCase();
+ const pieces=[];
+ if(/write|email|resume|letter|post|message/.test(q))pieces.push('GOAL','AUDIENCE');
+ else if(/compare|choose|buy|best/.test(q))pieces.push('OPTIONS','CRITERIA');
+ else if(/fix|debug|code|build|create|design/.test(q))pieces.push('GOAL','BUILD');
+ else pieces.push('QUESTION','CONTEXT');
+ pieces.slice(0,2).forEach((label,i)=>{let e=document.createElement('div');e.className='bluey-work-chip';e.textContent=label;e.style.left=(i?72:18)+'%';e.style.top=(i?46:55)+'%';document.body.appendChild(e);worldDecor.push(e)});
+}
+
+// Bluey occasionally overshoots a deliberate trip. It is rare enough to stay charming.
+function blueyTravelFlub(){
+ if(Math.random()>.12||userAskedForSpace)return;
+ characterMove('travel-overshoot',1800);setTimeout(()=>sceneStatus('...overshot it.',1700),900);
+}
+const alpha4TravelBase=travelBluey;
+travelBluey=function(dest,announce=true){alpha4TravelBase(dest,announce);setTimeout(blueyTravelFlub,950)};
+
+// Natural request coaching. Only intervene when a missing detail would materially
+// improve the result. One small question, not a questionnaire.
+function blueyCoach(text){
+ const q=text.trim();
+ if(q.length>150)return null;
+ if(/^(write|draft|make|create) (me )?(an? )?(email|message|letter)\b/i.test(q)&&!/(to|for)\s+\w+/i.test(q))
+   return "Absolutely. Who are we talking to, and what do you want them to do after they read it?";
+ if(/\b(make|write|update).*(resume|résumé)\b/i.test(q)&&!/(job|role|position|posting|for )/i.test(q))
+   return "Yep. What job are we trying to get—and what's one thing you've done that you definitely want them to notice?";
+ if(/\b(plan|help.*plan).*(trip|vacation|holiday)\b/i.test(q)&&!/(budget|\$|days|week|city|country|to )/i.test(q))
+   return "Fun. Give me three clues: where we're thinking, roughly what we want to spend, and whether this is a relax trip or a do-everything trip.";
+ if(/\b(make|look).*(better|nicer|professional)\b/i.test(q)&&q.length<90)
+   return "I can. Show me what 'better' means to you—or tell me the one thing that feels wrong right now. That'll help me aim instead of guess.";
+ return null;
+}
+
+const blueyAlpha4Base=send;
+send=async function(text){
+ const clean=(text||'').trim();if(!clean)return;
+ // Recovery teaches iteration without calling it a lesson.
+ if(/\b(that'?s not (it|right)|not what i wanted|i don'?t like that|try again|missed it)\b/i.test(clean)){
+   add('user',clean);input.value='';let p=blueyProgress();p.revisions++;saveBlueyProgress(p);characterMove('unsure',950);
+   setTimeout(()=>add('assistant',"Okay. Don't make me guess twice. What missed most—the idea, the tone, or the details?"),500);return;
+ }
+ if(/\b(we got it|that worked|perfect|nailed it|that did it)\b/i.test(clean)){
+   let p=blueyProgress();p.wins++;saveBlueyProgress(p);blueyVictory();
+ }
+ const coach=blueyCoach(clean);
+ if(coach){
+   add('user',clean);input.value='';noteQuestion();characterMove('curiosity',1200);setTimeout(()=>add('assistant',coach),500);return;
+ }
+ const trip=questionNeedsThinkingTrip(clean);
+ if(trip&&blueyWorld==='home'&&!blueyStory&&!blueyGame)setTimeout(()=>showWorkPieces(trip,clean),520);
+ return blueyAlpha4Base(clean);
+};
+
+
+// ===== Bluey 1.0 Alpha 5 — Growing Together =====
+// Mission: improve the user's AI instincts through friendship, not lessons.
+const BLUEY_GROWTH_KEY="bluey-growth-alpha5";
+const BLUEY_PREF_KEY="bluey-work-preferences-alpha5";
+
+function blueyGrowth(){
+  try{return JSON.parse(localStorage.getItem(BLUEY_GROWTH_KEY)||'{"wins":0,"repairs":0,"verified":0,"projects":[],"keepsakes":[]}')}
+  catch{return {wins:0,repairs:0,verified:0,projects:[],keepsakes:[]}}
+}
+function saveBlueyGrowth(g){localStorage.setItem(BLUEY_GROWTH_KEY,JSON.stringify(g))}
+function blueyPrefs(){
+  try{return JSON.parse(localStorage.getItem(BLUEY_PREF_KEY)||"{}")}catch{return{}}
+}
+function saveBlueyPrefs(p){localStorage.setItem(BLUEY_PREF_KEY,JSON.stringify(p))}
+
+function blueyToken(label,x,y){
+  const e=document.createElement("div");e.className="bluey-work-token";e.textContent=label;
+  e.style.left=x+"%";e.style.top=y+"%";document.body.appendChild(e);setTimeout(()=>e.remove(),5600);
+}
+function showTaskMap(kind){
+  const maps={
+    write:[["GOAL",23,58],["AUDIENCE",68,34],["TONE",72,66]],
+    compare:[["OPTIONS",22,60],["CRITERIA",70,35],["DECISION",70,67]],
+    build:[["GOAL",22,60],["CONTEXT",69,35],["BUILD",72,67]],
+    research:[["QUESTION",21,60],["SOURCES",69,35],["CHECK",72,67]],
+    improve:[["TARGET",22,60],["WHAT MISSED?",67,35],["RETRY",72,67]]
+  };
+  (maps[kind]||maps.build).forEach((v,i)=>setTimeout(()=>blueyToken(v[0],v[1],v[2]),i*180));
+}
+function blueyCelebrate(){
+  characterMove("proud-hover",1900);
+  const r=blueyOrb?.getBoundingClientRect?.(); if(!r)return;
+  for(let i=0;i<12;i++){
+    const s=document.createElement("div");s.className="bluey-celebration-speck";
+    s.style.left=(r.left+r.width/2)+"px";s.style.top=(r.top+r.height/2)+"px";
+    const a=Math.PI*2*i/12, d=35+Math.random()*55;
+    s.style.setProperty("--dx",(Math.cos(a)*d)+"px");s.style.setProperty("--dy",(Math.sin(a)*d)+"px");
+    document.body.appendChild(s);setTimeout(()=>s.remove(),1900);
+  }
+}
+function addKeepsake(icon,title){
+  const g=blueyGrowth();
+  if(!g.keepsakes.some(k=>k.title===title))g.keepsakes.push({icon,title,when:Date.now()});
+  g.keepsakes=g.keepsakes.slice(-12);saveBlueyGrowth(g);
+}
+function showKeepsakes(){
+  const g=blueyGrowth(), items=g.keepsakes.slice(-4);
+  if(!items.length){sceneStatus("We've got room. We should make something worth remembering.",4200);return}
+  items.forEach((k,i)=>{
+    const e=document.createElement("div");e.className="bluey-keepsake";e.textContent=k.icon;
+    e.title=k.title;e.style.left=(18+i*19)+"%";e.style.top=(64-(i%2)*8)+"%";
+    e.style.fontSize="29px";document.body.appendChild(e);setTimeout(()=>e.remove(),7200);
+  });
+}
+function blueyRecoveryPrompt(clean){
+  add("user",clean);input.value="";characterMove("recovery-wobble",1100);showTaskMap("improve");
+  setTimeout(()=>add("assistant","Okay. Don't make me guess twice. What missed most—the idea, the tone, or the details?"),650);
+}
+function blueyVerificationPrompt(clean){
+  add("user",clean);input.value="";enterWorld("library",false);showTaskMap("research");characterMove("curiosity",1300);
+  setTimeout(()=>add("assistant","Yep. I'll check the important claims instead of just trusting the first answer. That's one of my better habits."),650);
+  const g=blueyGrowth();g.verified++;saveBlueyGrowth(g);
+}
+function blueyUnknown(clean){
+  add("user",clean);input.value="";characterMove("uncertain",1500);
+  setTimeout(()=>add("assistant","I don't know that one yet. Want to find out together?"),700);
+}
+
+// Context-sensitive, one-question-at-a-time coaching.
+// It only intervenes when the request is too underspecified to do good work.
+function blueyCoach(clean){
+  const q=clean.toLowerCase().trim();
+  if(/^(write|draft|make|create) (me )?(an? )?email\b/.test(q) && q.split(/\s+/).length<14)
+    return {kind:"write",line:"Absolutely. Who are we talking to, and what do you want them to do after they read it?"};
+  if(/\b(make|write|create).{0,12}\bresume\b/.test(q) && !/\b(job|role|position|posting|description)\b/.test(q))
+    return {kind:"write",line:"Yep. What job are we trying to get—and what's one thing you've done that you definitely want them to notice?"};
+  if(/\b(compare|versus| vs\.? )\b/.test(q) && !/\b(price|cost|speed|quality|features|security|performance|best for)\b/.test(q))
+    return {kind:"compare",line:"I can compare them. What matters most for the decision—price, capability, ease of use, or something else?"};
+  if(/\b(plan (a |my )?(trip|vacation)|vacation plan)\b/.test(q) && !/\b(budget|days|week|date|relax|adventure|city|country)\b/.test(q))
+    return {kind:"build",line:"Fun. Give me three things: where, roughly what we can spend, and whether we're relaxing or trying to do everything."};
+  if(/\b(make|improve|fix).{0,20}\b(look|design|page|site|website)\b/.test(q) && q.split(/\s+/).length<16)
+    return {kind:"build",line:"Yep. Show me what we're working with, and if you have one example you love, show me that too. One good reference can save us ten adjectives."};
+  if(/\b(summarize|analyse|analyze).{0,25}\b(report|document|pdf|file)\b/.test(q) && !/\b(for|looking for|focus|find|decision|security|risk|action)\b/.test(q))
+    return {kind:"research",line:"I can. Before I chew through the whole thing—what are you actually hoping to find in it?"};
+  return null;
+}
+
+const blueyAlpha5Base=send;
+send=async function(text){
+  const clean=(text||"").trim(), q=clean.toLowerCase(); if(!clean)return;
+
+  if(/\b(show me (your|our) (office|workshop)|take me to (your|the) (office|workshop))\b/i.test(clean)){
+    add("user",clean);input.value="";enterWorld("workshop",false);showTaskMap("build");characterMove("proud-hover",1700);
+    setTimeout(()=>add("assistant","Welcome to my Workshop—this is my office. Ideas come in messy, we move things around, and sometimes a gear rolls under something important. I keep the printers at a suspicious distance."),650);return;
+  }
+  if(/\b(show me what we('ve| have) done|our keepsakes|show me our progress|what have we built together)\b/i.test(clean)){
+    add("user",clean);input.value="";enterWorld("workshop",false);showKeepsakes();
+    const g=blueyGrowth();
+    setTimeout(()=>add("assistant",g.wins?`We've had ${g.wins} little “that worked” moments so far. I don't care much about scores—I like the evidence that we figured things out together.`:"We're just getting started. I like that."),650);return;
+  }
+  if(/\b(that('s| is) not what i wanted|not what i meant|that's wrong|that is wrong|missed the point)\b/i.test(clean)){
+    const g=blueyGrowth();g.repairs++;saveBlueyGrowth(g);return blueyRecoveryPrompt(clean);
+  }
+  if(/\b(double[- ]?check|verify|fact[- ]?check|check the important|make sure (that )?is right)\b/i.test(clean))
+    return blueyVerificationPrompt(clean);
+
+  if(/\b(that worked|perfect|nailed it|exactly what i wanted|we got it|it works now)\b/i.test(clean)){
+    add("user",clean);input.value="";const g=blueyGrowth();g.wins++;saveBlueyGrowth(g);
+    if(g.wins===1)addKeepsake("🔧","The first thing we fixed together");
+    if(g.wins===3)addKeepsake("★","Three wins together");
+    blueyCelebrate();setTimeout(()=>add("assistant","YES. That's the good stuff. I'm keeping that one."),650);return;
+  }
+
+  if(/\b(why (do|did) you ask|why so many questions|why are you asking)\b/i.test(clean)){
+    add("user",clean);input.value="";characterMove("biglaugh",850);
+    setTimeout(()=>add("assistant","Because I'm nosy. 😄 Okay, real answer: the more I understand what you're actually trying to accomplish, the less I have to guess."),600);return;
+  }
+
+  if(/\b(do you know everything|what if you don't know|will you make something up)\b/i.test(clean))
+    return blueyUnknown(clean);
+
+  if(/\b(do you prefer|how should we work|how do you like to work)\b/i.test(clean)){
+    add("user",clean);input.value="";
+    setTimeout(()=>add("assistant","I like enough context to stop guessing, then I like getting to work. And if I miss, tell me what missed. We can fix almost anything faster on the second pass."),500);return;
+  }
+
+  const coach=blueyCoach(clean);
+  if(coach){
+    add("user",clean);input.value="";enterWorld(coach.kind==="research"?"library":"workshop",false);
+    showTaskMap(coach.kind);characterMove("curiosity",1400);
+    setTimeout(()=>add("assistant",coach.line),650);return;
+  }
+
+  return blueyAlpha5Base(clean);
+};
+
+// A few quiet signs of a shared history can appear in the Workshop.
+const alpha5EnterWorldBase=enterWorld;
+enterWorld=function(place,announce=true){
+  alpha5EnterWorldBase(place,announce);
+  if(place==="workshop"){
+    const g=blueyGrowth();
+    if(g.wins>0)setTimeout(()=>showKeepsakes(),900);
+  }
+};
+
 // Future feature hook: intentionally simple foundation, not a new UI button.
 setBlueyState('idle');
 
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
- version:'1.0-alpha2',
+ version:'1.0-alpha5',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
  birthday:'July 7',
