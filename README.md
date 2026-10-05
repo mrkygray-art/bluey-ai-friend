@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 38 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 39 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -239,3 +239,22 @@ The recommended first sign-in options are **email magic link** and **Continue wi
 Use a dedicated Supabase project for identity and user-owned data. Store conversations, saved projects, and user-approved memory in separate records keyed by the authenticated user ID, protected by database row-level security. Never put a server secret in browser code. Make memory opt-in, let people review/edit/delete each saved item, export or clear their data, and delete their account. Save only information the user explicitly asks Bluey to remember; do not silently turn every chat, photo, or sensitive detail into memory. Before each reply, retrieve only relevant approved memories and make it easy for the user to see when Bluey used one.
 
 To enable this, the project owner must create/connect the Supabase project, configure email and Google OAuth redirect URLs, set the hosting environment's public project URL and publishable key, add the RLS-protected schema, and test sign-in, ownership isolation, recovery, export, and deletion. Alpha 38 intentionally does not display a nonfunctional sign-in button.
+
+## Bluey 1.0 Alpha 39 — Browser compatibility and a useful capability answer
+
+- Bluey now has an explicit answer for “What do you work with?” It describes the intended device/browser support and his chat, prompt, image, document, voice, and microphone capabilities while explaining their setup requirements. It also tells users that sign-in and cross-device memory are not enabled.
+- The server-side character instructions carry the same capability facts, and tell Bluey not to claim that every browser/device has been individually certified.
+- Added `100vh` fallbacks for browsers without dynamic viewport units, and Safari-prefixed backdrop blur for stage tokens and room objects. Keyboard send also has a fallback when `form.requestSubmit()` is unavailable.
+- Intended targets: current Safari on iPhone/iPad/Mac; Chrome, Firefox, and DuckDuckGo Browser on current iPhone, Android, Windows, and Mac releases. Desktop screenshot paste is supported when the browser exposes an image item on the clipboard. On mobile, use **Add photos** if the browser does not expose pasted images.
+- Voice playback requires `/api/speech` and its server key. Microphone input requires HTTPS, microphone permission, and a browser-supported recorder format. Photo analysis and document creation require their API routes. Use the browser's normal text composer if voice input is unavailable.
+
+Compatibility status: source syntax and the Alpha 38 attachment/send behavior have been checked in this workspace. Browser binaries and physical iPhone/Android devices are not available here, so this release is not represented as physically verified across the listed browsers. Before calling the target matrix validated, run the smoke checklist below on at least one current iPhone Safari, Android Chrome, DuckDuckGo Browser, desktop Chrome, desktop Firefox, and desktop Safari:
+
+1. Load the page and refresh it; confirm the composer remains available.
+2. Send a text prompt and verify the reply appears and, when configured, plays aloud. Toggle Voice off and confirm it stays quiet.
+3. Attach a photo using **Add photos**; on desktop, also paste a screenshot. Confirm the thumbnail appears and Bluey describes the visible content.
+4. Ask for a Word, Excel, and PDF file and open each download.
+5. Tap Bluey and a room object; confirm the stage moves and remains usable at phone width.
+6. Tap Bluey to try microphone input; allow permission and confirm transcription, or verify that typed chat remains available when mic input is unsupported.
+
+Upload the complete Alpha 39 bundle, including all `alpha*.js`, `alpha*.css`, and `api/` files. The server prompt and API routes are part of the compatibility and capability behavior.
