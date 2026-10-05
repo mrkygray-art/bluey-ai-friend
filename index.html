@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 1.0 Alpha 13</title>
+<meta name="theme-color" content="#fff"><title>Bluey 1.0 Alpha 14</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -475,7 +475,7 @@ body.world-basement{background:linear-gradient(180deg,#edf0f4 0 38%,#fff 38%)}
   100%{opacity:0;transform:translateY(-5px)}
 }
 
-</style><link rel="stylesheet" href="/alpha7.css"><link rel="stylesheet" href="/alpha8.css"><link rel="stylesheet" href="/alpha10.css"><link rel="stylesheet" href="/alpha11.css"></head>
+</style><link rel="stylesheet" href="/alpha7.css"><link rel="stylesheet" href="/alpha8.css"><link rel="stylesheet" href="/alpha10.css"><link rel="stylesheet" href="/alpha11.css"><link rel="stylesheet" href="/alpha14.css"></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
 <div id="liveMicDiagnostic" style="display:none !important;width:min(780px,calc(100% - 28px));margin:0 auto 10px;padding:12px 14px;border:1px solid #e1e5e8;border-radius:18px;color:#64748b;font-size:14px">
@@ -495,7 +495,7 @@ body.world-basement{background:linear-gradient(180deg,#edf0f4 0 38%,#fff 38%)}
   </div>
   <audio id="lastRecordingAudio" preload="metadata"></audio>
 </div>
-<div id="bluey-tools" aria-label="Bluey controls"><div class="bluey-tool-group"><button id="bluey-attach" type="button" aria-label="Add photos" title="Add one or more photos"><span id="bluey-upload-icon" aria-hidden="true">↑</span> Add photos</button><span id="bluey-files" aria-live="polite"></span></div><div class="bluey-tool-group"><button id="bluey-voice" type="button" aria-pressed="true">Voice: On</button><button id="bluey-sounds" type="button" aria-pressed="true">Sounds: On</button></div></div><div id="bluey-photo-preview" aria-live="polite"></div>
+<div id="bluey-tools" aria-label="Bluey controls"><div class="bluey-tool-group"><button id="bluey-attach" type="button" aria-label="Add photos" title="Add one or more photos"><span id="bluey-upload-icon" aria-hidden="true">↑</span> Add photos</button><button id="bluey-prompt-start" class="bluey-prompt-tool" type="button" aria-label="Build a prompt with Bluey">✦ Build prompt</button><span id="bluey-files" aria-live="polite"></span></div><div class="bluey-tool-group"><button id="bluey-voice" type="button" aria-pressed="true">Voice: On</button><button id="bluey-sounds" type="button" aria-pressed="true">Sounds: On</button></div></div><div id="bluey-photo-preview" aria-live="polite"></div>
 <form class="composer" id="form"><input id="input" placeholder="Just start typing…" autocomplete="off" spellcheck="true" autocorrect="on" autocapitalize="sentences" aria-label="Message Bluey"><button>Send</button></form><input id="bluey-photo-input" type="file" accept="image/*" multiple hidden></section></div>
 <script>
 const app=document.querySelector('#app'),mover=document.querySelector('#mover'),orb=document.querySelector('#orb'),statusEl=document.querySelector('#status'),messages=document.querySelector('#messages'),form=document.querySelector('#form'),input=document.querySelector('#input');
@@ -2088,7 +2088,7 @@ setBlueyState('idle');
 window.blueyAbout={
  name:'Bluey',
  summary:'Bluey is a faceless blue AI friend designed to listen, think, help, teach, react, remember the flow of a conversation, and keep you company without getting in the way.',
- version:'1.0-alpha13',
+ version:'1.0-alpha14',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
  birthday:'July 7',
@@ -2382,4 +2382,4 @@ send=async function(text){
 // Restore current room through the Alpha 6 renderer.
 enterWorld(blueyWorld||"home",false);
 
-</script><div id="bluey-version" aria-label="Bluey version">Bluey 1.0 Alpha 13</div><script src="/alpha7.js"></script><script src="/alpha8.js"></script><script src="/alpha9.js"></script><script src="/alpha10.js"></script><script src="/alpha11.js"></script><script src="/alpha13.js"></script></body></html>
+</script><div id="bluey-version" aria-label="Bluey version">Bluey 1.0 Alpha 14</div><script src="/alpha7.js"></script><script src="/alpha8.js"></script><script src="/alpha9.js"></script><script src="/alpha10.js"></script><script src="/alpha11.js"></script><script src="/alpha13.js"></script><script src="/alpha14.js"></script></body></html>

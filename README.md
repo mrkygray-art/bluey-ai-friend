@@ -1,8 +1,8 @@
-# Bluey 1.0 Alpha 13 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 14 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
-This bundle carries the Alpha 7–10 tools and world forward, adds a persistent lower-right version label, and routes assistant messages through the voice preference.
+This bundle carries forward the Bluey world, its tools and interaction features, adds a guided prompt-building loop, and includes a persistent lower-right version label.
 
 ## Six connected systems
 - **Character Engine:** existing personality, body language, comedy, dancing and lore.
@@ -132,7 +132,7 @@ Well-specified task requests can receive subtle positive reinforcement instead o
 - **Ask about photos:** use the blue **Add photos** arrow to attach up to five pictures. Bluey can describe them, read visible text, and use the photos in a generated Word document or PDF.
 - **Choose how Bluey sounds:** Voice and Sounds switches are independent and saved on the device. Voice turns speech on or off; Sounds controls Bluey's short electronic chirps and beeps.
 - **Spelling help:** the composer enables the device's spelling suggestions, and Bluey may offer a clickable correction when a typo clearly changes meaning.
-- **One question at a time:** complex requests can be shaped over a few conversational turns, then Bluey makes a useful first version.
+- **Adaptive clarification:** Bluey asks for useful missing details conversationally, then makes a practical first version.
 - **Temporary room props:** interactive items fade away after a short visit, and room changes clear the old scene.
 
 The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MODEL` settings. Production installs the `docx`, `pdfkit` and `xlsx` package dependencies from `package.json`.
@@ -180,3 +180,13 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 - Turning Voice on plays a short test line so the user can confirm audio on the current device.
 - Speech playback errors are shown in the page with practical phone volume and text-to-speech checks instead of only going to the browser console.
 - The existing Alpha 12 photo API handoff and photo analysis remain included. Deploy the full bundle so the updated page, `alpha13.js`, and `api/chat.js` are all live together.
+
+## Bluey 1.0 Alpha 14 — Prompt Workshop
+
+- Users can start from the **Build prompt** button beside Add photos or ask naturally for help writing, creating, or improving a prompt.
+- Bluey asks only for useful missing details, can group up to two related questions, and drafts after a few turns using clearly marked assumptions where needed.
+- The prompt card offers editable Quick, Balanced, and Detailed versions, with copy and try actions.
+- After trying the prompt, users can say what they want changed; Bluey refines the prompt using that feedback and the latest result.
+- A small, optional coaching note points out one useful prompting choice without turning the conversation into a lesson.
+- Prompt Workshop uses the new `/api/prompt-workshop` endpoint and the existing `OPENAI_API_KEY` and optional `BLUEY_MODEL` configuration. Deploy the whole project, including `api/prompt-workshop.js`, `alpha14.js`, and `alpha14.css`.
+- Alpha 13 voice test and diagnostics, Alpha 12 photo analysis and receipt checks, document creation, stage interactions, and response variety are retained.
