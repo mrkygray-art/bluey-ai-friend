@@ -20,18 +20,30 @@ const blueyRenderRoomObjectsBefore40=renderInteractiveObjects;
 renderInteractiveObjects=function(place){const result=blueyRenderRoomObjectsBefore40(place);blueyVisibleObjects.forEach(object=>blueyStage37.appendChild(object));return result};
 renderInteractiveObjects(blueyWorld||'home');
 
-// Object interactions remember the visit and advance instead of looping a canned tooltip.
+// Object Personality V2: Discover -> Learn -> Curiosity -> Play.
 const blueyObjectTapCounts40=new Map();
 const blueyObjectOpeners40=['Oh, this one.','You found one of my little things.','Ha — good pick.','I wondered if you would tap that.','This one has a story.','Ooh, you noticed it.'];
 const blueyObjectClosers40=['',' There’s a little more to this one if you’re curious.',' That one makes me smile, in the very digital sense.',' You can ask me anything about it.',' We can follow that rabbit hole if you want.'];
-const blueyReturnLines40=['You came back to it.','Back again — I like your curiosity.','Still thinking about this one?','Okay, this one definitely has your attention.','We meet again.'];
-const blueyWaitLines40=['No rush. It’ll be here when you have a thought.','Still thinking? That’s okay. We don’t have to force the question.','We can leave that idea glowing in the background for a bit.','You don’t have to answer me just because I asked. Curiosity can sit for a minute.','I think we’ve interrogated this object enough for now. 😄 Bring me the thought it sparked when you’re ready.'];
+const blueyReturnLines40=['You came back to it.','Back again — I like your curiosity.','Okay, this one definitely has your attention.','We meet again.'];
+const blueyObjectPlay40={
+ 'home-marbles':['Another marble inspection? Excellent choice.','At this point I should probably let you name one.','You definitely have a favorite object in my house, don’t you?','Okay, pick a color. I’m emotionally prepared to adopt a marble.','I think you’re testing whether I can run out of marble opinions. I cannot. 😄'],
+ 'home-lamp':['You keep coming back to this lamp. I think you have an idea brewing.','Careful. Keep tapping it and we might accidentally invent something.','Okay, now I’m curious. What are you thinking about?','The lamp says you’re up to something. I’m inclined to believe it.','One more tap and I’m calling this an official brainstorm. 😄'],
+ 'home-mat':['Okay, you really like this welcome mat. 😄','Yep. Still a welcome mat. I checked.','I’m starting to think this is your favorite thing in my house.','Tap it again and I’m charging admission. 😂','All right, you win. The welcome mat likes you too.'],
+ 'quiet-leaf':['You keep checking on the leaf. It is still taking the scenic route.','That leaf has absolutely no deadlines. I respect the commitment.','I think you and this leaf have an understanding now.','Plot twist: it is still falling. Very, very slowly.'],
+ 'quiet-hourglass':['You checked the hourglass again. Time remains suspiciously time-shaped.','If we keep tapping this, I’m going to start billing by the grain of sand. 😄','The hourglass appreciates the attention. It has been working around the clock.','Okay, that pun was inevitable.'],
+ 'edge-light':['Back to the little light? You may be an explorer.','Careful — curiosity is how new rooms happen around here.','That light is starting to think you’re coming over.','I have a feeling we’re eventually going past this marker together.'],
+ 'edge-marker':['Yep, that’s still where I stopped. For now.','You keep tapping the boundary. That feels extremely explorer-like.','The marker is getting nervous. 😄','I’m starting to suspect you want to know what’s on the other side.']
+};
+const blueyGenericPlay40=['Okay, you definitely noticed this one. 😄','I think you’re testing me now.','We’ve officially moved from inspecting this to hanging out with it.','Yep. Still here. Still interesting.','At this point, I think this object knows you.'];
+function blueyPick40(items,index){return items[index%items.length]}
 function blueyDynamicObjectReply40(obj){
  const count=(blueyObjectTapCounts40.get(obj.id)||0)+1;blueyObjectTapCounts40.set(obj.id,count);
  if(count===1){const opener=blueyObjectOpeners40[Math.floor(Math.random()*blueyObjectOpeners40.length)];const closer=blueyObjectClosers40[Math.floor(Math.random()*blueyObjectClosers40.length)];return `${opener} ${obj.short}${closer}`.replace(/\s+/g,' ').trim()}
- if(count===2&&obj.deeper){const returnLine=blueyReturnLines40[Math.floor(Math.random()*blueyReturnLines40.length)];return `${returnLine} ${obj.deeper} ${obj.rabbit||''}`.replace(/\s+/g,' ').trim()}
- if(count===3){const returnLine=blueyReturnLines40[Math.floor(Math.random()*blueyReturnLines40.length)];return obj.rabbit?`${returnLine} ${obj.rabbit}`:`${returnLine} ${blueyWaitLines40[Math.floor(Math.random()*blueyWaitLines40.length)]}`}
- return blueyWaitLines40[(count-4)%blueyWaitLines40.length];
+ if(count===2&&obj.deeper){const returnLine=blueyReturnLines40[Math.floor(Math.random()*blueyReturnLines40.length)];return `${returnLine} ${obj.deeper}`.replace(/\s+/g,' ').trim()}
+ if(count===3&&obj.rabbit)return obj.rabbit;
+ const play=blueyObjectPlay40[obj.id]||blueyGenericPlay40;const playIndex=Math.max(0,count-4);
+ if(count>=6&&Math.random()<0.12)return `Okay, secret object achievement unlocked: “${obj.title} Enthusiast.” 🏆`;
+ return blueyPick40(play,playIndex);
 }
 inspectBlueyObject=function(obj,el){blueyStopDepthFlight();blueyStageActivity({front:true});blueyObjectFocus={obj,depth:0};clearTimeout(blueyRoomExpiry);blueyRoomExpiry=setTimeout(()=>{const nodes=[...(blueyVisibleObjects||[])];nodes.forEach(item=>item.classList.add('bluey-object-leaving'));setTimeout(()=>{nodes.forEach(item=>item.remove());blueyVisibleObjects=blueyVisibleObjects.filter(item=>!nodes.includes(item))},420)},42000);const answer=blueyDynamicObjectReply40(obj);setTimeout(()=>{add('assistant',answer);if(typeof blueyVoiceOn==='undefined'||blueyVoiceOn)speak(answer,'curious')},260)};
 
