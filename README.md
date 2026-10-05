@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 14 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 15 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -183,10 +183,19 @@ The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MOD
 
 ## Bluey 1.0 Alpha 14 — Prompt Workshop
 
-- Users can start from the **Build prompt** button beside Add photos or ask naturally for help writing, creating, or improving a prompt.
-- Bluey asks only for useful missing details, can group up to two related questions, and drafts after a few turns using clearly marked assumptions where needed.
+- Users can start from the **Build prompt** button beside Add photos or ask naturally for help writing, creating, or improving a prompt. Requests about getting better results with AI also open the workshop.
+- Bluey first suggests a practical approach, then asks up to three targeted questions total when the answers would improve the prompt. He skips questions that are not needed and drafts using clearly marked assumptions when appropriate.
 - The prompt card offers editable Quick, Balanced, and Detailed versions, with copy and try actions.
 - After trying the prompt, users can say what they want changed; Bluey refines the prompt using that feedback and the latest result.
 - A small, optional coaching note points out one useful prompting choice without turning the conversation into a lesson.
-- Prompt Workshop uses the new `/api/prompt-workshop` endpoint and the existing `OPENAI_API_KEY` and optional `BLUEY_MODEL` configuration. Deploy the whole project, including `api/prompt-workshop.js`, `alpha14.js`, and `alpha14.css`.
+- Bluey speaks as himself (“I” and “me”) instead of describing himself as AI; his welcome and capability wording use his name and first-person voice.
+- Prompt Workshop uses the new `/api/prompt-workshop` endpoint and the existing `OPENAI_API_KEY` and optional `BLUEY_MODEL` configuration. Deploy the whole project, including `api/prompt-workshop.js`, `alpha15.js`, and `alpha15.css`.
 - Alpha 13 voice test and diagnostics, Alpha 12 photo analysis and receipt checks, document creation, stage interactions, and response variety are retained.
+
+## Bluey 1.0 Alpha 15 — Bluey speaks as Bluey
+
+- In the Prompt Workshop, Bluey suggests a practical approach first, then asks up to three targeted questions total when they will improve the prompt. He asks fewer when enough is already clear.
+- Requests like “Teach me how to get better results from AI” now open the Prompt Workshop, where Bluey answers from his own point of view and helps tailor a prompt.
+- Bluey uses first-person wording (“I” and “me”) instead of describing himself as AI. Direct questions about AI still get a clear, honest answer.
+- Chat replies use plain text so Markdown markers such as literal asterisks do not appear in the conversation.
+- Alpha 14's editable prompt drafts, copy and try actions, and refine loop remain included.
