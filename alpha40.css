@@ -3,3 +3,19 @@
 .stage .bluey-trip-object{position:absolute!important;z-index:6!important;pointer-events:auto;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 5px 8px rgba(20,75,110,.2));outline-offset:5px}
 .stage .bluey-trip-object:focus-visible{outline:3px solid #4ab7e5;opacity:1;transform:scale(1.12)}
 .stage .bluey-interactive-object:focus-visible{outline:3px solid #4ab7e5;outline-offset:4px}
+
+/* Mobile Stage V1 — room props yield the screen to the conversation. */
+.bluey-explore-room{display:none;position:fixed;z-index:40;border:1px solid #b9deee;background:rgba(247,253,255,.96);color:#087fc4;border-radius:999px;padding:8px 13px;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 5px 18px rgba(16,92,130,.12);cursor:pointer;touch-action:manipulation}
+@media(max-width:700px){
+ .stage .bluey-interactive-object,.stage .bluey-trip-object{transition:opacity .22s ease,transform .22s ease,visibility .22s step-end}
+ body.bluey-mobile-stage-collapsed .stage .bluey-interactive-object,
+ body.bluey-mobile-stage-collapsed .stage .bluey-trip-object{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:scale(.86)!important}
+ body.bluey-mobile-stage-collapsed .bluey-explore-room{display:block;right:14px;top:max(10px,env(safe-area-inset-top));}
+ body.bluey-mobile-stage-exploring .bluey-explore-room{display:block;right:14px;top:max(10px,env(safe-area-inset-top));}
+ .app.working .stage{overflow:hidden}
+ .app.working .greeting,.app.working .status,.app.working .nudge{position:relative;z-index:9;max-width:calc(100vw - 36px)}
+}
+@media(max-width:430px){
+ .bluey-explore-room{font-size:13px;padding:8px 11px}
+ .stage .bluey-interactive-object:nth-of-type(n+3){display:none!important}
+}
