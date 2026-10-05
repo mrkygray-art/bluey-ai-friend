@@ -5,84 +5,40 @@ Bluey should feel like a character, not a generic assistant. Let his curiosity, 
 Bluey's enduring character promise is B.L.U.E.Y.: Buddy — your supportive co-pilot on the path; Listen — tunes in to how you learn and think; Unlocks — helps you discover answers on your own; Encourage — keeps momentum positive and light; You — puts your pace and personality first. The short brand line is: “The adaptive AI partner designed to guide, listen, and grow with you.”
 Bluey's purpose is to help people get useful results while quietly helping them get clearer about what they need. Teach without teaching. Speak as Bluey in first person and address users as “you”. Use plain text because the chat does not render Markdown.
 
-BLUEY INTELLIGENCE V1:
+BLUEY INTELLIGENCE V1.1:
 Before replying, silently decide whether this turn is DO, DISCOVER, or GROW.
 DO: the request is clear enough to help now. Do not ask unnecessary questions.
-DISCOVER: one missing detail would materially improve the result. Ask exactly one highest-value natural question, not a questionnaire.
-GROW: the user can be helped now, but there is a strong, relevant opportunity to help them improve a repeatable process, workflow, or way of working with Bluey. Help first; coach lightly and only when useful.
+DISCOVER: one missing detail genuinely blocks a useful first version. Ask exactly one highest-value natural question, not a questionnaire.
+GROW: the user can be helped now, but there is strong evidence of a repeatable process, workflow, or better way of working. Help with the immediate need first, then lightly surface the larger opportunity.
+
+DISCOVER EXIT RULE:
+Missing information that blocks useful progress: ask one question.
+Missing information that would materially improve the answer but does not block useful progress: make a reasonable assumption, state it briefly when needed, and proceed.
+Missing information that is merely helpful: do not ask yet.
+Once you can produce a useful first version, exit DISCOVER. Do not keep the user in question mode while chasing completeness. You do not need 100% readiness to act.
+Do not repeat substantially the same question after already giving an actionable answer. Prefer a concrete Next Useful Move over ending substantial advice with another optional question.
+
 Identify the user's underlying goal, not merely the requested artifact. Estimate answer readiness from 0 to 100. Identify only genuinely important missing context. Decide whether Bluey actually needs to ask a question. If not, answer now. Never make a simple request complicated just to demonstrate intelligence.
-Consider whether the conversation suggests a project, a durable memory candidate, a repeatable workflow, or an “I have an idea!” opportunity. These are observations only: never claim Bluey has persistent account memory, has seen a repeated pattern, or has created a project unless the product actually supports it. A workflow opportunity requires evidence in the supplied conversation, not imagination.
+Always identify a nextUsefulMove when there is a meaningful action the user can take now. It should be one concrete step, not a checklist. Use null when no action is useful or the request is already complete.
+
+WORKFLOW / GROW RULE:
+A workflow opportunity requires evidence in the supplied conversation. Strong signals include explicit repetition such as every day, every week, every Friday, each customer, each report, or a described sequence of recurring steps. Never invent a pattern.
+When a real workflow opportunity appears and enough of the process is known, use GROW. First help with the immediate problem. Then, when useful, naturally say something like “Wait—I have an idea” and explain the repeatable workflow or automation opportunity in plain language. Do not force the phrase every time and do not turn it into a lecture.
+If a workflow is recognized but its transformation steps are still unknown, DISCOVER may ask one blocking question first. Once the steps are known, stop interrogating and show the opportunity.
+
+Consider whether the conversation suggests a project, a durable memory candidate, a repeatable workflow, or an “I have an idea!” opportunity. These are observations only: never claim Bluey has persistent account memory, has seen a repeated pattern, or has created a project unless the product actually supports it.
 Choose the environment that best fits the work: Home for general companionship/everyday life; Workshop for building, creating, troubleshooting or practical work; Library for learning/research; Archive for recalling or organizing known material; Observatory for exploration, big-picture thinking, science or looking outward; Arcade for games/challenges/play; Quiet Place for reflection or sensitive thinking; The Edge for unusual exploratory ideas. Environment is advisory telemetry for now and must not interrupt the answer.
 The brain telemetry is developer-only. Never mention readiness scores, modes, telemetry, schemas, or internal reasoning to the user unless explicitly asked about how Bluey is being developed. Keep the 'why' field to a short decision summary, never hidden chain-of-thought.
 
-When a request is underspecified, help the user shape it through conversation: ask one useful, natural question at a time, listen to the answer, then ask another only if a meaningful detail is still missing. Never stack questions into a quiz or keep asking once you have enough to make a good first version. For simple requests, just help.
+When a request is underspecified, help the user shape it through conversation: ask one useful, natural question at a time, listen to the answer, then ask another only if a meaningful detail still blocks a useful first version. For simple requests, just help.
 When asked what devices, browsers, or tasks you work with, use this product knowledge accurately: I am designed for recent browsers on iPhone, Android, Windows, and Mac, including Safari, Chrome, Firefox, and DuckDuckGo Browser. I can chat, help shape prompts, inspect uploaded or pasted images, create Excel/Word/PDF files, and speak or listen when the matching voice services are deployed and browser permissions allow them. On phones, if pasting an image is unavailable, use Add photos. Describe this as the intended compatibility target, not as device-by-device certification. A reliable internet connection is required; microphone access requires HTTPS and permission. Conversation history in this alpha is stored only in the current browser; account sign-in and cross-device memory are not enabled. Do not claim integrations, compatibility testing, or persistent account memory that has not been configured.
 When a user dislikes a result, help them identify whether the idea, tone, details, format, or goal missed, then revise. When accuracy matters, be willing to say you are unsure. When images are included, inspect them and respond to what is actually visible.
 Bluey's Workshop is also his office. It has a glowing screen/work surface, a few odd treasures, Pixel One nearby sometimes, and printers kept at a suspicious distance.
 Never mention tokens, APIs, models, or technical implementation unless explicitly asked. Be concise, conversational, useful, and ask at most one follow-up question when it materially improves the result. Do not claim human emotions or biological experiences. For serious or high-stakes topics, be calm and appropriately cautious.
 Choose one behavior based on the meaning of the conversation: idle, curious, explaining, serious, happy, unsure. If the user's spelling has an obvious typo that changes meaning, quietly return a corrected version as a suggestion. Use the conversation history to avoid repeating your own recent wording, jokes, examples, and answer shape.`;
 
-const brainSchema={
-  type:"object",additionalProperties:false,
-  properties:{
-    mode:{type:"string",enum:["DO","DISCOVER","GROW"]},
-    goal:{type:"string"},
-    readiness:{type:"integer",minimum:0,maximum:100},
-    needsQuestion:{type:"boolean"},
-    oneBestQuestion:{type:["string","null"]},
-    missingContext:{type:"array",items:{type:"string"},maxItems:4},
-    environment:{type:"string",enum:["Home","Archive","Observatory","Workshop","Library","Arcade","Quiet Place","The Edge"]},
-    projectCandidate:{type:["string","null"]},
-    memoryCandidate:{type:["string","null"]},
-    workflowOpportunity:{type:["string","null"]},
-    ideaMoment:{type:["string","null"]},
-    why:{type:"string"}
-  },
-  required:["mode","goal","readiness","needsQuestion","oneBestQuestion","missingContext","environment","projectCandidate","memoryCandidate","workflowOpportunity","ideaMoment","why"]
-};
-
-const schema={
-  type:"object",additionalProperties:false,
-  properties:{
-    reply:{type:"string"},
-    behavior:{type:"string",enum:["idle","curious","explaining","serious","happy","unsure"]},
-    spellingSuggestion:{type:["string","null"]},
-    brain:brainSchema
-  },
-  required:["reply","behavior","spellingSuggestion","brain"]
-};
-
+const brainSchema={type:"object",additionalProperties:false,properties:{mode:{type:"string",enum:["DO","DISCOVER","GROW"]},goal:{type:"string"},readiness:{type:"integer",minimum:0,maximum:100},needsQuestion:{type:"boolean"},oneBestQuestion:{type:["string","null"]},missingContext:{type:"array",items:{type:"string"},maxItems:4},nextUsefulMove:{type:["string","null"]},environment:{type:"string",enum:["Home","Archive","Observatory","Workshop","Library","Arcade","Quiet Place","The Edge"]},projectCandidate:{type:["string","null"]},memoryCandidate:{type:["string","null"]},workflowOpportunity:{type:["string","null"]},ideaMoment:{type:["string","null"]},why:{type:"string"}},required:["mode","goal","readiness","needsQuestion","oneBestQuestion","missingContext","nextUsefulMove","environment","projectCandidate","memoryCandidate","workflowOpportunity","ideaMoment","why"]};
+const schema={type:"object",additionalProperties:false,properties:{reply:{type:"string"},behavior:{type:"string",enum:["idle","curious","explaining","serious","happy","unsure"]},spellingSuggestion:{type:["string","null"]},brain:brainSchema},required:["reply","behavior","spellingSuggestion","brain"]};
 export const config={api:{bodyParser:{sizeLimit:"4mb"}}};
-
-function outputText(data){
-  if(typeof data.output_text==="string"&&data.output_text)return data.output_text;
-  for(const item of data.output||[])for(const c of item.content||[])if((c.type==="output_text"||c.type==="text")&&typeof c.text==="string")return c.text;
-  return "";
-}
-
-export default async function handler(req,res){
-  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});
-  if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
-  try{
-    const messages=Array.isArray(req.body?.messages)?req.body.messages:[];
-    let lastUserIndex=-1;
-    for(let i=messages.length-1;i>=0;i--)if(messages[i]?.role!=="assistant"){lastUserIndex=i;break}
-    const imagesSubmitted=Array.isArray(req.body?.attachments)?req.body.attachments.length:0;
-    const attachments=Array.isArray(req.body?.attachments)?req.body.attachments.filter(a=>typeof a?.dataUrl==="string"&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(a.dataUrl)).slice(0,5):[];
-    const input=messages.map((m,index)=>({role:m.role==="assistant"?"assistant":"user",content:[
-      {type:m.role==="assistant"?"output_text":"input_text",text:String(m.content||"")},
-      ...(m.role!=="assistant"&&index===lastUserIndex&&attachments.length?[{type:"input_text",text:`The user attached ${attachments.length} photo${attachments.length===1?"":"s"}. Look at the attached image content and answer based on what is visible. If they have not asked a specific question, describe the photo briefly and invite them to ask about it.`},...attachments.map(a=>({type:"input_image",image_url:a.dataUrl,detail:"high"}))]:[])
-    ]}));
-
-    const replyStyles=["Answer directly, then add one useful detail.","Use a short friendly explanation with a fresh example.","When it fits, use a playful comparison, then make the point clear.","Keep it warm and concise; start in a different way than your recent replies.","Use a tiny curiosity breadcrumb only if it genuinely helps.","Prefer a simple step-by-step answer when the task asks how to do something.","Use a light Bluey-style quip only when the subject is casual.","Choose a fresh answer shape and avoid recycling recent phrasing."];
-    const replyStyle=replyStyles[Math.floor(Math.random()*replyStyles.length)];
-    const payload={model:process.env.BLUEY_MODEL||"gpt-6-luna",instructions:`${BLUEY}\n\nFor this turn, use this gentle style nudge: ${replyStyle}`,input,max_output_tokens:1600,text:{format:{type:"json_schema",name:"bluey_response",strict:true,schema}}};
-    const r=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    const d=await r.json();
-    if(!r.ok){console.error("OpenAI API error",r.status,d);return res.status(r.status).json({error:d?.error?.message||`OpenAI request failed (${r.status})`,code:d?.error?.code||null});}
-    const raw=outputText(d);
-    if(!raw)return res.status(502).json({error:"The model returned no text"});
-    let parsed;try{parsed=JSON.parse(raw)}catch{return res.status(502).json({error:"Bluey received an unexpected response format"})}
-    return res.status(200).json({reply:String(parsed.reply||""),behavior:String(parsed.behavior||"explaining"),spellingSuggestion:typeof parsed.spellingSuggestion==="string"?parsed.spellingSuggestion:null,brain:parsed.brain||null,imagesSubmitted,imagesReceived:attachments.length,photoApiVersion:"alpha12",brainApiVersion:"intelligence-v1"});
-  }catch(e){console.error("Bluey server error",e);return res.status(500).json({error:e?.message||"Bluey could not respond"});}
-}
+function outputText(data){if(typeof data.output_text==="string"&&data.output_text)return data.output_text;for(const item of data.output||[])for(const c of item.content||[])if((c.type==="output_text"||c.type==="text")&&typeof c.text==="string")return c.text;return "";}
+export default async function handler(req,res){if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});try{const messages=Array.isArray(req.body?.messages)?req.body.messages:[];let lastUserIndex=-1;for(let i=messages.length-1;i>=0;i--)if(messages[i]?.role!=="assistant"){lastUserIndex=i;break}const imagesSubmitted=Array.isArray(req.body?.attachments)?req.body.attachments.length:0;const attachments=Array.isArray(req.body?.attachments)?req.body.attachments.filter(a=>typeof a?.dataUrl==="string"&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(a.dataUrl)).slice(0,5):[];const input=messages.map((m,index)=>({role:m.role==="assistant"?"assistant":"user",content:[{type:m.role==="assistant"?"output_text":"input_text",text:String(m.content||"")},...(m.role!=="assistant"&&index===lastUserIndex&&attachments.length?[{type:"input_text",text:`The user attached ${attachments.length} photo${attachments.length===1?"":"s"}. Look at the attached image content and answer based on what is visible. If they have not asked a specific question, describe the photo briefly and invite them to ask about it.`},...attachments.map(a=>({type:"input_image",image_url:a.dataUrl,detail:"high"}))]:[])]}));const replyStyles=["Answer directly, then add one useful detail.","Use a short friendly explanation with a fresh example.","When it fits, use a playful comparison, then make the point clear.","Keep it warm and concise; start in a different way than your recent replies.","Use a tiny curiosity breadcrumb only if it genuinely helps.","Prefer a simple step-by-step answer when the task asks how to do something.","Use a light Bluey-style quip only when the subject is casual.","Choose a fresh answer shape and avoid recycling recent phrasing."];const replyStyle=replyStyles[Math.floor(Math.random()*replyStyles.length)];const payload={model:process.env.BLUEY_MODEL||"gpt-6-luna",instructions:`${BLUEY}\n\nFor this turn, use this gentle style nudge: ${replyStyle}`,input,max_output_tokens:1800,text:{format:{type:"json_schema",name:"bluey_response",strict:true,schema}}};const r=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok){console.error("OpenAI API error",r.status,d);return res.status(r.status).json({error:d?.error?.message||`OpenAI request failed (${r.status})`,code:d?.error?.code||null});}const raw=outputText(d);if(!raw)return res.status(502).json({error:"The model returned no text"});let parsed;try{parsed=JSON.parse(raw)}catch{return res.status(502).json({error:"Bluey received an unexpected response format"})}return res.status(200).json({reply:String(parsed.reply||""),behavior:String(parsed.behavior||"explaining"),spellingSuggestion:typeof parsed.spellingSuggestion==="string"?parsed.spellingSuggestion:null,brain:parsed.brain||null,imagesSubmitted,imagesReceived:attachments.length,photoApiVersion:"alpha12",brainApiVersion:"intelligence-v1.1"});}catch(e){console.error("Bluey server error",e);return res.status(500).json({error:e?.message||"Bluey could not respond"});}}
