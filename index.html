@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff"><title>Bluey 0.5.5</title>
+<meta name="theme-color" content="#fff"><title>Bluey 0.6.0</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#20262d;background:#fff}
 .app{height:100dvh;overflow:hidden}.stage{height:58dvh;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:.7s}
@@ -21,6 +21,23 @@
 .nudge{min-height:24px;margin-top:7px;color:#087fc4;text-align:center;font-size:16px;opacity:0;transition:opacity .4s;padding:0 18px}
 .nudge.show{opacity:1}
 @media(max-width:520px){.nudge{font-size:15px}}
+
+/* Bluey 0.6 state animation system — explicit so Chrome/Firefox behave alike */
+#orb{
+  will-change:transform,filter;
+  transform-origin:50% 55%;
+  animation:blueyIdle 3.8s ease-in-out infinite;
+}
+#orb.bluey-listening{animation:blueyListening .82s ease-in-out infinite;filter:drop-shadow(0 12px 18px rgba(0,137,210,.24))}
+#orb.bluey-thinking{animation:blueyThinking 1.55s ease-in-out infinite}
+#orb.bluey-speaking{animation:blueySpeaking .62s ease-in-out infinite}
+#orb.bluey-attention{animation:blueyAttention .72s ease-in-out 2}
+@keyframes blueyIdle{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-8px,0) scale(1.018)}}
+@keyframes blueyListening{0%,100%{transform:translate3d(-3px,-3px,0) scale(1.01)}50%{transform:translate3d(4px,-12px,0) scale(1.075)}}
+@keyframes blueyThinking{0%,100%{transform:translate3d(-8px,-4px,0) rotate(-2deg)}50%{transform:translate3d(8px,-10px,0) rotate(2deg)}}
+@keyframes blueySpeaking{0%,100%{transform:translate3d(0,-3px,0) scale(1.01)}50%{transform:translate3d(0,-11px,0) scale(1.055)}}
+@keyframes blueyAttention{0%,100%{transform:translate3d(0,0,0) scale(1)}35%{transform:translate3d(-7px,-10px,0) scale(1.06)}70%{transform:translate3d(7px,-6px,0) scale(1.035)}}
+@media (prefers-reduced-motion:reduce){#orb{animation:none!important}}
 </style></head>
 <body><div class="app" id="app"><section class="stage"><div class="rig"><div class="mover idle" id="mover"><button class="orb" id="orb" aria-label="Talk to Bluey"></button></div><div class="shadow"></div></div><h1 class="greeting">Hello, how can I help you today?</h1><div class="status" id="status"></div><div class="nudge" id="nudge" aria-live="polite"></div></section>
 <section class="workspace"><div class="messages" id="messages"></div>
@@ -188,7 +205,7 @@ async function finishRecording(){
  mediaRecorder=null;audioStream=null;
  const mime=rec.mimeType||chunks[0]?.type||'audio/webm',blob=new Blob(chunks,{type:mime});chunks=[];
  const hasLiveAudio=renderMicDiagnostic({durationMs,bytes:blob.size,mime});
- console.log('Bluey 0.5.5 voice capture',{
+ console.log('Bluey 0.6.0 voice capture',{
    device:micTrackSnapshot?.label||'(unknown)',
    livePeak:+livePeakSeen.toFixed(6),
    liveRms:+liveRmsSeen.toFixed(6),
@@ -221,7 +238,8 @@ async function finishRecording(){
  });
  const fd=new FormData();fd.append('audio',blob,`bluey.${ext}`);fd.append('duration_ms',String(durationMs));
  try{
-  const r=await fetch('/api/transcribe',{method:'POST',body:fd}),d=await r.json().catch(()=>({}));
+  setBlueyState('thinking');
+ const r=await fetch('/api/transcribe',{method:'POST',body:fd}),d=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(d.error||`Transcription failed (${r.status})`);
   if(!d.text?.trim())throw new Error('No speech detected');
   clearStatus();send(d.text.trim());
@@ -246,4 +264,82 @@ async function listen(){
 scheduleIdle();
 orb.onpointerdown=()=>{lastActivity=Date.now();orb.style.transform='scale(.95)'};orb.onpointerup=()=>{orb.style.transform='';listen()};form.onsubmit=e=>{e.preventDefault();send(input.value)};
 if('speechSynthesis'in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
+
+// ---- Bluey 0.6 personality + state layer ----
+const blueyOrb=document.getElementById('orb');
+let blueyState='idle', lastHumanActivity=Date.now(), idleStage=0, userAskedForSpace=false;
+const blueyIdleLines=[
+ "Are you still there?",
+ "What can I help you with?",
+ "I'm here if you need me.",
+ "Need a hand with anything?",
+ "Still thinking? I can hang out.",
+ "Bluey thought: sometimes the best next step is the smallest one."
+];
+const blueyFunLines=[
+ "Random Bluey thought: curiosity is a pretty good superpower.",
+ "I wonder what we'll figure out next.",
+ "Bluey thought: complicated things get easier when we take them one piece at a time.",
+ "No rush. I'm good at waiting."
+];
+function setBlueyState(state){
+ if(!blueyOrb)return;
+ blueyState=state;
+ blueyOrb.classList.remove('bluey-listening','bluey-thinking','bluey-speaking','bluey-attention');
+ if(state!=='idle')blueyOrb.classList.add('bluey-'+state);
+}
+function blueyAttention(text){
+ if(userAskedForSpace)return;
+ setBlueyState('attention');
+ if(typeof tempStatus==='function')tempStatus(text,9000);
+ setTimeout(()=>{if(blueyState==='attention')setBlueyState('idle')},1600);
+}
+function noteHumanActivity(text=''){
+ lastHumanActivity=Date.now(); idleStage=0;
+ if(/\b(busy|working on something else|leave me alone|give me a minute|give me some time|not now)\b/i.test(text)){
+   userAskedForSpace=true;
+   if(typeof tempStatus==='function')tempStatus("No problem. I'll be here when you need me.",6500);
+ } else if(text.trim()){
+   userAskedForSpace=false;
+ }
+}
+setInterval(()=>{
+ const quiet=Date.now()-lastHumanActivity;
+ if(userAskedForSpace)return;
+ if(quiet>120000 && idleStage<2){
+   idleStage=2;
+   blueyAttention(blueyFunLines[Math.floor(Math.random()*blueyFunLines.length)]);
+ } else if(quiet>60000 && idleStage<1){
+   idleStage=1;
+   blueyAttention(blueyIdleLines[Math.floor(Math.random()*blueyIdleLines.length)]);
+ }
+},5000);
+
+// Integrate state changes without changing the proven recorder/transcription pipeline.
+document.addEventListener('pointerdown',()=>{lastHumanActivity=Date.now()},{passive:true});
+document.addEventListener('keydown',()=>{lastHumanActivity=Date.now()},{passive:true});
+
+// Observe existing status text to map Bluey's visual state.
+const blueyStatusObserver=new MutationObserver(()=>{
+ const t=(statusEl?.textContent||'').toLowerCase();
+ if(t.includes("listening")) setBlueyState('listening');
+ else if(t.includes("thinking")||t.includes("transcrib")) setBlueyState('thinking');
+ else if(t.includes("speaking")) setBlueyState('speaking');
+ else if(!t) setBlueyState('idle');
+});
+if(typeof statusEl!=='undefined'&&statusEl)blueyStatusObserver.observe(statusEl,{childList:true,subtree:true,characterData:true});
+
+// Capture visible user submissions to manage idle/back-off behavior.
+document.addEventListener('submit',e=>{
+ const input=e.target?.querySelector?.('input[type="text"],textarea');
+ if(input)noteHumanActivity(input.value||'');
+},true);
+
+// Future feature hook: intentionally simple foundation, not a new UI button.
+window.blueyAbout={
+ name:'Bluey',
+ summary:'Bluey is an AI friend designed to listen, think, help, teach, and keep you company without getting in the way.',
+ version:'0.6.0'
+};
+
 </script></body></html>
