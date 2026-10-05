@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 2 — The Living World
+# Bluey 1.0 Alpha 9 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -123,3 +123,29 @@ Well-specified task requests can receive subtle positive reinforcement instead o
 
 ### Task specification visualization
 “Bluey, show me what you heard” uses Workshop tokens to show task-level concepts such as GOAL, AUDIENCE, TONE, CONSTRAINTS, CRITERIA and MATERIAL. This is task specification, not private chain-of-thought.
+
+## Bluey 1.0 Alpha 7 — Helpful tools, still Bluey
+
+- **Create real files:** ask Bluey to create an Excel spreadsheet (`.xlsx`), Word document (`.docx`) or PDF. A download link appears in the conversation.
+- **Ask about photos:** use the blue **Add photos** arrow to attach up to five pictures. Bluey can describe them, read visible text, and use the photos in a generated Word document or PDF.
+- **Choose how Bluey sounds:** Voice and Sounds switches are independent and saved on the device. Voice turns speech on or off; Sounds controls Bluey's short electronic chirps and beeps.
+- **Spelling help:** the composer enables the device's spelling suggestions, and Bluey may offer a clickable correction when a typo clearly changes meaning.
+- **One question at a time:** complex requests can be shaped over a few conversational turns, then Bluey makes a useful first version.
+- **Temporary room props:** interactive items fade away after a short visit, and room changes clear the old scene.
+
+The document endpoint uses the existing `OPENAI_API_KEY` and optional `BLUEY_MODEL` settings. Production installs the `docx`, `pdfkit` and `xlsx` package dependencies from `package.json`.
+
+## Bluey 1.0 Alpha 8 — The stage is Bluey's world
+
+- Office, Arcade, and other visible room objects render inside the stage rather than the scrolling conversation.
+- Bluey can swoosh side to side through the stage during a quiet moment. Tapping Bluey or the stage brings him front and center for a playful bounce before he waits for the next instruction.
+- Short chirps line up with listening, travel, happy, unsure, upload, and response movement cues. The Sounds control remains independent from Voice.
+- Stage movement pauses when the page is hidden, while Bluey is speaking, or during a response.
+
+## Bluey 1.0 Alpha 9 — Fresh answers, familiar Bluey
+
+- A rotating, device-local response collection gives fresh replies to common character questions, greetings, room visits, jokes, fun facts, and AI-coaching questions. It avoids the last few answers for that topic.
+- Clicked and asked-about room objects get rotating conversational lead-ins and varied follow-up framing.
+- The AI uses the conversation to avoid repeating recent wording, examples, and jokes. It can answer repeat questions from a new angle without changing facts.
+- A gentle per-turn style nudge helps Bluey vary his answer shape while keeping requested formats and serious answers clear.
+- The existing Alpha 7 and Alpha 8 document tools, photo support, voice and sound controls, room stage, and motion are retained.
