@@ -1,4 +1,4 @@
-# Bluey 1.0 Alpha 37 — A Helpful Friend With Real Tools
+# Bluey 1.0 Alpha 38 — A Helpful Friend With Real Tools
 
 Bluey now has a world and a life, not just an interface.
 
@@ -224,3 +224,18 @@ Upload the complete bundle, including `api/speech.js`, `alpha36.js`, and `alpha3
 - Alpha 36 generated mobile speech, voice testing/mute/replay, saved conversations, Copy/Save/New Chat controls, photo analysis, document creation, transcription, and Prompt Workshop remain included.
 
 Upload this entire bundle to the project root and redeploy. Keep every API file inside the root `api/` folder so voice, photos, documents, and chat all deploy together.
+
+## Bluey 1.0 Alpha 38 — Paste a screenshot, build familiarity with consent
+
+- Paste a copied screenshot or image directly into the chat composer on desktop. Bluey shows the image thumbnail and attachment count; press Send to ask about it, or add a question first. A blank message with an attached image uses a clear default question.
+- The composer is a growing text area: Enter sends, Shift+Enter adds a line, and Ctrl/Command+Enter still sends. Text-only clipboard pastes behave normally. Five image attachments remain the maximum per message.
+- The image still goes through the same `/api/chat` vision route as an uploaded photo, so deploy the complete bundle including `api/chat.js`.
+- Long-term, cross-device memory is not switched on in this alpha. This project has no configured authentication provider or user database; local chat history stays on the current device. Do not treat that as an account or cross-device backup.
+
+### Account and memory direction
+
+The recommended first sign-in options are **email magic link** and **Continue with Google**. Gmail means Google sign-in through Google's authorization screen; Bluey should never ask for or store a Gmail password. Phone-number sign-in can be added later after an SMS provider, delivery costs, and abuse limits are configured.
+
+Use a dedicated Supabase project for identity and user-owned data. Store conversations, saved projects, and user-approved memory in separate records keyed by the authenticated user ID, protected by database row-level security. Never put a server secret in browser code. Make memory opt-in, let people review/edit/delete each saved item, export or clear their data, and delete their account. Save only information the user explicitly asks Bluey to remember; do not silently turn every chat, photo, or sensitive detail into memory. Before each reply, retrieve only relevant approved memories and make it easy for the user to see when Bluey used one.
+
+To enable this, the project owner must create/connect the Supabase project, configure email and Google OAuth redirect URLs, set the hosting environment's public project URL and publishable key, add the RLS-protected schema, and test sign-in, ownership isolation, recovery, export, and deletion. Alpha 38 intentionally does not display a nonfunctional sign-in button.
