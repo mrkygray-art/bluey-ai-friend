@@ -1,3 +1,4 @@
+import { overLimit } from "./_limit.js";
 const schema={
   type:"object",
   additionalProperties:false,
@@ -28,7 +29,7 @@ function outputText(data){
 export const config={api:{bodyParser:{sizeLimit:"1mb"}}};
 
 export default async function handler(req,res){
-  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});
+  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(overLimit(req,res,"prompt-workshop",30,200))return;
   if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
   try{
     const messages=Array.isArray(req.body?.messages)?req.body.messages.slice(-18).map(m=>({

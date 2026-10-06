@@ -1,3 +1,4 @@
+import { overLimit } from "./_limit.js";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, ImageRun } from "docx";
 import * as XLSX from "xlsx";
 import PDFDocument from "pdfkit";
@@ -47,7 +48,7 @@ async function makePdf(data,images){
 }
 
 export default async function handler(req,res){
-  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});
+  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(overLimit(req,res,"document",15,100))return;
   if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
   try{
     const format=String(req.body?.format||"").toLowerCase();

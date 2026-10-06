@@ -53,7 +53,7 @@ The brain also tracks the user's current goal, detects when the topic genuinely 
 
 ## Brain Lab
 
-The Brain is a product promise, so it is tested like one. [`brain-lab.html`](brain-lab.html) is a developer test page, with the test cases and scoring in [`brain-eval.js`](brain-eval.js) and the runner in [`brain-lab-v2.js`](brain-lab-v2.js). The app doesn't link to it. To use it, [run Bluey locally](#run-it-locally) and open `/brain-lab.html`. Each run sends real requests to `/api/chat`, so it uses your OpenAI key.
+The Brain is a product promise, so it is tested like one. [`brain-lab.html`](brain-lab.html) is a developer test page, with the test cases and scoring in [`brain-eval.js`](brain-eval.js) and the runner in [`brain-lab-v2.js`](brain-lab-v2.js). The app doesn't link to it, and [`vercel.json`](vercel.json) redirects it to the home page on any `.vercel.app` deployment, so visitors can't run it on the live key. To use it, [run Bluey locally](#run-it-locally) and open `/brain-lab.html`. Each run sends real requests to `/api/chat`, so it uses your OpenAI key.
 
 - **15 regression conversations**, including multi-turn ones: a simple answer that should stay simple, clear writing tasks, a vague request, messy spelling, a recurring weekly workflow, a topic change that must not drag the old goal along, a "continue" turn, an emotional turn, and ordinary tasks that must not turn into business ideas.
 - **Each reply is checked against expectations** for that case: the mode, how much initiative it took, how many questions it asked, whether it noticed a topic change, and how far up the opportunity ladder it went.
@@ -118,6 +118,7 @@ Account sign-in, cross-device memory, and a semantic, user-controlled memory ser
 
 - API keys are server-side environment variables and never appear in the browser or in this repository (variable names only, in [`.env.example`](.env.example)).
 - Requests are size-limited and photo and audio inputs are validated before they reach a model.
+- Every endpoint that calls OpenAI has a per-visitor hourly limit and a daily cap ([`api/_limit.js`](api/_limit.js)). These are best-effort: they live in memory and reset when Vercel starts a new instance, so they stop casual abuse and runaway loops, not a determined attacker. The real backstop is a monthly spending limit on the OpenAI account.
 - Bluey is a friendly companion, not a source of professional advice. This is an alpha: don't enter sensitive information.
 - Bluey is an original character and is not affiliated with any television series or brand of the same name.
 

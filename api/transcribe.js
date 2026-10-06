@@ -1,3 +1,4 @@
+import { overLimit } from "./_limit.js";
 import OpenAI, { toFile } from "openai";
 import formidable from "formidable";
 import fs from "fs/promises";
@@ -16,7 +17,7 @@ function normalizedType(name,mime){
 }
 
 export default async function handler(req,res){
-  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});
+  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(overLimit(req,res,"transcribe",60,500))return;
   try{
     const form=formidable({multiples:false,maxFileSize:15*1024*1024});
     const [fields,files]=await form.parse(req);

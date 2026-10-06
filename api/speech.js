@@ -1,8 +1,9 @@
+import { overLimit } from "./_limit.js";
 // Bluey's generated speech endpoint. OPENAI_API_KEY stays on the server.
 export const config={api:{bodyParser:{sizeLimit:"64kb"}}};
 
 export default async function handler(req,res){
-  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});
+  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(overLimit(req,res,"speech",60,500))return;
   if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
   const text=String(req.body?.text||"").trim();
   if(!text)return res.status(400).json({error:"Add a reply for Bluey to speak"});
