@@ -56,8 +56,17 @@ export async function loadMemories(query = "") {
   if (!String(query || "").trim()) return all.slice(0, 12);
   const ranked = all.map(memory => ({ memory, score: relevance(memory, query) }))
     .sort((a,b) => b.score - a.score);
-  const relevant = ranked.filter(x => x.score > 0).slice(0, 8).map(x => x.memory);
-  return relevant;
+  const positive = ranked.filter(x => x.score > 0);
+  if (!positive.length) return [];
+
+  const top = positive[0].score;
+  const close = positive.filter(x => x.score >= Math.max(3, top - 3));
+  const exactSubject = positive.filter(x => String(query || "").toLowerCase().includes(String(x.memory.subject_key || "").replace(/_/g, " ").toLowerCase()));
+
+  // A named subject is decisive. Otherwise keep close contenders so the
+  // reasoning model can recognize ambiguity instead of silently choosing one.
+  if (exactSubject.length) return exactSubject.slice(0, 3).map(x => x.memory);
+  return close.slice(0, 4).map(x => x.memory);
 }
 
 export async function remember(brain) {
