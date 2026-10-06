@@ -186,6 +186,11 @@ const schema={type:"object",additionalProperties:false,properties:{reply:{type:"
 function deterministicTurn(messages){
   const last=String(messages[messages.length-1]?.content||"").trim();
   const prev=[...messages].reverse().find((m,i)=>i>0&&m?.role==="assistant");
+  const forgetRename=last.match(/^forget (?:that )?i (?:renamed|changed|updated) (.+?) to (.+?)[.!]?$/i);
+  if(forgetRename){
+    const current=forgetRename[2].trim().replace(/[.!]+$/,"");
+    return {kind:"forget-renamed-project",instruction:"This is an explicit request to forget the CURRENT renamed project memory. Do not restore or reactivate the old superseded name. Set brain.memoryAction FORGET, memoryType PROJECT, memoryDurability durable, memorySubject to "+JSON.stringify(current)+", memoryReplacesSubject null, memoryCandidate null, memoryConfidence at least 95. Confirm briefly without asking a question."};
+  }
   const edit=/^(make it nicer|make it (?:more )?friendly|make it kinder|make it warmer|shorter|less formal|simpler|make it cheaper)$/i.test(last);
   if(edit&&prev){
     return {kind:"edit",instruction:"The latest turn is a deterministic edit command on the immediately preceding assistant artifact. Perform that edit only. Do not ask any question. brain.mode must be DO, needsQuestion false, oneBestQuestion null, resultReady true."};
