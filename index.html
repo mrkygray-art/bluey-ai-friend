@@ -1807,13 +1807,9 @@ send=async function(text){
    add("user",clean);input.value="";enterWorld("workshop",false);characterMove("curiosity",1200);
    setTimeout(()=>add("assistant","Welcome to my Workshop—this is my office. The screen is where ideas get messy, the gear is mostly decorative, and the printers stay at a suspicious distance."),650);return;
  }
- const trip=questionNeedsThinkingTrip(clean);
- const eligible=trip && blueyWorld==="home" && !blueyStory && !blueyGame;
- if(eligible)beginThinkingTrip(trip);
- // Let normal conversation/model produce the answer. Travel is visual thinking behavior only.
- const result=await blueyAlpha2Base(clean);
- if(eligible)endThinkingTrip();
- return result;
+ // Secret-world rule: normal conversation never auto-travels.
+ // Explicit room/travel requests above still unlock Bluey's Easter eggs.
+ return blueyAlpha2Base(clean);
 };
 
 // ===== BLUEY 1.0 ALPHA 3 — DIGITAL TRAVEL CANON =====
