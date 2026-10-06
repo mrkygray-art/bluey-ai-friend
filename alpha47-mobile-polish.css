@@ -1,0 +1,76 @@
+/* Alpha 47 mobile polish: keep the orb, copy, props, and composer in separate visual zones. */
+.stage>.greeting{
+ position:absolute!important;
+ top:clamp(12px,4vh,34px);
+ left:16px;
+ right:16px;
+ z-index:9!important;
+ margin:0!important;
+ font-size:clamp(18px,5.8vw,30px);
+ line-height:1.16;
+ text-wrap:balance;
+}
+.stage>.status{
+ position:absolute!important;
+ top:calc(50% + 112px);
+ left:18px;
+ right:18px;
+ z-index:9!important;
+ margin:0!important;
+}
+.stage>.nudge{
+ position:absolute!important;
+ top:calc(50% + 142px);
+ left:12px;
+ right:12px;
+ z-index:9!important;
+ min-height:0;
+ margin:0!important;
+}
+.stage #bluey-version{
+ position:absolute!important;
+ top:auto!important;
+ right:10px!important;
+ bottom:8px!important;
+ z-index:10!important;
+ max-width:calc(100% - 20px);
+ padding:3px 6px;
+ border-radius:8px;
+ background:rgba(255,255,255,.8);
+ color:rgba(75,91,106,.72);
+ text-align:right;
+}
+.app.working .stage #bluey-version{display:none!important}
+@media(max-width:520px){
+ .stage>.greeting{
+  top:12px;
+  left:14px;
+  right:14px;
+  font-size:clamp(18px,6vw,23px);
+  line-height:1.15;
+ }
+ .stage>.status{top:calc(50% + 104px);font-size:14px}
+ .stage>.nudge{top:calc(50% + 132px);font-size:14px;line-height:1.2}
+ .stage .bluey-interactive-object{
+  min-width:108px;
+  min-height:58px;
+  padding:7px;
+ }
+ .stage .bluey-item-label{
+  max-width:116px;
+  overflow:visible;
+  text-overflow:clip;
+  white-space:normal;
+  font-size:10px;
+  line-height:1.2;
+  letter-spacing:0;
+ }
+}
+@media(max-width:520px) and (max-height:560px){
+ .stage{min-height:320px}
+ .stage>.status{top:calc(50% + 90px)}
+ .stage>.nudge{top:calc(50% + 115px)}
+}
+@media(prefers-reduced-motion:reduce){
+ .stage>.greeting{scroll-behavior:auto}
+}
