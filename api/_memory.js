@@ -43,7 +43,7 @@ function relevance(memory, query) {
   const rawQuery = String(query || "").toLowerCase();
   if (subject && rawQuery.includes(subject.toLowerCase())) score += 12;
   if (memory.memory_type === "PREFERENCE") {
-    const wantsPreference = /\\b(prefer|preference|answer me|respond|response|style|concise|short|simple|detailed|format|tone)\\b/i.test(rawQuery);
+    const wantsPreference = /\b(prefer|preference|answer me|respond|response|style|concise|short|simple|detailed|format|tone)\b/i.test(rawQuery);
     if (!wantsPreference) return 0;
     score += 9;
   }
