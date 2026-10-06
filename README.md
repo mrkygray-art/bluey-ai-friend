@@ -132,7 +132,7 @@ Account sign-in, cross-device memory, and a semantic, user-controlled memory ser
 
 ## Browser testing
 
-Troubleshot by hand on desktop and Android across Chrome, Firefox, and DuckDuckGo: the mobile layout, tap-to-talk, the soft keyboard, pasting images, and room travel. Fixes include screen-height fallbacks for browsers without dynamic viewport units and a keyboard-send fallback when `form.requestSubmit()` is missing. On computers, the greeting used to sit at the top of the window, away from Bluey (and on wide screens, nowhere near him, since he wanders around the stage). It now stays in a column just under Bluey and follows him as he moves, the same way it sits under him on phones ([`desktop-copy.js`](desktop-copy.js)).
+Troubleshot by hand on desktop and Android across Chrome, Firefox, and DuckDuckGo: the mobile layout, tap-to-talk, the soft keyboard, pasting images, and room travel. Fixes include screen-height fallbacks for browsers without dynamic viewport units and a keyboard-send fallback when `form.requestSubmit()` is missing. On computers, the greeting used to sit at the top of the window, away from Bluey, and on phones it stayed in the middle when he drifted to one side. Now, on every screen, the greeting and status stay in a column just under Bluey and follow him as he drifts left and right and forward and back ([`follow-copy.js`](follow-copy.js)).
 
 ## Not measured yet
 
