@@ -161,7 +161,10 @@ send=async function(text){
  }
  const asksLocation=/\b(where are you|where are we|what room are you in|what room is this|where is bluey)\b/i.test(clean);
  if(asksLocation){
-  room=BLUEY_OBJECTS[blueyCurrentRoom]?.length?blueyCurrentRoom:'workshop';
+  // Answer where we are; don't move (this used to jump to the Workshop from rooms without objects, like Home).
+  add('user',clean);input.value='';
+  const answer=typeof currentWorldAnswer==='function'?currentWorldAnswer():"We're right here at Home.";
+  setTimeout(()=>add('assistant',answer),300);return;
  }
  const hasRoomIntent=/\b(show|take|go|visit|where|what|tour|see|do you have|tell me about)\b/i.test(lower);
  if(room&&hasRoomIntent){

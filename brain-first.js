@@ -1,40 +1,53 @@
-// Brain first: real requests always reach Bluey's brain (/api/chat).
+// Brain first: every message reaches Bluey's brain (/api/chat), except the few things only
+// the app itself can do.
 //
 // The older layers (alpha9…alpha45 and index.html) wrap send() with ~50 keyword checks that
-// answer locally with canned lines: favorite color, room travel, lore, "thanks", printer jokes…
-// They're fun for short playful messages, but their unanchored keyword matches also caught
-// real requests: a long message mentioning "browser/device" got the canned compatibility
-// speech, "my printer says offline" got a printer joke, "please verify this" was dropped
-// without ever being sent, and a long request ending in "thanks!" got "Anytime."
+// answer locally with canned lines: favorite color, lore, "thanks", printer jokes, coaching…
+// Their keyword matches also caught real requests (a message mentioning "browser/device" got
+// a canned speech, "please verify this" was never sent). The brain already knows Bluey's lore
+// and product facts (api/chat.js), so canned text isn't needed. Messages stay with the old
+// layers only for app actions the brain can't perform:
+//   - moving between rooms ("take me to the library", "go home", "can we go to the arcade?")
+//   - stage objects ("tell me about the lamp", "where did the welcome mat go?")
+//   - the built-in story and guessing games, and replies while one is running
+//   - dancing, and "where are we?" (only the app knows the current room)
+//   - the prompt workshop while it's open, and photo-only messages
+// Anything with task words (my, help, write, please…) goes to the brain even if it names a room
+// ("go home and finish my lab report").
 //
-// This layer must run first. alpha40.js loads alpha41-46 (and alpha47) after the page starts,
-// and they wrap send() again, so the guard re-checks every 300 ms and puts a fresh guard on
-// the outside whenever another layer has wrapped it. A message that looks like a real request goes
-// straight to the brain (keeping the file and photo routes from alpha7.js); short playful
-// messages still go through the old chain, so "what's your favorite color?", "take me to the
-// library", and "thanks!" keep their fun answers.
+// alpha40.js loads alpha41-47 after the page starts and they wrap send() again, so the guard
+// re-checks every 300 ms and puts a fresh guard on the outside whenever another layer has
+// wrapped it. Document and photo routes from alpha7.js are kept.
 (function(){
 'use strict';
 const TASK=/\b(my|our|help|write|draft|make|create|fix|plan|explain|summari[sz]e|compare|verify|double-check|check|translate|calculate|list|need|want|please|can you|could you|would you|how (do|can|should|would) (i|we)|email|text|letter|report|code|error|actually|instead|change|rewrite|rephrase|shorter|warmer|formal|casual|simpler|bullet)\b/i;
+const ROOMS=String.raw`home|house|library|workshop|office|lab|observatory|telescope|arcade|archive|garage|attic|closet|bedroom|your room|backyard|yard|basement|quiet place|the edge|edge|beach|ocean|sea|forest|woods|museum|gallery|aquarium|city|space|the moon|moon|stars`;
+const TRAVEL=new RegExp(String.raw`\b(take me|take us|bring me|go|go back|let'?s go|can we go|could we go|head|zip|visit|travel|show me|back)\b.*\b(${ROOMS})\b`,'i');
+const GO_HOME=/^(go|come|back|take me|let'?s go|zip)( back)?( to)? home[.!?]*$/i;
+const WHERE=/^(where are (we|you)|what room is this|what place is this)[?.!]*$/i;
+const GAMES=/\b(tell me a story|tell us a story|story mode|mystery object|play mystery|guessing game)\b/i;
+const DANCE=/\b(dance for me|do a dance|show me your moves)\b/i;
+const OBJECT_ALIASES=['welcome mat','doormat','door mat','mat','idea lamp','lamp','marble jar','marbles','marble','leaf','quiet leaf','hourglass','sand timer','timer','edge light','little light','edge marker','marker'];
+const hasWord=(text,word)=>new RegExp('(^|[^a-z0-9])'+String(word).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es)?($|[^a-z0-9])','i').test(text);
+function objectNames(){
+ const names=[...OBJECT_ALIASES];
+ try{for(const list of Object.values(BLUEY_OBJECTS))for(const o of list||[])names.push(...(o.names||[]))}catch(_){}
+ document.querySelectorAll('.bluey-item-label').forEach(el=>{const t=(el.textContent||'').trim();if(t)names.push(t.replace(/^bluey'?s\s+/i,''))});
+ return names.filter(n=>n&&n.length>2);
+}
+const wordCount=t=>t.split(/\s+/).filter(Boolean).length;
 
-// Short messages where a canned line would lose what the person meant. Lore questions aimed
-// at Bluey himself ("do you like printers?", "are you afraid of anything?") stay playful.
-const ALWAYS=[
- /\b(verify|double-check|fact-check|check (this|that|it)|is (this|that|it) (right|correct|true)|try again|that'?s (wrong|not it|not right|incorrect)|not what i (wanted|meant)|missed the point|i don'?t like (it|that|this)|compare|versus|vs\.?|resume|cover letter)\b/i,
- /\bwhere am i (going|getting) wrong\b/i
-];
-const ALWAYS_UNLESS_ABOUT_BLUEY=[
- [/\bprinters?\b/i,/\b(offline|jam|jammed|error|won'?t|not working|broken|connect|ink|paper)\b/i],
- [/\bspace\b/i,null],
- [/\b(fear|scared|afraid)\b/i,null],
- [/\bfor fun\b/i,null]
-];
-function isRealRequest(t){
- const words=t.split(/\s+/).filter(Boolean).length;
- const sentences=(t.match(/[.!?](\s|$)/g)||[]).length;
- if(words>10||sentences>1||/\n/.test(t)||TASK.test(t)||ALWAYS.some(r=>r.test(t)))return true;
- const aboutBluey=/\b(you|your|bluey)\b/i.test(t)||/\b(outer space|in space|space travel|favorite planet)\b/i.test(t);
- return ALWAYS_UNLESS_ABOUT_BLUEY.some(([topic,problem])=>topic.test(t)&&(problem?problem.test(t):!aboutBluey));
+// True only for the app actions listed at the top; everything else goes to the brain.
+function isLocalAction(t){
+ if(WHERE.test(t)||GO_HOME.test(t))return true;
+ const realRequest=TASK.test(t)||wordCount(t)>10;
+ const playing=(typeof blueyStory!=='undefined'&&blueyStory)||(typeof blueyGame!=='undefined'&&blueyGame);
+ if(playing)return !realRequest; // game replies stay local; a real request ends the game
+ if(realRequest)return false;
+ if(GAMES.test(t)&&!/\b(about|with|for)\b/i.test(t))return true; // "tell me a story about my dog" goes to the brain
+ if(DANCE.test(t)||TRAVEL.test(t))return true;
+ if(typeof blueyObjectFocus!=='undefined'&&blueyObjectFocus&&wordCount(t)<=6)return true; // follow-up on a tapped object
+ return objectNames().some(n=>hasWord(t,n));
 }
 
 // Same steps as the original send in index.html, but a friendly server message (hourly
@@ -58,8 +71,8 @@ function install(){
  const sendThroughOldLayers=send;
  const guard=async function(text){
   const clean=String(text||'').trim();
-  if(!clean||(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive)||!isRealRequest(clean))return sendThroughOldLayers(text);
-  // A real request also ends any little local game, story, or object chat.
+  if(!clean||(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive)||isLocalAction(clean))return sendThroughOldLayers(text);
+  // Going to the brain also ends any little local game, story, or object chat.
   blueyStory=null;blueyGame=null;blueyObjectFocus=null;
   const format=blueyDocumentFormat(clean);
   if(format)return blueyCreateDocument(clean,format,blueyPhotos.length?blueyPhotos:blueyRecentPhotos);
