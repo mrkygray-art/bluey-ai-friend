@@ -7,7 +7,7 @@ Bluey is a friendly blue 3D orb who lives in a small digital world. You talk to 
 > Built around one idea: **Say it naturally → Bluey finds the real goal → asks only what matters → does the work → you get a better result, and learn how without a lesson**
 
 **Try it live:** https://bluey-ai-friend.vercel.app/  
-**How it's built:** [Architecture](#high-level-architecture) · [Brain](#the-brain-do-discover-grow) · [Brain Lab](#brain-lab) · [Run it locally](#run-it-locally) · [Full engineering handoff](docs/HANDOFF.md)
+**How it's built:** [Architecture](#high-level-architecture) · [Brain](#the-brain-do-discover-grow) · [Brain Lab](#brain-lab) · [Run it locally](#run-it-locally)
 
 > **Demo note:** Bluey is an **alpha in active testing**. Open it on your phone and just start typing, or turn Voice on and talk. Chat history in this alpha is stored only in your current browser. Please don't share sensitive personal information, and expect rough edges.
 
@@ -21,17 +21,11 @@ Bluey is intentionally **not** a developer dashboard. He is meant for first-time
 
 ## Screenshots
 
-### Bluey's home
+A clear request gets done (DO). A vague one gets one question first (DISCOVER).
 
 <p>
-  <img src="docs/bluey-home.jpg" alt="Bluey's home screen: the blue orb, a welcome message, and a simple message box" width="260">
-</p>
-
-### Thinking, then replying
-
-<p>
-  <img src="docs/bluey-thinking.jpg" alt="Bluey thinking after the user says hello" width="260">
-  <img src="docs/bluey-reply.jpg" alt="Bluey replying with Copy and Play again controls" width="260">
+  <img src="docs/bluey-do.webp" alt="Bluey answering a clear request to text the boss about running late by simply writing the message, with Copy and Play again buttons" width="300">
+  <img src="docs/bluey-discover.webp" alt="Bluey answering the vague request My boss wants a report by asking what the report should cover" width="300">
 </p>
 
 ## What Bluey does
@@ -59,11 +53,11 @@ The brain also tracks the user's current goal, detects when the topic genuinely 
 
 ## Brain Lab
 
-The Brain is a product promise, so it is tested like one. [`brain-lab.html`](brain-lab.html) and [`brain-eval.js`](brain-eval.js) form a **development-only** lab that is not part of the public app. It runs conversations through the Brain and scores each reply for task completion, question discipline, initiative, and personality, and flags generic "help-desk" phrasing. To use it, [run Bluey locally](#run-it-locally) and open `brain-lab.html`.
+The Brain is a product promise, so it is tested like one. [`brain-lab.html`](brain-lab.html) is a developer test page, with the test cases and scoring in [`brain-eval.js`](brain-eval.js) and the runner in [`brain-lab-v2.js`](brain-lab-v2.js). The app doesn't link to it. To use it, [run Bluey locally](#run-it-locally) and open `/brain-lab.html`. Each run sends real requests to `/api/chat`, so it uses your OpenAI key.
 
-- A **39-case Brain regression suite** is the release gate for Brain changes.
-- An early recorded run scored **37 pass, 2 review, 0 errors**. The two review cases became fix targets: an unnecessary follow-up question on a vague "make it nicer" request, and a missed context shift when the user changed topic to a museum.
-- Every fixed behavior is meant to stay in the suite permanently, and a release checklist covers conversation, stage, voice, photos, memory, and browsers.
+- **15 regression conversations**, including multi-turn ones: a simple answer that should stay simple, clear writing tasks, a vague request, messy spelling, a recurring weekly workflow, a topic change that must not drag the old goal along, a "continue" turn, an emotional turn, and ordinary tasks that must not turn into business ideas.
+- **Each reply is checked against expectations** for that case: the mode, how much initiative it took, how many questions it asked, whether it noticed a topic change, and how far up the opportunity ladder it went.
+- **Each reply is scored** on task success, initiative fit, question discipline, goal fidelity, and "Blueyness". Generic help-desk phrasing ("As an AI…", "How can I assist") and replies that repeat an earlier answer's wording are flagged. A case passes with a score of 75 or more, every expectation met, and no repeated answer.
 
 ## Architecture
 
@@ -122,7 +116,7 @@ Account sign-in, cross-device memory, and a semantic, user-controlled memory ser
 
 ## Safety, privacy, and limits
 
-- API keys are server-side environment variables and never appear in the browser or in this repository (names only in [`.env.example`](.env.example)).
+- API keys are server-side environment variables and never appear in the browser or in this repository (variable names only, in [`.env.example`](.env.example)).
 - Requests are size-limited and photo and audio inputs are validated before they reach a model.
 - Bluey is a friendly companion, not a source of professional advice. This is an alpha: don't enter sensitive information.
 - Bluey is an original character and is not affiliated with any television series or brand of the same name.
@@ -136,7 +130,7 @@ Account sign-in, cross-device memory, and a semantic, user-controlled memory ser
 
 ## Project status
 
-Bluey is an actively developed alpha. Production **Alpha 47** is the frozen baseline, and Beta work on the Brain and relationship memory advances separately so the baseline stays stable. The full engineering and product handoff, including design principles, history, known failure modes, and the regression test matrix, is in [`docs/HANDOFF.md`](docs/HANDOFF.md).
+Bluey is an actively developed alpha. Production **Alpha 47** is the frozen baseline, and Beta work on the Brain and relationship memory advances separately so the baseline stays stable.
 
 ## Run it locally
 
