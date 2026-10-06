@@ -17,10 +17,24 @@
 'use strict';
 const TASK=/\b(my|our|help|write|draft|make|create|fix|plan|explain|summari[sz]e|compare|verify|double-check|check|translate|calculate|list|need|want|please|can you|could you|would you|how (do|can|should|would) (i|we)|email|text|letter|report|code|error|actually|instead|change|rewrite|rephrase|shorter|warmer|formal|casual|simpler|bullet)\b/i;
 
+// Short messages where a canned line would lose what the person meant. Lore questions aimed
+// at Bluey himself ("do you like printers?", "are you afraid of anything?") stay playful.
+const ALWAYS=[
+ /\b(verify|double-check|fact-check|check (this|that|it)|is (this|that|it) (right|correct|true)|try again|that'?s (wrong|not it|not right|incorrect)|not what i (wanted|meant)|missed the point|i don'?t like (it|that|this)|compare|versus|vs\.?|resume|cover letter)\b/i,
+ /\bwhere am i (going|getting) wrong\b/i
+];
+const ALWAYS_UNLESS_ABOUT_BLUEY=[
+ [/\bprinters?\b/i,/\b(offline|jam|jammed|error|won'?t|not working|broken|connect|ink|paper)\b/i],
+ [/\bspace\b/i,null],
+ [/\b(fear|scared|afraid)\b/i,null],
+ [/\bfor fun\b/i,null]
+];
 function isRealRequest(t){
  const words=t.split(/\s+/).filter(Boolean).length;
  const sentences=(t.match(/[.!?](\s|$)/g)||[]).length;
- return words>10||sentences>1||/\n/.test(t)||TASK.test(t);
+ if(words>10||sentences>1||/\n/.test(t)||TASK.test(t)||ALWAYS.some(r=>r.test(t)))return true;
+ const aboutBluey=/\b(you|your|bluey)\b/i.test(t)||/\b(outer space|in space|space travel|favorite planet)\b/i.test(t);
+ return ALWAYS_UNLESS_ABOUT_BLUEY.some(([topic,problem])=>topic.test(t)&&(problem?problem.test(t):!aboutBluey));
 }
 
 // Same steps as the original send in index.html, but a friendly server message (hourly

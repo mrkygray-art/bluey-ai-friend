@@ -2283,7 +2283,7 @@ function inspectBlueyObject(obj,el){
 function findVisibleObject(q){
   const objs=BLUEY_OBJECTS[blueyWorld]||[];
   const lower=q.toLowerCase();
-  return objs.find(o=>o.names.some(n=>lower.includes(n)));
+  const hasWord=((s,w)=>new RegExp('(^|[^a-z0-9])'+String(w).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es)?($|[^a-z0-9])','i').test(s));return objs.find(o=>o.names.some(n=>hasWord(lower,n))); // whole words only
 }
 function blueyObjectFollowup(q){
   if(!blueyObjectFocus)return false;
