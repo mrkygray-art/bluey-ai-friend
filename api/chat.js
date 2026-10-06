@@ -190,6 +190,9 @@ function deterministicTurn(messages){
   if(edit&&prev){
     return {kind:"edit",instruction:"The latest turn is a deterministic edit command on the immediately preceding assistant artifact. Perform that edit only. Do not ask any question. brain.mode must be DO, needsQuestion false, oneBestQuestion null, resultReady true."};
   }
+  if(/^my boss wants (?:a )?report\.?$/i.test(last)){
+    return {kind:"blocked-report",instruction:"The user needs a report but has not supplied the topic or source material. Do not interrogate them. Ask exactly one compact blocking question that combines what the report is about and what material/data Bluey should use. brain.mode must be DISCOVER, needsQuestion true, oneBestQuestion must contain that single combined question, resultReady true. The visible reply must contain exactly one question mark."};
+  }
   if(/\b(resume|cv)\b/i.test(last)&&/\b(fix|edit|review|tailor|improve)\b/i.test(last)&&/\b(tomorrow|today|tonight|morning|interview|deadline|asap)\b/i.test(last)){
     return {kind:"urgent-artifact",instruction:"The user wants a specific resume/CV fixed urgently but its contents are not present. The resume itself is the single blocking artifact. Ask exactly one direct question/request for the resume text or file, and in the same reply give a compact immediate priority plan for the deadline. Do not ask about style, industry, role, goals, or preferences yet. brain.needsQuestion must be true, oneBestQuestion must request the resume, blockingContext must include the missing resume, resultReady true because the rescue plan is useful now."};
   }
