@@ -58,6 +58,8 @@ The Brain is a product promise, so it is tested like one. [`brain-lab.html`](bra
 - **15 regression conversations**, including multi-turn ones: a simple answer that should stay simple, clear writing tasks, a vague request, messy spelling, a recurring weekly workflow, a topic change that must not drag the old goal along, a "continue" turn, an emotional turn, and ordinary tasks that must not turn into business ideas.
 - **Each reply is checked against expectations** for that case: the mode, how much initiative it took, how many questions it asked, whether it noticed a topic change, and how far up the opportunity ladder it went.
 - **Each reply is scored** on task success, initiative fit, question discipline, goal fidelity, and "Blueyness". Generic help-desk phrasing ("As an AI…", "How can I assist") and replies that repeat an earlier answer's wording are flagged. A case passes with a score of 75 or more, every expectation met, and no repeated answer.
+- **On the beta branch** ([`brain-lab-v23-real-human`](https://github.com/mrkygray-art/bluey-ai-friend/tree/brain-lab-v23-real-human)), the lab has grown to **39 permanent release-gate tests**: the 19-test V2.2 baseline plus 20 real-human scenarios for ambiguity, corrections, references, frustration, continuity, constraints, and changing minds. It also has 7 retrieval tests for the beta memory store.
+- Brain changes went through hours of regression runs: run the suite, fix what failed, run it again. The app also has a world regression runner for traveling between rooms.
 
 ## Architecture
 
@@ -112,7 +114,7 @@ The reply isn't only text. The server returns the reply together with a **behavi
 
 Today, chat history and preferences live in the browser, and durable memory sits behind an explicit permission setting. Bluey is built never to claim he remembers something that was never stored.
 
-Account sign-in, cross-device memory, and a semantic, user-controlled memory service (see what Bluey remembers, correct it, forget it) are the next planned stage. They are **not** in this alpha.
+Account sign-in, cross-device memory, and a semantic, user-controlled memory service (see what Bluey remembers, correct it, forget it) are the next planned stage. They are **not** in this alpha. A first version is in beta on the `brain-lab-v23-real-human` branch: a Supabase table where Bluey saves facts, retrieves only the relevant ones for a new message, and forgets on request (including after a project is renamed). It still uses a single test owner, so it waits on sign-in before it can go live.
 
 ## Safety, privacy, and limits
 
@@ -122,9 +124,13 @@ Account sign-in, cross-device memory, and a semantic, user-controlled memory ser
 - Bluey is a friendly companion, not a source of professional advice. This is an alpha: don't enter sensitive information.
 - Bluey is an original character and is not affiliated with any television series or brand of the same name.
 
+## Browser testing
+
+Troubleshot by hand on desktop and Android across Chrome, Firefox, and DuckDuckGo: the mobile layout, tap-to-talk, the soft keyboard, pasting images, and room travel. Fixes include screen-height fallbacks for browsers without dynamic viewport units and a keyboard-send fallback when `form.requestSubmit()` is missing.
+
 ## Not measured yet
 
-- Real-device testing across iPhone Safari, Android Chrome, Firefox, and DuckDuckGo for voice, photos, and the soft keyboard
+- iPhone and Safari (no regular access to an iPhone yet)
 - Testing with people who aren't AI users, which is the real measure of "teaching without teaching"
 - Long-term memory quality, because durable semantic memory isn't built yet
 - Cost, load, and abuse behavior at scale
