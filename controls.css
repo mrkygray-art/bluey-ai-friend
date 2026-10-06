@@ -1,0 +1,10 @@
+/* controls.js: one "🔊 Sound ▾" pill that opens the Voice and Sounds switches. */
+.bluey-audio{position:relative;display:inline-flex}
+.bluey-audio-toggle{border:1px solid #bfe0ee;border-radius:999px;background:#eaf6fc;color:#1f5d79;padding:8px 14px;font:inherit;cursor:pointer;white-space:nowrap}
+.bluey-audio-toggle[aria-expanded="true"]{background:#d9f0fa;border-color:#8fcbe4}
+.bluey-audio-toggle:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
+.bluey-audio-menu{position:absolute;left:0;bottom:calc(100% + 8px);z-index:40;display:flex;flex-direction:column;gap:7px;min-width:150px;padding:9px;border:1px solid #d9e8ef;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(16,43,69,.14)}
+.bluey-audio-menu[hidden]{display:none}
+.bluey-audio-menu button{width:100%;text-align:left}
+/* "Save chat" is hidden for now; the download code in alpha36.js stays. */
+.bluey-session-tools button[aria-label="Download this conversation as a text file"]{display:none!important}
