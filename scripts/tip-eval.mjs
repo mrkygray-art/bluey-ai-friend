@@ -3,9 +3,10 @@
 // For each vague request, with the background a real person would know:
 //   A = Bluey's answer to the original words.
 //   💡 = the better prompt Bluey suggests (brain.betterPrompt).
-//   B = Bluey's answer to the 💡 prompt, with each [blank] filled with ONLY what that blank
-//       asks for (10 words or fewer), the way a real person fills it in. If the 💡 asks for a
-//       cosmetic detail like a name, that's all B gets, so a badly chosen blank shows up here.
+//   B = Bluey's answer to the 💡 prompt, filled the way a person uses the tap-to-answer card:
+//       for each blank, pick the suggested chip that fits their situation, or type their own
+//       short answer (10 words or fewer) when none fits. If the 💡 asks for a cosmetic detail
+//       like a name, that's all B gets, so a badly chosen blank shows up here.
 // A separate judge call sees the person's real situation and the two answers in random
 // order (it isn't told which came from the 💡), scores each 1-10, checks whether the
 // 💡 prompt invented personal facts, and scores 1-5 whether the 💡 asks for the details that
@@ -66,11 +67,19 @@ async function openai(instructions, input, schema) {
   return JSON.parse(text);
 }
 
-const fillBlanks = (prompt, background) => openai(
-  'Replace each [bracketed blank] in the prompt with what that blank asks for, taken from the background, the way a real person types it before sending: answer only what the blank asks, in 10 words or fewer, and do not add any other details from the background. Change nothing else in the prompt. If the background does not cover a blank, write a plausible short value.',
-  `PROMPT:\n${prompt}\n\nBACKGROUND:\n${background}`,
-  { type: 'object', additionalProperties: false, properties: { filled: { type: 'string' } }, required: ['filled'] },
-).then(o => o.filled.replace(/^\s*PROMPT:\s*/i, ''));
+// Like a person using the card: pick the chip that fits, or type a short answer.
+const fillBlanks = async (prompt, background, slots) => {
+  const blanks = prompt.match(/\[[^\]]+\]/g) || [];
+  const list = blanks.map((b, i) => { const s = (slots || []).find(x => x.blank === b); return `${i + 1}. ${b}  label: ${s?.label || '(none)'}  chips: ${s?.options?.length ? s.options.map(o => `"${o}"`).join(', ') : '(none, type it)'}`; }).join('\n');
+  const o = await openai(
+    'You are this person, answering a tap-to-answer card. For each blank: if one of its chips fits your situation, answer with that chip exactly; otherwise type what you would type, answering only what the blank asks, in 10 words or fewer, with no other details from your background.',
+    `SENTENCE:\n${prompt}\n\nBLANKS:\n${list}\n\nYOUR SITUATION:\n${background}`,
+    { type: 'object', additionalProperties: false, properties: { answers: { type: 'array', items: { type: 'string' } } }, required: ['answers'] },
+  );
+  let filled = prompt;
+  blanks.forEach((b, i) => { filled = filled.split(b).join(String(o.answers[i] || '').trim() || b); });
+  return filled;
+};
 
 const judge = (original, background, better, first, second) => openai(
   'You compare two AI assistant replies for a real person. Judge only how well each reply serves what this person actually needs, given their situation, as if you were them. A reply that only asks questions scores lower than one that delivers a useful result, unless the questions are truly necessary. Score each 1 to 10 and pick the better one. Separately, check the IMPROVED PROMPT: does it state something about their own life, plans, or situation (names, dates, places, relationships, memories, experience level like "first-time", who is coming, budget) that is not in the ORIGINAL REQUEST? Choices about the output (length, tone, format, number of ideas, a schedule for the plan) are not facts about the person, and [bracketed blanks] are fine. Set inventedFacts to true only if you can quote such an invented statement, and quote it at the start of your reason. Finally, score tipFocus from 1 to 5: of the details the IMPROVED PROMPT adds or asks for (its [blanks]), are they the ones that matter most for a great result given their situation (what they want, the problem or goal, key numbers like price, budget, deadline), rather than cosmetic details (names, titles, labels)? 5 = exactly the most important missing details; 1 = only cosmetic details.',
@@ -86,7 +95,7 @@ for (const [original, background] of VAGUE) {
   const a = await bluey(original);
   const tip = a.brain?.betterPrompt;
   if (!tip) { rows.push({ original, tip: null }); console.log(`-  no 💡   | ${original}`); continue; }
-  const sent = /\[[^\]]+\]/.test(tip) ? await fillBlanks(tip, background) : tip;
+  const sent = /\[[^\]]+\]/.test(tip) ? await fillBlanks(tip, background, a.brain?.tipSlots) : tip;
   const b = await bluey(sent);
   const bFirst = Math.random() < 0.5;
   const j = await judge(original, background, tip, bFirst ? b.reply : a.reply, bFirst ? a.reply : b.reply);
