@@ -220,7 +220,9 @@ function enforceQuestionDiscipline(parsed,deterministic,messages){
     let reply=String(parsed.reply||"");
     // Edit commands are complete transformations, so strip any trailing
     // conversational question regardless of its wording.
-    reply=reply.replace(/(?:\s|^)[^.!?\n]*\?\s*$/,"").trim();
+    // An edit result must contain no assistant questions at all. Remove any
+    // question sentence the model appended, not only a trailing one.
+    reply=reply.replace(/(?:^|\s)[^.!?\n]*\?/g," ").replace(/\s{2,}/g," ").trim();
     parsed.reply=reply;
     parsed.brain={...(parsed.brain||{}),mode:"DO",needsQuestion:false,oneBestQuestion:null,resultReady:true};
   }
