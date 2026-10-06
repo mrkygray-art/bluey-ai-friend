@@ -171,6 +171,9 @@ function deterministicTurn(messages){
   if(/\bevery (?:day|week|friday|month)|\beach (?:day|week|friday|month|customer|report)|\bweekly\b|\bdaily\b/i.test(last)&&/\b(manually|update|calculate|email|send|report|summary|follow[- ]?up)\b/i.test(last)){
     return {kind:"recurring-workflow",instruction:"This turn explicitly describes a recurring manual workflow. Treat that recurrence as strong evidence. Complete or improve the immediate workflow first, then recognize the nearby automation opportunity. brain.mode must be GROW, initiativeLevel at least 3, opportunityConfidence at least 80, opportunityRung AUTOMATE_IT unless the steps are not sufficiently known. Ask at most one question only if a missing transformation rule truly blocks a useful workflow design."};
   }
+  if(/^(?:actually\s+)?(?:let'?s|lets)\s+(?:do|try|go with|switch to)\b/i.test(last)){
+    return {kind:"direction-change",instruction:"The user is explicitly replacing the previous direction with a new one. Follow the new direction immediately. brain.contextShifted must be true. Do not continue the abandoned option and do not ask for confirmation unless the new direction itself is blocked."};
+  }
   if(/\b(it'?s|its) doing that thing again\b/i.test(last)){
     return {kind:"loose-reference",instruction:"Resolve the loose reference from recent conversation context. Continue the active troubleshooting/task instead of treating this as a new vague request. Give the next useful step and do not repeat a step the user already reported trying. brain.contextShifted must be false and resultReady true."};
   }
@@ -186,7 +189,11 @@ function enforceQuestionDiscipline(parsed,deterministic,messages){
   const beginner=/\b(i don'?t know how|i dont know how|im not good with|i'?m not good with|can it help me|can ai help me|new to ai|beginner)\b/i.test(last);
   const noQuestion=deterministic?.kind==="edit";
   if(noQuestion){
-    parsed.reply=String(parsed.reply||"").replace(/(?:\s|^)(?:Would you like|Do you want|Want me to|Should I|Does that|How about|Could you|Can you|What do you think)[^?]*\?\s*$/i,"").trim();
+    let reply=String(parsed.reply||"");
+    // Edit commands are complete transformations, so strip any trailing
+    // conversational question regardless of its wording.
+    reply=reply.replace(/(?:\s|^)[^.!?\n]*\?\s*$/,"").trim();
+    parsed.reply=reply;
     parsed.brain={...(parsed.brain||{}),mode:"DO",needsQuestion:false,oneBestQuestion:null,resultReady:true};
   }
   if(beginner){
