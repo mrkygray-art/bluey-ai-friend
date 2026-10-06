@@ -86,3 +86,16 @@ export async function remember(brain) {
   console.log("Bluey memory stored", { type: brain.memoryType, subject });
   return true;
 }
+
+
+export async function inspectMemories() {
+  const db = client();
+  if (!db) throw new Error("Persistent memory environment variables are unavailable");
+  const { data, error } = await db.from("bluey_memories")
+    .select("id,memory_type,subject_key,fact,confidence,status,created_at,updated_at")
+    .eq("owner_key", TEST_OWNER)
+    .order("updated_at", { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  return data || [];
+}
