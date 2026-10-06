@@ -22,6 +22,6 @@ const css=document.createElement('style');css.textContent=`.bluey-memory-artifac
 setTimeout(render,500);
 window.BlueyWorldArtifactMemory={version:'1.0',render,artifactFor,response};
 // Quiet Stage is the Alpha 47.1 presentation layer. Load it last so it can simplify the mature world engine without deleting it.
-if(!window.BlueyQuietStage&&!document.querySelector('script[data-bluey-quiet-stage]')){const s=document.createElement('script');s.src='/alpha47-quiet-stage.js';s.async=false;s.dataset.blueyQuietStage='1';document.body.appendChild(s)}
+if(!window.BlueyQuietStage&&!document.querySelector('script[data-bluey-quiet-stage]')){const s=document.createElement('script');s.src='/alpha47-quiet-stage.js?v=20261006-2';s.async=false;s.dataset.blueyQuietStage='1';document.body.appendChild(s)}
 console.info('[Bluey] Alpha 46 World Artifact Memory V1 ready');
 })();
