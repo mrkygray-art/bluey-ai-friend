@@ -1,10 +1,36 @@
-/* controls.js: one "🔊 Sound ▾" pill that opens the Voice and Sounds switches. */
-.bluey-audio{position:relative;display:inline-flex}
-.bluey-audio-toggle{border:1px solid #bfe0ee;border-radius:999px;background:#eaf6fc;color:#1f5d79;padding:8px 14px;font:inherit;cursor:pointer;white-space:nowrap}
-.bluey-audio-toggle[aria-expanded="true"]{background:#d9f0fa;border-color:#8fcbe4}
-.bluey-audio-toggle:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
-.bluey-audio-menu{position:absolute;left:0;bottom:calc(100% + 8px);z-index:40;display:flex;flex-direction:column;gap:7px;min-width:150px;padding:9px;border:1px solid #d9e8ef;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(16,43,69,.14)}
-.bluey-audio-menu[hidden]{display:none}
-.bluey-audio-menu button{width:100%;text-align:left}
+/* controls.js: a round blue "+" at the left of the message box opens one menu (Add photos &
+   files, Take a photo on phones, Sound, Remembered). The old Add photos and Sound pills are gone. */
+#bluey-attach,#bluey-files{display:none!important}
+.composer{padding-left:7px}
+.bluey-plus{position:relative;flex:none;align-self:flex-end}
+.composer .bluey-plus-toggle{position:relative;display:grid;place-items:center;width:42px;height:42px;min-height:42px;padding:0;border:0;border-radius:50%;
+ background:radial-gradient(circle at 34% 28%,#7fd5fb 0%,#29a9ea 42%,#0a78c2 100%);color:#fff;box-shadow:0 3px 10px rgba(10,120,194,.28),inset 0 -2px 4px rgba(0,60,110,.25);cursor:pointer;touch-action:manipulation;transition:transform .15s ease,box-shadow .15s ease}
+.composer .bluey-plus-toggle:hover{box-shadow:0 4px 14px rgba(10,120,194,.36),inset 0 -2px 4px rgba(0,60,110,.25)}
+.composer .bluey-plus-toggle:active{transform:scale(.94)}
+.composer .bluey-plus-toggle:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
+.bluey-plus-sign{font:400 28px/1 system-ui,-apple-system,"Segoe UI",sans-serif;margin-top:-2px;text-shadow:0 1px 2px rgba(0,50,90,.35);transition:transform .2s ease}
+.bluey-plus-toggle[aria-expanded="true"] .bluey-plus-sign{transform:rotate(45deg)}
+.bluey-plus-muted{display:none;position:absolute;right:-5px;top:-5px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);font-size:10px;line-height:19px;text-align:center}
+.bluey-plus-toggle.is-muted .bluey-plus-muted{display:block}
+.bluey-plus-menu{position:absolute;left:-1px;bottom:calc(100% + 12px);z-index:60;width:min(290px,calc(100vw - 32px));display:flex;flex-direction:column;gap:2px;padding:8px;border:1px solid #d9e8ef;border-radius:16px;background:#fff;box-shadow:0 12px 32px rgba(16,43,69,.16);text-align:left;font:15px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-plus-menu[hidden]{display:none}
+.composer .bluey-plus-menu button{min-height:0}
+.composer .bluey-plus-item{display:flex;align-items:center;gap:11px;width:100%;padding:10px 10px;border:0;border-radius:11px;background:transparent;color:#17344a;font:inherit;text-align:left;cursor:pointer}
+.composer .bluey-plus-item:hover,.composer .bluey-plus-item:focus-visible{background:#eef7fc;outline:0}
+.bluey-plus-icon{flex:none;width:24px;text-align:center;font-size:18px}
+.bluey-plus-text{display:flex;flex-direction:column;gap:2px}
+.bluey-plus-text small{color:#6c8090;font-size:12px}
+.bluey-plus-head{margin:8px 10px 2px;padding-top:9px;border-top:1px solid #e8f0f4;color:#6c8090;font-size:12px;font-weight:600;letter-spacing:.02em}
+.bluey-plus-switches{display:flex;gap:6px;padding:4px 8px 4px}
+.composer .bluey-plus-switches button{flex:1;border:1px solid #d6e8f1;border-radius:999px;background:#f6fbfe;color:#1f5d79;padding:8px 10px;font:13.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.composer .bluey-plus-switches button[aria-pressed="true"]{background:#e2f3fb;border-color:#9bcfea;color:#086ea8}
+.composer .bluey-plus-switches button:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
+.bluey-plus-remembered:empty{display:none}
+.bluey-plus-remembered{margin-top:6px;padding:9px 8px 2px;border-top:1px solid #e8f0f4}
+.bluey-plus-remembered .bluey-remembered{display:flex;flex-direction:column;gap:6px;position:static}
+.composer .bluey-plus-remembered .bluey-remembered>button{align-self:flex-start;border:1px solid #d6e8f1;border-radius:999px;background:#f6fbfe;color:#1f5d79;padding:7px 12px;font:13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-plus-menu .bluey-remembered-menu{position:static;width:auto;padding:4px 2px 2px;border:0;box-shadow:none;background:transparent}
+@media(max-width:700px){.bluey-plus-menu .bluey-remembered-menu{position:static;left:auto;right:auto;bottom:auto;width:auto}}
+.composer .bluey-plus-menu .bluey-remembered-menu button{border:1px solid #cfe6f1;border-radius:999px;background:#fff;color:#2f6f8c;padding:5px 10px;font:12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif}
 /* "Save chat" is hidden for now; the download code in alpha36.js stays. */
 .bluey-session-tools button[aria-label="Download this conversation as a text file"]{display:none!important}

@@ -1,0 +1,19 @@
+/* files.js: attached documents above the message box, file chips under the message that
+   sent them, and the drop highlight. */
+#bluey-doc-tray{width:min(780px,calc(100% - 28px));margin:0 auto 7px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+#bluey-doc-tray:empty{display:none}
+.bluey-doc-chip{display:inline-flex;align-items:center;gap:8px;max-width:min(320px,100%);padding:6px 6px 6px 10px;border:1px solid #cfe6f1;border-radius:12px;background:#f5fbfe;color:#17344a;font:13px/1.25 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-doc-chip.is-sent{background:#fff}
+.bluey-doc-icon{flex:none;font-size:18px}
+.bluey-doc-text{display:flex;flex-direction:column;min-width:0}
+.bluey-doc-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.bluey-doc-text small{color:#6c8090;font-size:11.5px}
+.bluey-doc-chip button{flex:none;width:26px;height:26px;border:0;border-radius:50%;background:transparent;color:#5a7385;font-size:18px;line-height:1;cursor:pointer}
+.bluey-doc-chip button:hover{background:#e3f1f8}
+.bluey-doc-chip button:focus-visible{outline:3px solid #64c8ef;outline-offset:1px}
+.bluey-doc-note{color:#6c8090;font:12px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;margin-left:2px}
+.bluey-msg-files{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px;margin:-14px 0 22px}
+.bluey-msg-files .bluey-doc-chip{padding-right:10px}
+body.bluey-dropping .composer{border-color:#2fa6e3;box-shadow:0 0 0 4px rgba(47,166,227,.22),0 8px 26px rgba(0,0,0,.05)}
+body.bluey-dropping .composer::after{content:"Drop to add";position:absolute;right:86px;top:50%;transform:translateY(-50%);color:#0a78c2;font:600 14px system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:none}
+body.bluey-dropping .composer{position:relative}

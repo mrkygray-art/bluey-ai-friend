@@ -4,7 +4,7 @@
 //   Nothing is saved unless the user taps Remember.
 // - Saved preferences (max 8) are added to every /api/chat request; api/chat.js treats them
 //   as style preferences only.
-// - A "Remembered ▾" dropdown next to New chat / Save chat lists them, each with Forget,
+// - A "Remembered ▾" list in the blue + menu shows them, each with Forget,
 //   plus Forget all. It only appears once something is saved.
 (function(){
 'use strict';
@@ -43,18 +43,20 @@ add=function(role,text){
  const card=document.createElement('div');card.className='bluey-remember';card.setAttribute('role','group');card.setAttribute('aria-label','Remember a preference');
  const ask=document.createElement('span');ask.append('Remember this for next time? ');const q=document.createElement('q');q.textContent=noticed;ask.appendChild(q);
  card.append(ask,
-  pill('Remember',()=>{save([...load(),noticed]);card.replaceChildren(document.createTextNode('Got it. I’ll remember that in this browser. You can change it under Remembered.'));setTimeout(()=>card.remove(),6000)}),
+  pill('Remember',()=>{save([...load(),noticed]);card.replaceChildren(document.createTextNode('Got it. I’ll remember that in this browser. You can change it under Remembered in the + menu.'));setTimeout(()=>card.remove(),6000)}),
   pill('Not now',()=>card.remove()));
  anchor.after(card);
 };
 
-// "Remembered ▾" in the session tools (New chat / Save chat).
+// "Remembered ▾" inside the blue + menu (controls.js makes the slot and calls
+// blueyRenderRemembered once it exists); before that, in the session tools.
 let wrap=null;
 function renderMenu(){
- const tools=document.querySelector('.bluey-session-tools');if(!tools)return;
+ const tools=document.querySelector('.bluey-plus-remembered')||document.querySelector('.bluey-session-tools');if(!tools)return;
  const prefs=load();
  if(!prefs.length){wrap?.remove();wrap=null;return}
- if(!wrap){wrap=document.createElement('div');wrap.className='bluey-remembered';tools.prepend(wrap)}
+ if(!wrap)wrap=document.createElement('div');
+ if(wrap.parentElement!==tools){wrap.className='bluey-remembered';tools.prepend(wrap)}
  const wasOpen=wrap.querySelector('.bluey-remembered-menu')&&!wrap.querySelector('.bluey-remembered-menu').hidden;
  wrap.replaceChildren();
  const toggle=pill(`Remembered (${prefs.length}) ▾`,()=>{menu.hidden=!menu.hidden;toggle.setAttribute('aria-expanded',String(!menu.hidden))});
@@ -65,7 +67,8 @@ function renderMenu(){
  if(prefs.length>1)menu.appendChild(pill('Forget all',()=>{if(window.confirm('Forget everything Bluey remembers in this browser?'))save([])}));
  wrap.append(toggle,menu);
 }
-document.addEventListener('click',e=>{if(wrap&&!e.target.closest('.bluey-remembered')){const m=wrap.querySelector('.bluey-remembered-menu');if(m&&!m.hidden){m.hidden=true;wrap.querySelector('button')?.setAttribute('aria-expanded','false')}}});
+document.addEventListener('click',e=>{if(wrap&&e.target.isConnected&&!e.target.closest('.bluey-remembered')){const m=wrap.querySelector('.bluey-remembered-menu');if(m&&!m.hidden){m.hidden=true;wrap.querySelector('button')?.setAttribute('aria-expanded','false')}}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&wrap){const m=wrap.querySelector('.bluey-remembered-menu');if(m)m.hidden=true}});
+window.blueyRenderRemembered=renderMenu;
 renderMenu();
 })();

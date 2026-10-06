@@ -12,6 +12,8 @@
 //   - the built-in story and guessing games, and replies while one is running
 //   - dancing, and "where are we?" (only the app knows the current room)
 //   - the prompt workshop while it's open, and photo-only messages
+// A message sent with a newly added file (files.js) always goes to the brain, and Send with
+// only a file sends "Please take a look at this." so Bluey sums it up and asks what you need.
 // Anything with task words (my, help, write, please…) goes to the brain even if it names a room
 // ("go home and finish my lab report").
 //
@@ -57,7 +59,7 @@ async function askBrain(text){
  try{
   const r=await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({messages:history.slice(-20)})});
   let d={};try{d=await r.json()}catch(_){}
-  if(!r.ok){const e=new Error(d.error||'Request failed');e.friendly=r.status===429||/^That answer got too long/.test(d.error||'');throw e}
+  if(!r.ok){const e=new Error(d.error||'Request failed');e.friendly=r.status===429||r.status===413||/^That answer got too long/.test(d.error||'');throw e}
   statusEl.textContent='';add('assistant',d.reply);history.push({role:'assistant',content:d.reply});behavior(d.behavior);speak(d.reply,d.behavior);
   if(d.spellingSuggestion&&window.blueyShowSuggestion)window.blueyShowSuggestion(d.spellingSuggestion);
  }catch(e){
@@ -70,8 +72,9 @@ async function askBrain(text){
 function install(){
  const sendThroughOldLayers=send;
  const guard=async function(text){
-  const clean=String(text||'').trim();
-  if(!clean||(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive)||isLocalAction(clean))return sendThroughOldLayers(text);
+  const newFile=!!(window.blueyDocsPending&&blueyDocsPending());
+  const clean=String(text||'').trim()||(newFile?'Please take a look at this.':'');
+  if(!clean||(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive)||(!newFile&&isLocalAction(clean)))return sendThroughOldLayers(text);
   // Going to the brain also ends any little local game, story, or object chat.
   blueyStory=null;blueyGame=null;blueyObjectFocus=null;
   const format=blueyDocumentFormat(clean);

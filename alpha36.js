@@ -82,7 +82,7 @@ add=function(role,text){
  if(role==='assistant'&&node?.classList.contains('msg')){
   const actions=document.createElement('div');actions.className='bluey-reply-actions';
   const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';copy.setAttribute('aria-label','Copy Bluey’s reply');
-  copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(String(text));tempStatus('Copied Bluey’s reply.',2200)}catch{tempStatus('Copy is unavailable in this browser.',2500)}});
+  copy.addEventListener('click',async()=>{try{await (window.blueyCopyReply?blueyCopyReply(String(text)):navigator.clipboard.writeText(String(text)));tempStatus('Copied Bluey’s reply.',2200)}catch{tempStatus('Copy is unavailable in this browser.',2500)}});
   const replay=document.createElement('button');replay.type='button';replay.textContent='▶ Play again';replay.setAttribute('aria-label','Play Bluey’s reply again');
   replay.addEventListener('click',()=>{blueyUnlockPhoneAudio();blueySpeakingKey='';speak(String(text),'explaining')});
   actions.append(copy,replay);node.after(actions);
@@ -94,7 +94,7 @@ add=function(role,text){
 const blueyConversationKey='bluey-alpha36-conversation';
 function blueySaveConversation(){
  try{
-  const transcript=[...messages.querySelectorAll('.msg')].map(node=>({role:node.classList.contains('assistant')?'assistant':'user',content:node.textContent||''}));
+  const transcript=[...messages.querySelectorAll('.msg')].map(node=>({role:node.classList.contains('assistant')?'assistant':'user',content:node.dataset.raw??node.textContent??''}));
   if(transcript.length)localStorage.setItem(blueyConversationKey,JSON.stringify(transcript.slice(-100)));
   else localStorage.removeItem(blueyConversationKey);
  }catch(_){/* Private browsing/storage limits should never block chat. */}
@@ -104,11 +104,11 @@ function blueyRestoreConversation(){
   const saved=JSON.parse(localStorage.getItem(blueyConversationKey)||'[]');if(!Array.isArray(saved)||!saved.length)return;
   for(const item of saved.slice(-100)){
    if(!item||!['user','assistant'].includes(item.role)||typeof item.content!=='string')continue;
-   const paragraph=document.createElement('p');paragraph.className='msg '+item.role;paragraph.textContent=item.content;messages.appendChild(paragraph);
+   let paragraph;if(item.role==='assistant'&&window.blueyFormat)paragraph=blueyFormat(item.content);else{paragraph=document.createElement('p');paragraph.className='msg '+item.role;paragraph.textContent=item.content}messages.appendChild(paragraph);
    history.push({role:item.role,content:item.content});
    if(item.role==='assistant'){
     const actions=document.createElement('div');actions.className='bluey-reply-actions';
-    const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(item.content);tempStatus('Copied Bluey’s reply.',2200)}catch{}});
+    const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';copy.addEventListener('click',async()=>{try{await (window.blueyCopyReply?blueyCopyReply(item.content):navigator.clipboard.writeText(item.content));tempStatus('Copied Bluey’s reply.',2200)}catch{}});
     const replay=document.createElement('button');replay.type='button';replay.textContent='▶ Play again';replay.addEventListener('click',()=>{blueyUnlockPhoneAudio();blueySpeakingKey='';speak(item.content,'explaining')});actions.append(copy,replay);paragraph.after(actions);
    }
   }
@@ -119,11 +119,11 @@ blueyRestoreConversation();
 
 const blueyTools=document.querySelector('#bluey-tools');
 const blueySessionTools=document.createElement('div');blueySessionTools.className='bluey-tool-group bluey-session-tools';
-const blueyNewChat=document.createElement('button');blueyNewChat.type='button';blueyNewChat.textContent='＋ New chat';blueyNewChat.setAttribute('aria-label','Start a new chat');
+const blueyNewChat=document.createElement('button');blueyNewChat.type='button';blueyNewChat.textContent='New chat';blueyNewChat.setAttribute('aria-label','Start a new chat');
 blueyNewChat.addEventListener('click',()=>{
  if(history.length&&!window.confirm('Start a new chat? This clears the conversation saved on this device.'))return;
  if(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive&&typeof blueyWorkshopFinish==='function')blueyWorkshopFinish();
- blueyStopVoice();history.length=0;messages.replaceChildren();localStorage.removeItem(blueyConversationKey);blueyPhotos=[];blueyRecentPhotos=[];
+ blueyStopVoice();history.length=0;messages.replaceChildren();localStorage.removeItem(blueyConversationKey);blueyPhotos=[];blueyRecentPhotos=[];if(window.blueyClearDocuments)blueyClearDocuments();
  if(typeof blueySyncControls==='function')blueySyncControls();input.value='';statusEl.textContent='';app.classList.remove('working');tempStatus('Fresh page, fresh start. I’m right here.',3000);input.focus();
 });
 const blueyExport=document.createElement('button');blueyExport.type='button';blueyExport.textContent='↓ Save chat';blueyExport.setAttribute('aria-label','Download this conversation as a text file');
