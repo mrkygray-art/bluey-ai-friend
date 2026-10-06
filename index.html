@@ -2216,6 +2216,7 @@ const BLUEY_OBJECTS={
 };
 
 let blueyVisibleObjects=[];
+Object.defineProperty(window,'blueyVisibleObjects',{configurable:true,get:()=>blueyVisibleObjects,set:value=>{blueyVisibleObjects=value}});
 let blueyObjectFocus=null;
 
 function clearInteractiveObjects(){
@@ -2381,5 +2382,8 @@ send=async function(text){
 
 // Restore current room through the Alpha 6 renderer.
 enterWorld(blueyWorld||"home",false);
+window.send=send;
+window.enterWorld=enterWorld;
+window.renderInteractiveObjects=renderInteractiveObjects;
 
 </script><div id="bluey-version" aria-label="Bluey version">Bluey 1.0 Alpha 40</div><script src="/alpha7.js"></script><script src="/alpha8.js"></script><script src="/alpha9.js"></script><script src="/alpha10.js"></script><script src="/alpha11.js"></script><script src="/alpha13.js"></script><script src="/alpha15.js"></script><script src="/alpha36.js"></script><script src="/alpha37.js"></script><script src="/alpha38.js"></script><script src="/alpha39.js"></script><script src="/alpha40.js"></script></body></html>
