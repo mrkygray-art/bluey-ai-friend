@@ -26,7 +26,8 @@ export async function loadMemories() {
 
 export async function remember(brain) {
   if (!brain || !["REMEMBER","UPDATE","FORGET"].includes(brain.memoryAction)) return false;
-  if (brain.memoryDurability !== "durable") return false;\n  if (brain.memoryAction !== "FORGET" && !brain.memoryCandidate) return false;
+  if (brain.memoryDurability !== "durable") return false;
+  if (brain.memoryAction !== "FORGET" && !brain.memoryCandidate) return false;
   if (!["PREFERENCE","PROJECT","PERSONAL_FACT"].includes(brain.memoryType)) return false;
   const db = client();
   if (!db) throw new Error("Persistent memory environment variables are unavailable");
