@@ -24,3 +24,22 @@ export function overLimit(req, res, name, perHour, perDay) {
   b.day.count++;
   return false;
 }
+
+// Web search budget (searches cost more than plain replies). Checked before a chat request
+// offers the search tool; counted only when the model actually searched.
+const searches = { ips: new Map(), day: { count: 0, reset: 0 } };
+const SEARCHES_PER_VISITOR_PER_DAY = 15, SEARCHES_PER_DAY = 300;
+const visitor = req => String(req.headers["x-forwarded-for"] || "unknown").split(",")[0].trim();
+function searchDay() {
+  const now = Date.now();
+  if (now > searches.day.reset) { searches.day = { count: 0, reset: now + 86400000 }; searches.ips.clear(); }
+}
+export function searchAllowed(req) {
+  searchDay();
+  return searches.day.count < SEARCHES_PER_DAY && (searches.ips.get(visitor(req)) || 0) < SEARCHES_PER_VISITOR_PER_DAY;
+}
+export function noteSearch(req) {
+  searchDay();
+  searches.day.count++;
+  searches.ips.set(visitor(req), (searches.ips.get(visitor(req)) || 0) + 1);
+}
