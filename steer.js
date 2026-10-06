@@ -3,7 +3,8 @@
 // extra options. Tapping one sends an ordinary message ("Make it shorter."), so people
 // see in their own chat that a few plain words steer the result. Teach without teaching.
 // When the draft rests on a guess, brain.assumption is shown above the buttons
-// ("💭 I aimed this at a coworker...") with a "Fix that" button that starts a correction.
+// ("💭 I aimed this at a coworker... If that's not right, just tell me."). It used to have a
+// "Fix that" button, which wasn't clear on its own, so the line invites a correction instead.
 //
 // The brain marks drafts with brain.isDraft (api/chat.js). The older layers call
 // add('assistant', reply) without the brain, so this layer reads each /api/chat
@@ -77,8 +78,8 @@ add=function(role,text){
  const guess=typeof chat.brain.assumption==='string'?chat.brain.assumption.trim():'';
  if(guess){
   const note=document.createElement('div');note.className='bluey-assumption';
-  const say=document.createElement('span');say.textContent='💭 '+guess;
-  note.append(say,pill('Fix that',()=>startTyping('Actually, ')));
+  const say=document.createElement('span');say.textContent='💭 '+guess+(/[.!?]$/.test(guess)?'':'.')+' If that’s not right, just tell me.';
+  note.append(say);
   anchor.after(note);
  }
 };

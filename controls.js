@@ -3,6 +3,11 @@
 //   holding the original Voice: On/Off and Sounds: On/Off buttons, moved there as they are,
 //   so every existing behavior (alpha7, alpha36, alpha8...) keeps working by id.
 // - "Save chat" is hidden in controls.css; its code in alpha36.js is kept.
+// - The "Small spelling suggestion" card is switched off (the browser's own spell check in the
+//   chat box underlines mistakes and offers fixes on right-click, like Notepad). Its code in
+//   alpha7.js is kept; blueyShowSuggestion is just replaced with a no-op here.
+blueyShowSuggestion=function(){};
+
 (function(){
 'use strict';
 const voice=document.getElementById('bluey-voice'),sounds=document.getElementById('bluey-sounds');
