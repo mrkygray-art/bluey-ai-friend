@@ -8,7 +8,7 @@ body .app .stage .stage-copy{
  left:0!important;right:auto!important;top:0!important;bottom:auto!important;
  width:max-content!important;max-width:min(560px,calc(100% - 24px))!important;
  z-index:20!important;text-align:center!important;pointer-events:none;
- transform:translate(var(--bluey-copy-x,0px),var(--bluey-copy-y,0px))!important;transition:transform .35s ease-out;
+ transform:translate(var(--bluey-copy-x,0px),var(--bluey-copy-y,0px))!important;transition:transform .12s linear;
 }
 body .app .stage .stage-copy:not(.bluey-copy-placed){visibility:hidden}
 body .app .stage .stage-copy>.greeting,body .app .stage .stage-copy>.status,body .app .stage .stage-copy>.nudge{

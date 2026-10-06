@@ -16,7 +16,5 @@ function place(){
  copy.style.setProperty('--bluey-copy-y',Math.round(y)+'px');
  copy.classList.add('bluey-copy-placed');
 }
-place();
-setInterval(place,150);
-window.addEventListener('resize',place);
+(function loop(){place();requestAnimationFrame(loop)})(); // every frame, so the text keeps up when he moves fast
 })();
