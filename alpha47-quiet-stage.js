@@ -12,7 +12,7 @@ function deduplicateObjects(){const seen=new Set();objectNodes().forEach(n=>{con
 function watchStageObjects(){const S=stage();if(!S||stageObserver)return;stageObserver=new MutationObserver(()=>{if(dedupeQueued)return;dedupeQueued=true;requestAnimationFrame(()=>{dedupeQueued=false;deduplicateObjects()})});stageObserver.observe(S,{childList:true,subtree:true})}
 function clearObjects(){clearTimeout(revealTimer);objectsVisibleUntil=0;objectNodes().forEach(n=>n.remove());if(Array.isArray(window.blueyVisibleObjects))window.blueyVisibleObjects=window.blueyVisibleObjects.filter(n=>n?.isConnected)}
 function clearScenery(){const S=stage();if(!S)return;S.querySelectorAll('.bluey-scenery-43,.roomLabel43,.stars43').forEach(n=>n.remove())}
-function quietHome(){const S=stage();if(!S)return;document.body.dataset.blueyWorld=HOME;S.dataset.blueyWorld=HOME;S.style.setProperty('background','#fff','important');clearScenery();clearObjects()}
+function quietHome(){const S=stage();if(!S)return;document.body.dataset.blueyWorld=HOME;S.dataset.blueyWorld=HOME;S.style.setProperty('background','#fff','important');clearScenery();if(Date.now()>=objectsVisibleUntil)clearObjects();else deduplicateObjects()}
 function revealObjects(which=room(),ttl=42000){clearObjects();objectsVisibleUntil=ttl>0?Date.now()+ttl:Number.POSITIVE_INFINITY;window.renderInteractiveObjects?.(which);const S=stage();if(Array.isArray(window.blueyVisibleObjects)&&S)window.blueyVisibleObjects.forEach(n=>{if(n&&!n.isConnected)S.appendChild(n)});window.BlueyWorldStandard?.layoutObjects?.(which);deduplicateObjects();if(ttl>0)revealTimer=setTimeout(clearObjects,ttl);return objectNodes().length}
 function asksToSeeObjects(text){const q=String(text||'').toLowerCase();return /\b(what(?:'s| is) (?:in|inside)|what do you have|show me (?:what|your|the)|what(?:'s| is) here|look around|explore|objects?|things? (?:are|do you have)|what is in your|show (?:me )?(?:around|your room|your home|the room))\b/.test(q)}
 function asksHome(text){const q=String(text||'').toLowerCase();return /\b(go|take me|come|return|back|visit|show me)\b.*\b(home|house)\b|\b(go|come|head) home\b/.test(q)}
@@ -20,7 +20,7 @@ function topicMovedOn(text){const q=String(text||'').toLowerCase();if(!q||asksTo
 function forceHome(){try{window.enterWorld?.(HOME,false)}catch(_){};setTimeout(quietHome,20);setTimeout(quietHome,100);setTimeout(quietHome,350)}
 const previousSend=window.send;
 window.send=async function(t){const text=String(t||'').trim(),showObjects=asksToSeeObjects(text);if(text&&asksHome(text)&&!showObjects){clearObjects();forceHome()}else if(text&&topicMovedOn(text)){clearObjects()}const result=await previousSend.apply(this,arguments);if(showObjects)revealObjects(room());return result};
-window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();clearObjects();if(r===HOME){setTimeout(quietHome,20);setTimeout(quietHome,160)}});
+window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();if(r!==HOME||Date.now()>=objectsVisibleUntil)clearObjects();if(r===HOME){setTimeout(quietHome,20);setTimeout(quietHome,160)}});
 window.addEventListener('bluey:alpha47-ready',()=>{if(room()===HOME)quietHome()});
 
 function isBuildPromptControl(el){const s=[el.textContent,el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.id,el.className].filter(Boolean).join(' ').toLowerCase();return /build\s*prompt|prompt\s*builder|buildprompt/.test(s)}
