@@ -4,8 +4,8 @@ const TEST_OWNER = "brain-lab-alpha";
 
 function client() {
   const url = process.env.SUPABASE_URL;
-  const secret = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !secret) return null;
+  const secret = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !secret) { console.error("Bluey memory config missing", { hasUrl: !!url, hasSecret: !!secret }); return null; }
   return createClient(url, secret, {
     auth: { persistSession: false, autoRefreshToken: false }
   });
@@ -30,7 +30,7 @@ export async function remember(brain) {
   if (brain.memoryDurability !== "durable" || !brain.memoryCandidate) return false;
   if (!["PREFERENCE", "PROJECT", "PERSONAL_FACT"].includes(brain.memoryType)) return false;
   const db = client();
-  if (!db) return false;
+  if (!db) throw new Error("Persistent memory environment variables are unavailable");
 
   const seed = brain.projectCandidate || brain.memoryCandidate || brain.memoryType;
   const subject = String(seed)
@@ -48,5 +48,6 @@ export async function remember(brain) {
     status: "active"
   });
   if (error) throw error;
+  console.log("Bluey memory stored", { type: brain.memoryType, subject });
   return true;
 }
