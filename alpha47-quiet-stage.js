@@ -19,7 +19,7 @@ function asksHome(text){const q=String(text||'').toLowerCase();return /\b(go|tak
 function topicMovedOn(text){const q=String(text||'').toLowerCase();if(!q||asksToSeeObjects(q))return false;return /\b(help me|write|email|question|explain|plan|solve|troubleshoot|picture|photo|new topic|something else|resume|code|calculate|research)\b/.test(q)}
 function forceHome(){try{window.enterWorld?.(HOME,false)}catch(_){};setTimeout(quietHome,20);setTimeout(quietHome,100);setTimeout(quietHome,350)}
 const previousSend=window.send;
-window.send=async function(t){const text=String(t||'').trim();if(text&&asksToSeeObjects(text)){setTimeout(()=>revealObjects(room()),220)}else if(text&&asksHome(text)){clearObjects();forceHome()}else if(text&&topicMovedOn(text)){clearObjects()}return previousSend.apply(this,arguments)};
+window.send=async function(t){const text=String(t||'').trim(),showObjects=asksToSeeObjects(text);if(text&&asksHome(text)&&!showObjects){clearObjects();forceHome()}else if(text&&topicMovedOn(text)){clearObjects()}const result=await previousSend.apply(this,arguments);if(showObjects)revealObjects(room());return result};
 window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();clearObjects();if(r===HOME){setTimeout(quietHome,20);setTimeout(quietHome,160)}});
 window.addEventListener('bluey:alpha47-ready',()=>{if(room()===HOME)quietHome()});
 
