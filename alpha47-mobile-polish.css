@@ -96,3 +96,13 @@
  body.bluey-world43-home:not(.bluey-home-props-visible) .stage .bluey-object,
  body.bluey-world43-home:not(.bluey-home-props-visible) .stage .bluey-memory-artifact{display:none!important}
 }
+
+/* Home props stay hidden at every layout width until the user asks to see them. */
+.stage[data-bluey-world="home"]:not(.bluey-home-props-visible) .bluey-interactive-object,
+.stage[data-bluey-world="home"]:not(.bluey-home-props-visible) .bluey-trip-object,
+.stage[data-bluey-world="home"]:not(.bluey-home-props-visible) .bluey-object,
+.stage[data-bluey-world="home"]:not(.bluey-home-props-visible) .bluey-memory-artifact,
+body.bluey-world43-home:not(.bluey-home-props-visible) .stage .bluey-interactive-object,
+body.bluey-world43-home:not(.bluey-home-props-visible) .stage .bluey-trip-object,
+body.bluey-world43-home:not(.bluey-home-props-visible) .stage .bluey-object,
+body.bluey-world43-home:not(.bluey-home-props-visible) .stage .bluey-memory-artifact{display:none!important}
