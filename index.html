@@ -1512,8 +1512,8 @@ send=async function(text){
  if(clean.includes('🧲')||/\bmagnet(s)?\b/i.test(clean)){
    add('user',clean);input.value='';magnetReaction();await characterPause(1000);add('assistant',"See? Suspicious.");return;
  }
- if(/\b(printer|printers)\b/i.test(clean))
-   return answer("I can travel across the digital world in milliseconds, but apparently printing page 2 requires divine intervention. Printers and I have history.",'biglaugh',650);
+ // Printer mentions are normal conversation. Let /api/chat and the Personality
+ // Engine generate a fresh, context-aware response instead of replaying a canned joke.
  if(/\b(rubber duck|traffic cone|bubble wrap|missing socks|dryer socks)\b/i.test(clean))
    return answer(q.includes('rubber')?"You made a tiny yellow bird specifically for bathtubs. Nobody finds this strange?":
      q.includes('traffic')?"Traffic cones are tiny orange mountains whose entire job is saying “not here.” I respect the clarity.":
