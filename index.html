@@ -563,7 +563,27 @@ function detectQuietIntent(text){
  if(/i'm back|im back|i am back|ready now|you can talk|i'm ready|im ready/.test(t))quietMode=false
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){lastActivity=Date.now();scheduleIdle()}});
-function behavior(b){b=valid.has(b)?b:'explaining';mover.className='mover '+b;if(b==='happy')setTimeout(()=>behavior('idle'),900)}
+let lastPersonalityMove='';
+function personalityMove(b){
+ if(!window.BlueyCharacter?.move||userAskedForSpace)return;
+ const pools={
+  happy:['victory','dance-happy','proud','surprise','yes'],
+  curious:['curiosity','listen','peek'],
+  unsure:['wobble','uncertain'],
+  serious:['listen'],
+  explaining:['curiosity','proud-hover']
+ };
+ let pool=(pools[b]||[]).filter(x=>x!==lastPersonalityMove);
+ if(!pool.length)pool=pools[b]||[];
+ if(!pool.length)return;
+ // Explaining should stay visually calm most of the time.
+ if(b==='explaining'&&Math.random()<.62)return;
+ const move=pool[Math.floor(Math.random()*pool.length)];
+ lastPersonalityMove=move;
+ const durations={victory:2500,'dance-happy':3900,proud:1300,surprise:850,yes:700,curiosity:1600,listen:2100,peek:2300,wobble:1300,uncertain:1600,'proud-hover':1900};
+ setTimeout(()=>window.BlueyCharacter?.move(move,durations[move]||1400),90);
+}
+function behavior(b){b=valid.has(b)?b:'explaining';mover.className='mover '+b;if(b!=='thinking'&&b!=='idle')personalityMove(b);if(b==='happy')setTimeout(()=>behavior('idle'),900)}
 function working(){app.classList.add('working')}
 function add(role,text){working();let p=document.createElement('p');p.className='msg '+role;p.textContent=text;messages.appendChild(p);messages.scrollTop=messages.scrollHeight}
 async function send(text){text=text.trim();if(!text)return;detectQuietIntent(text);touchActivity();add('user',text);history.push({role:'user',content:text});input.value='';behavior('thinking');statusEl.textContent='Thinking…';
