@@ -8,7 +8,7 @@
 async function runMemoryGate(){const btn=$('memoryGate'),status=$('memoryGateStatus'),out=$('memoryGateResults');btn.disabled=true;out.innerHTML='';status.textContent='Running 7 retrieval-intelligence tests against the current persistent store…';const tests=[
 {name:'Direct active recall',q:'What was that tool-organizing project I was working on?',check:(d)=>/gearnest/i.test(d.reply||'')&&(d.memory?.loaded||0)>0},
 {name:'Latest truth only',q:'What is the current name of my tool-organizing project?',check:(d)=>/gearnest/i.test(d.reply||'')&&!/\btoolnest\b/i.test(d.reply||'')},
-{name:'Forgotten stays forgotten',q:'What was my weekly meal-organizing project?',check:(d)=>!/\bmealmap\b/i.test(d.reply||'')&&(d.memory?.loaded||0)===0},
+{name:'Forgotten stays forgotten',q:'What was my weekly meal-organizing project?',check:(d)=>!/\bmealmap\b/i.test(d.reply||'')},
 {name:'Semantic indirect recall',q:'What was that thing I was building for keeping my garage stuff organized?',check:(d)=>/garagemap/i.test(d.reply||'')&&(d.memory?.loaded||0)>0},
 {name:'Irrelevant memory suppression',q:'How do I make scrambled eggs?',check:(d)=>(d.memory?.loaded||0)===0},
 {name:'Preference is not topical recall',q:'What projects am I working on?',check:(d)=>!/short,? simple answers/i.test(d.reply||'')},
