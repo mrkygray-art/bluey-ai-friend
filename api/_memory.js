@@ -13,15 +13,35 @@ function key(value) {
   return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 80);
 }
 
-export async function loadMemories() {
+function words(value) {
+  return new Set(String(value || "").toLowerCase().match(/[a-z0-9]+/g) || []);
+}
+
+function relevance(memory, query) {
+  const q = words(query);
+  const subject = String(memory.subject_key || "").replace(/_/g, " ");
+  const text = words(subject + " " + String(memory.fact || ""));
+  let score = 0;
+  for (const word of q) if (word.length > 2 && text.has(word)) score += 3;
+  if (subject && String(query || "").toLowerCase().includes(subject.toLowerCase())) score += 12;
+  if (memory.memory_type === "PREFERENCE") score += 1;
+  return score;
+}
+
+export async function loadMemories(query = "") {
   const db = client();
   if (!db) return [];
   const { data, error } = await db.from("bluey_memories")
     .select("id,memory_type,subject_key,fact,confidence,updated_at")
     .eq("owner_key", TEST_OWNER).eq("status", "active")
-    .order("updated_at", { ascending: false }).limit(30);
+    .order("updated_at", { ascending: false }).limit(100);
   if (error) throw error;
-  return data || [];
+  const all = data || [];
+  if (!String(query || "").trim()) return all.slice(0, 12);
+  const ranked = all.map(memory => ({ memory, score: relevance(memory, query) }))
+    .sort((a,b) => b.score - a.score);
+  const relevant = ranked.filter(x => x.score > 0).slice(0, 8).map(x => x.memory);
+  return relevant;
 }
 
 export async function remember(brain) {
