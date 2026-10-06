@@ -71,6 +71,3 @@
  .stage>.status{top:calc(50% + 90px)}
  .stage>.nudge{top:calc(50% + 115px)}
 }
-@media(prefers-reduced-motion:reduce){
- .stage>.greeting{scroll-behavior:auto}
-}
