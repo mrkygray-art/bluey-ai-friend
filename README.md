@@ -43,6 +43,7 @@ A clear request gets done (DO). A vague one gets one question first (DISCOVER).
 - **A fun hello.** About 30 greetings in Bluey's voice (marbles, Pixel One, suspicious magnets), a few for Mondays, Fridays, and weekends, and a birthday one on July 7. It won't repeat any of your last 8.
 - **Saves and shares.** New chat, Save chat, Copy a reply, and Play a reply again.
 - **Honest by design.** Bluey is instructed never to claim a feature, memory, image, or file that doesn't exist. If an upload or API call fails, he says so.
+- **Real requests always reach the brain.** Bluey has dozens of playful built-in replies (favorite color, his rooms, "thanks!"), matched by keyword. Those used to catch real requests too: a long message that mentioned "browser" got a canned speech about browsers, "my printer says offline" got a printer joke, and "please verify this" was never sent. Now any message that looks like a real request (more than 10 words, more than one sentence, or task words like *my, help, write, please, verify*) goes straight to the brain ([`brain-first.js`](brain-first.js)). Short playful messages keep their fun answers.
 
 ## The Brain: DO, DISCOVER, GROW
 
