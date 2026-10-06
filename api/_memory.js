@@ -24,7 +24,7 @@ function relevance(memory, query) {
   let score = 0;
   for (const word of q) if (word.length > 2 && text.has(word)) score += 3;
   if (subject && String(query || "").toLowerCase().includes(subject.toLowerCase())) score += 12;
-  if (memory.memory_type === "PREFERENCE") score += 1;
+  // Preferences should not compete with topical/project recall.\n  // They will be handled separately as behavior settings later.
   return score;
 }
 
