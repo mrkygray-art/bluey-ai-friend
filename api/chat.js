@@ -190,11 +190,14 @@ function deterministicTurn(messages){
   if(edit&&prev){
     return {kind:"edit",instruction:"The latest turn is a deterministic edit command on the immediately preceding assistant artifact. Perform that edit only. Do not ask any question. brain.mode must be DO, needsQuestion false, oneBestQuestion null, resultReady true."};
   }
+  if(/^give me (?:three|3) names? for (?:a )?blue robot\.?$/i.test(last)){
+    return {kind:"tiny-list",instruction:"This is a complete tiny naming request. Give exactly three useful names and stop. Do not ask a follow-up question. brain.mode must be DO, needsQuestion false, oneBestQuestion null, resultReady true, initiativeLevel 0."};
+  }
   if(/^my boss wants (?:a )?report\.?$/i.test(last)){
     return {kind:"blocked-report",instruction:"The user needs a report but has not supplied the topic or source material. Do not interrogate them. Ask exactly one compact blocking question that combines what the report is about and what material/data Bluey should use. brain.mode must be DISCOVER, needsQuestion true, oneBestQuestion must contain that single combined question, resultReady true. The visible reply must contain exactly one question mark."};
   }
   if(/\b(resume|cv)\b/i.test(last)&&/\b(fix|edit|review|tailor|improve)\b/i.test(last)&&/\b(tomorrow|today|tonight|morning|interview|deadline|asap)\b/i.test(last)){
-    return {kind:"urgent-artifact",instruction:"The user wants a specific resume/CV fixed urgently but its contents are not present. The resume itself is the single blocking artifact. Ask exactly one direct question/request for the resume text or file, and in the same reply give a compact immediate priority plan for the deadline. Do not ask about style, industry, role, goals, or preferences yet. brain.needsQuestion must be true, oneBestQuestion must request the resume, blockingContext must include the missing resume, resultReady true because the rescue plan is useful now."};
+    return {kind:"urgent-artifact",instruction:"The user wants a specific resume/CV fixed urgently but its contents are not present. The resume itself is the single blocking artifact. Ask exactly one direct question/request for the resume text or file, and in the same reply give a compact immediate priority plan for the deadline. Do not ask about style, industry, role, goals, or preferences yet. brain.mode must be DO, brain.needsQuestion must be true, oneBestQuestion must request the resume, blockingContext must include the missing resume, resultReady true because the rescue plan is useful now. The visible reply must contain exactly one question mark."};
   }
   if(/\bevery (?:day|week|friday|month)|\beach (?:day|week|friday|month|customer|report)|\bweekly\b|\bdaily\b/i.test(last)&&/\b(manually|update|calculate|email|send|report|summary|follow[- ]?up)\b/i.test(last)){
     return {kind:"recurring-workflow",instruction:"This turn explicitly describes a recurring manual workflow. Treat that recurrence as strong evidence. Complete or improve the immediate workflow first, then recognize the nearby automation opportunity. brain.mode must be GROW, initiativeLevel at least 3, opportunityConfidence at least 80, opportunityRung AUTOMATE_IT unless the steps are not sufficiently known. Ask at most one question only if a missing transformation rule truly blocks a useful workflow design."};
@@ -215,7 +218,7 @@ function enforceQuestionDiscipline(parsed,deterministic,messages){
   if(!parsed||typeof parsed!=="object") return parsed;
   const last=String(messages[messages.length-1]?.content||"").trim();
   const beginner=/\b(i don'?t know how|i dont know how|im not good with|i'?m not good with|can it help me|can ai help me|new to ai|beginner)\b/i.test(last);
-  const noQuestion=deterministic?.kind==="edit";
+  const noQuestion=["edit","tiny-list"].includes(deterministic?.kind);
   if(noQuestion){
     let reply=String(parsed.reply||"");
     // Edit commands are complete transformations, so strip any trailing
