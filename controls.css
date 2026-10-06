@@ -34,3 +34,6 @@
 .composer .bluey-plus-menu .bluey-remembered-menu button{border:1px solid #cfe6f1;border-radius:999px;background:#fff;color:#2f6f8c;padding:5px 10px;font:12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif}
 /* "Save chat" is hidden for now; the download code in alpha36.js stays. */
 .bluey-session-tools button[aria-label="Download this conversation as a text file"]{display:none!important}
+/* pwa.js: "Add Bluey to your home screen" in the same menu, with steps for browsers without an install dialog. */
+.composer .bluey-plus-item[hidden],.bluey-install-help[hidden]{display:none}
+.bluey-install-help{margin:2px 10px 6px 45px;color:#3f5b6f;font-size:13px;line-height:1.4}

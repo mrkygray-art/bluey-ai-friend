@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Bluey's orb (index.html .orb): blue body, darker lower right, white highlight upper left -->
+  <defs>
+    <linearGradient id="body" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0" stop-color="#58d6ff"/>
+      <stop offset=".37" stop-color="#12afea"/>
+      <stop offset=".68" stop-color="#008bd5"/>
+      <stop offset="1" stop-color="#0871bf"/>
+    </linearGradient>
+    <radialGradient id="shade" cx="68%" cy="73%" r="42%">
+      <stop offset="0" stop-color="#004696" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#004696" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="31%" cy="22%" r="29%">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".1" stop-color="#fff"/>
+      <stop offset=".24" stop-color="#fff" stop-opacity=".6"/>
+      <stop offset=".69" stop-color="#fff" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#body)"/>
+  <circle cx="50" cy="50" r="48" fill="url(#shade)"/>
+  <circle cx="50" cy="50" r="48" fill="url(#shine)"/>
+</svg>
