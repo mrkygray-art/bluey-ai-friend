@@ -40,7 +40,13 @@ function relevance(memory, query) {
   const text = expandedWords(subject + " " + String(memory.fact || ""));
   let score = 0;
   for (const word of q) if (word.length > 2 && text.has(word)) score += 3;
-  if (subject && String(query || "").toLowerCase().includes(subject.toLowerCase())) score += 12;
+  const rawQuery = String(query || "").toLowerCase();
+  if (subject && rawQuery.includes(subject.toLowerCase())) score += 12;
+  if (memory.memory_type === "PREFERENCE") {
+    const wantsPreference = /\\b(prefer|preference|answer me|respond|response|style|concise|short|simple|detailed|format|tone)\\b/i.test(rawQuery);
+    if (!wantsPreference) return 0;
+    score += 9;
+  }
   return score;
 }
 
