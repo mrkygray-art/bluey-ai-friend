@@ -67,7 +67,13 @@ export async function loadMemories(query = "") {
   // one related memory score artificially higher, so use a wider ambiguity
   // band rather than silently choosing it.
   if (exactSubject.length) return exactSubject.slice(0, 3).map(x => x.memory);
-  const close = positive.filter(x => x.score >= Math.max(3, top * 0.55));
+  const close = positive.filter(x => x.score >= Math.max(3, top * 0.35));
+
+  // If an indirect query has multiple positive project matches, preserve them.
+  // Ambiguity should be resolved conversationally, not by an arbitrary score gap.
+  const projectMatches = positive.filter(x => x.memory.memory_type === "PROJECT");
+  if (projectMatches.length > 1) return projectMatches.slice(0, 4).map(x => x.memory);
+
   return close.slice(0, 4).map(x => x.memory);
 }
 
