@@ -29,14 +29,13 @@ const blueyRoomInvitationBefore40=blueyRoomInvitation,blueyRoomInvitationCounts4
  load('/alpha43.js','data-bluey-alpha43',()=>!!window.BlueyWorldStandard,()=>
  load('/alpha44.js','data-bluey-alpha44',()=>!!window.BlueyReleaseCandidate,()=>
  load('/alpha45.js','data-bluey-alpha45',()=>!!window.BlueyRoomIntelligence,()=>
- load('/alpha46.js','data-bluey-alpha46',()=>!!window.BlueyWorldArtifactMemory,()=>
- load('/alpha47-quiet-stage.js','data-bluey-alpha47-quiet',()=>!!window.BlueyQuietStage,()=>{
+ load('/alpha46.js','data-bluey-alpha46',()=>!!window.BlueyWorldArtifactMemory,()=>{
    if(window.BlueyCharacter)window.BlueyCharacter.version='1.0-alpha47';
    if(window.blueyAbout)window.blueyAbout.version='1.0-alpha47';
    const badge=document.getElementById('bluey-version');if(badge)badge.textContent=window.BLUEY_RUNTIME_VERSION;
    document.title=window.BLUEY_RUNTIME_VERSION;
-   window.BlueyAlpha47={version:window.BLUEY_RUNTIME_VERSION,runtimeChain:[41,42,43,44,45,46,'quiet-stage'],brainLab:'2.1',ready:true};
+   window.BlueyAlpha47={version:window.BLUEY_RUNTIME_VERSION,runtimeChain:[41,42,43,44,45,46],brainLab:'2.1',ready:true};
    window.dispatchEvent(new CustomEvent('bluey:alpha47-ready',{detail:window.BlueyAlpha47}));
-   console.info('[Bluey Alpha 47] Production baseline ready: 41 → 42 → 43 → 44 → 45 → 46 + quiet stage');
- })))))))
+   console.info('[Bluey Alpha 47] Production baseline ready: 41 → 42 → 43 → 44 → 45 → 46 + Brain Lab V2.1');
+ }))))))
 })();
