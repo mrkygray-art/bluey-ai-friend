@@ -1,0 +1,14 @@
+/* preferences.js: "Remember this?" card under a reply, and the "Remembered ▾" dropdown. Same quiet pills. */
+.bluey-remember{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:-10px 0 22px 1px;padding:9px 11px;border:1px solid #d9e8ef;border-radius:14px;background:#f7fbfd;color:#43627a;font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-remember q{font-weight:600;color:#1f4f69}
+.bluey-remember button,.bluey-remembered button{border:1px solid #cfe6f1;border-radius:999px;background:#fff;color:#2f6f8c;padding:6px 11px;font:12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.bluey-remember button:active,.bluey-remembered button:active{background:#e7f6fc}
+.bluey-remember button:focus-visible,.bluey-remembered button:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
+.bluey-remembered{position:relative;display:inline-flex}
+.bluey-remembered>button[aria-expanded="true"]{background:#e7f6fc;border-color:#9fd3ea}
+.bluey-remembered-menu{position:absolute;right:0;bottom:calc(100% + 8px);z-index:40;width:min(300px,calc(100vw - 32px));display:flex;flex-direction:column;gap:7px;padding:10px;border:1px solid #d9e8ef;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(16,43,69,.14);text-align:left}
+.bluey-remembered-menu[hidden]{display:none}
+.bluey-remembered-menu p{margin:0;color:#6a7c8b;font:12px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-remembered-row{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#1f4f69;font:13px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-remembered-row span{overflow-wrap:anywhere}
+@media(max-width:700px){.bluey-remembered{position:static}.bluey-remembered-menu{position:fixed;left:16px;right:16px;bottom:150px;width:auto}}
