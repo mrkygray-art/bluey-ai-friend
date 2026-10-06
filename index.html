@@ -1930,8 +1930,7 @@ send=async function(text){
  if(coach){
    add('user',clean);input.value='';noteQuestion();characterMove('curiosity',1200);setTimeout(()=>add('assistant',coach),500);return;
  }
- const trip=questionNeedsThinkingTrip(clean);
- if(trip&&blueyWorld==='home'&&!blueyStory&&!blueyGame)setTimeout(()=>showWorkPieces(trip,clean),520);
+ // Secret stage worlds stay opt-in. Normal work stays at Home.
  return blueyAlpha4Base(clean);
 };
 
@@ -2064,8 +2063,7 @@ send=async function(text){
 
   const coach=blueyCoach(clean);
   if(coach){
-    add("user",clean);input.value="";enterWorld(coach.kind==="research"?"library":"workshop",false);
-    showTaskMap(coach.kind);characterMove("curiosity",1400);
+    add("user",clean);input.value="";characterMove("curiosity",1400);
     setTimeout(()=>add("assistant",coach.line),650);return;
   }
 
