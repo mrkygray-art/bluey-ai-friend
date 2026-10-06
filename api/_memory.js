@@ -25,13 +25,28 @@ export async function loadMemories() {
 }
 
 export async function remember(brain) {
-  if (!brain || !["REMEMBER","UPDATE"].includes(brain.memoryAction)) return false;
-  if (brain.memoryDurability !== "durable" || !brain.memoryCandidate) return false;
+  if (!brain || !["REMEMBER","UPDATE","FORGET"].includes(brain.memoryAction)) return false;
+  if (brain.memoryDurability !== "durable") return false;\n  if (brain.memoryAction !== "FORGET" && !brain.memoryCandidate) return false;
   if (!["PREFERENCE","PROJECT","PERSONAL_FACT"].includes(brain.memoryType)) return false;
   const db = client();
   if (!db) throw new Error("Persistent memory environment variables are unavailable");
 
   const subject = key(brain.memorySubject || brain.projectCandidate || brain.memoryCandidate || brain.memoryType) || "memory";
+
+  if (brain.memoryAction === "FORGET") {
+    if (!brain.memorySubject) throw new Error("FORGET requires memorySubject so Bluey does not forget unrelated memories");
+    const { data: matches, error: findError } = await db.from("bluey_memories")
+      .select("id,subject_key").eq("owner_key", TEST_OWNER)
+      .eq("memory_type", brain.memoryType).eq("status", "active");
+    if (findError) throw findError;
+    const target = (matches || []).find(m => m.subject_key === subject || m.subject_key.includes(subject) || subject.includes(m.subject_key));
+    if (!target) throw new Error("No matching active memory found for FORGET target: " + subject);
+    const { error: forgetError } = await db.from("bluey_memories")
+      .update({ status: "forgotten" }).eq("id", target.id).eq("owner_key", TEST_OWNER);
+    if (forgetError) throw forgetError;
+    console.log("Bluey memory forgotten", { type: brain.memoryType, subject });
+    return true;
+  }
 
   if (brain.memoryAction === "UPDATE") {
     const prior = key(brain.memoryReplacesSubject);
