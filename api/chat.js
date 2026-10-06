@@ -231,6 +231,19 @@ function enforceQuestionDiscipline(parsed,deterministic,messages){
       parsed.brain={...(parsed.brain||{}),needsQuestion:true,oneBestQuestion:keep};
     }
   }
+  // Hard arbitration: when Judgment says no question is needed, Personality
+  // cannot append a conversational follow-up. Preserve questions inside a
+  // requested artifact, but remove a trailing assistant question.
+  if(parsed.brain?.needsQuestion===false){
+    let reply=String(parsed.reply||"").trim();
+    const parts=reply.split(/(?<=[.!?])\s+/);
+    if(parts.length>1 && /\?\s*$/.test(parts[parts.length-1])){
+      parts.pop();
+      reply=parts.join(" ").trim();
+    }
+    parsed.reply=reply;
+    parsed.brain.oneBestQuestion=null;
+  }
   return parsed;
 }
 function outputText(data){if(typeof data.output_text==="string"&&data.output_text)return data.output_text;for(const item of data.output||[])for(const c of item.content||[])if((c.type==="output_text"||c.type==="text")&&typeof c.text==="string")return c.text;return "";}
