@@ -17,14 +17,30 @@ function words(value) {
   return new Set(String(value || "").toLowerCase().match(/[a-z0-9]+/g) || []);
 }
 
+const CONCEPTS = [
+  ["organize","organized","organizing","organization","organizer","keeping","track"],
+  ["tool","tools","wrench","wrenches","drill","drills","garage","workshop","equipment","gear"],
+  ["meal","meals","food","dinner","lunch","breakfast","recipe","recipes","cooking"],
+  ["book","books","reading","library","novel","novels"],
+  ["project","projects","building","build","making","thing"]
+];
+
+function expandedWords(value) {
+  const base = words(value);
+  const expanded = new Set(base);
+  for (const group of CONCEPTS) {
+    if (group.some(word => base.has(word))) for (const word of group) expanded.add(word);
+  }
+  return expanded;
+}
+
 function relevance(memory, query) {
-  const q = words(query);
+  const q = expandedWords(query);
   const subject = String(memory.subject_key || "").replace(/_/g, " ");
-  const text = words(subject + " " + String(memory.fact || ""));
+  const text = expandedWords(subject + " " + String(memory.fact || ""));
   let score = 0;
   for (const word of q) if (word.length > 2 && text.has(word)) score += 3;
   if (subject && String(query || "").toLowerCase().includes(subject.toLowerCase())) score += 12;
-  // Preferences should not compete with topical/project recall.\n  // They will be handled separately as behavior settings later.
   return score;
 }
 
