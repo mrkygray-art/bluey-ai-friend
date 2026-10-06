@@ -53,7 +53,11 @@ The brain also tracks the user's current goal, detects when the topic genuinely 
 
 ## Brain Lab
 
-The Brain is a product promise, so it is tested like one. [`brain-lab.html`](brain-lab.html) is a developer test page, with the test cases and scoring in [`brain-eval.js`](brain-eval.js) and the runner in [`brain-lab-v2.js`](brain-lab-v2.js). The app doesn't link to it, and [`vercel.json`](vercel.json) redirects it to the home page on any `.vercel.app` deployment, so visitors can't run it on the live key. To use it, [run Bluey locally](#run-it-locally) and open `/brain-lab.html`. Each run sends real requests to `/api/chat`, so it uses your OpenAI key.
+The Brain is a product promise, so it is tested like one. [`brain-lab.html`](brain-lab.html) is a developer test page, with the test cases and scoring in [`brain-eval.js`](brain-eval.js) and the runner in [`brain-lab-v2.js`](brain-lab-v2.js). The app doesn't link to it.
+
+> **Why the Brain Lab is turned off on the live site:** every test sends a real conversation to OpenAI, and a full run of the suite is 15 paid requests (39 on the beta branch). A public Run button would let anyone spend the project's API budget over and over. So [`vercel.json`](vercel.json) sends `/brain-lab.html` to the home page on any `.vercel.app` deployment, and the lab runs only on a developer's own machine. The test cases and the scoring are public in this repo, so anyone can read exactly what is tested.
+
+To use it, [run Bluey locally](#run-it-locally) and open `/brain-lab.html`. Each run sends real requests to `/api/chat`, so it uses your OpenAI key.
 
 - **15 regression conversations**, including multi-turn ones: a simple answer that should stay simple, clear writing tasks, a vague request, messy spelling, a recurring weekly workflow, a topic change that must not drag the old goal along, a "continue" turn, an emotional turn, and ordinary tasks that must not turn into business ideas.
 - **Each reply is checked against expectations** for that case: the mode, how much initiative it took, how many questions it asked, whether it noticed a topic change, and how far up the opportunity ladder it went.
