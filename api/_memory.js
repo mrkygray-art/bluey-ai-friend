@@ -60,12 +60,14 @@ export async function loadMemories(query = "") {
   if (!positive.length) return [];
 
   const top = positive[0].score;
-  const close = positive.filter(x => x.score >= Math.max(3, top - 3));
   const exactSubject = positive.filter(x => String(query || "").toLowerCase().includes(String(x.memory.subject_key || "").replace(/_/g, " ").toLowerCase()));
 
-  // A named subject is decisive. Otherwise keep close contenders so the
-  // reasoning model can recognize ambiguity instead of silently choosing one.
+  // An explicitly named subject is decisive. For indirect references, preserve
+  // every plausible contender near the top score. Concept expansion can make
+  // one related memory score artificially higher, so use a wider ambiguity
+  // band rather than silently choosing it.
   if (exactSubject.length) return exactSubject.slice(0, 3).map(x => x.memory);
+  const close = positive.filter(x => x.score >= Math.max(3, top * 0.55));
   return close.slice(0, 4).map(x => x.memory);
 }
 
