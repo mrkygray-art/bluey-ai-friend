@@ -1,0 +1,5 @@
+/* Steer buttons under Bluey's latest draft (steer.js). Same quiet pill style as Copy / Play again. */
+.bluey-steer{display:flex;flex-wrap:wrap;gap:6px;margin:-14px 0 22px 1px}
+.bluey-steer button{border:1px solid #cfe6f1;border-radius:999px;background:#fff;color:#2f6f8c;padding:6px 11px;font:12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.bluey-steer button:active{background:#e7f6fc}
+.bluey-steer button:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}

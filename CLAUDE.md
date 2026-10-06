@@ -22,9 +22,13 @@ Development moved from ChatGPT to Claude Code on 2026-10-06. Earlier history (al
 - `transcribe.js` (speech-to-text, 15 MB), `speech.js` (TTS, ≤4,096 chars), `document.js` (PDF/Word/Excel via pdfkit/docx/xlsx), `prompt-workshop.js`.
 - `_limit.js` — best-effort in-memory per-IP hourly limit + daily cap, applied to all five endpoints. Resets per instance; the real backstop is the OpenAI account's monthly spend limit.
 
+**Steer buttons** — `steer.js` + `steer.css` (loaded after `alpha40.js`). `chat.js` returns `brain.isDraft`; `steer.js` wraps `window.fetch` to read each `/api/chat` response (parsed before the caller gets it) and wraps `add()` to show Shorter / Warmer / More specific / Different angle under the latest draft only; a tap calls `send("Make it shorter.")` etc. Server side, `chat.js` detects a revision turn (latest user message starts with "make it/this/that", "shorter", "warmer", "try a different angle"…, right after an assistant message) and swaps the random reply-style nudge for an "edit your previous draft, keep every detail" nudge — the random nudges ("choose a fresh answer shape") made revisions start over and drop facts. Replies are capped at 4,000 output tokens; a cut-off reply returns a friendly 502.
+
+**Greeting placement** — phones (≤700px): CSS-only stack in an `index.html` media query puts `.stage-copy` (greeting + status) under the orb. Computers (≥701px): `desktop-copy.css` + `desktop-copy.js` make `.stage-copy` a column that follows the orb's live position every 150 ms (Bluey wanders on wide screens), flipping above him if there's no room below.
+
 **State:** chat history and preferences in `localStorage` only. No accounts.
 
-**Brain Lab** — `brain-lab.html` + `brain-eval.js` (cases, deterministic scoring, expectations) + `brain-lab-v2.js` (runner). On `main`: 15 cases. It calls the real `/api/chat`, so every run costs money. `vercel.json` redirects `/brain-lab.html` to `/` on `*.vercel.app` hosts; it works under `vercel dev`. `alpha44.js` has a world (room travel) regression runner.
+**Brain Lab** — `brain-lab.html` + `brain-eval.js` (cases, deterministic scoring, expectations) + `brain-lab-v2.js` (runner). On `main`: 20 cases (5 cover draft steering). It calls the real `/api/chat`, so every run costs money. `vercel.json` redirects `/brain-lab.html` to `/` on `*.vercel.app` hosts; it works under `vercel dev`. `alpha44.js` has a world (room travel) regression runner.
 
 ## Branches
 

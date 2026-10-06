@@ -1,0 +1,19 @@
+/* Computers (wider than the phone stack's 700px): keep the greeting and status together
+   in one column just under Bluey, like on phones. desktop-copy.js moves the column with
+   the orb, because Bluey wanders around the stage on wide screens. */
+@media(min-width:701px){
+ .stage-copy{
+  position:absolute!important;display:flex!important;flex-direction:column;align-items:center;gap:6px;
+  left:0;top:0;width:min(560px,calc(100% - 24px));z-index:20;text-align:center;pointer-events:none;
+  transform:translate(var(--bluey-copy-x,0px),var(--bluey-copy-y,0px));transition:transform .35s ease-out;
+ }
+ .stage-copy:not(.bluey-copy-placed){visibility:hidden}
+ .stage-copy>.greeting,.stage-copy>.status,.stage-copy>.nudge{
+  position:static!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+  width:100%!important;max-width:100%!important;margin:0!important;transform:none!important;text-align:center!important;
+  white-space:normal!important;pointer-events:auto;
+ }
+ .stage-copy>.greeting{font-size:clamp(20px,2.1vw,27px)!important;line-height:1.2!important;text-wrap:balance}
+ .stage-copy>.status:empty,.stage-copy>.nudge:not(.show){display:none!important}
+ .app.working .stage-copy>.greeting{font-size:clamp(15px,1.4vw,18px)!important}
+}
