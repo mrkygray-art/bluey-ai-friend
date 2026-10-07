@@ -63,7 +63,7 @@ function open(app,opts={}){
  const s=steps(app);const back=document.createElement('div');back.className='ih-back';back.setAttribute('role','dialog');back.setAttribute('aria-modal','true');back.setAttribute('aria-label',`Put ${app} on your Home Screen`);
  if(opts.accent)back.style.setProperty('--ih-accent',opts.accent);
  const li=s.list.map(([icon,text,small])=>`<li><span class="ih-icon">${ICON[icon]||''}</span><span>${text}${small?`<small>${small}</small>`:''}</span></li>`).join('');
- back.innerHTML=`<div class="ih-sheet"><h2>Put ${app} on your Home Screen</h2><p class="ih-lead">${s.lead||`It takes about 20 seconds. Then ${app} opens from its own icon, full screen, like an app.`}</p><ol>${li}</ol>${s.lead?'':`<p class="ih-after">Look for the ${app} icon on your Home Screen.</p>`}<button type="button">Got it</button></div>`;
+ back.innerHTML=`<div class="ih-sheet"><h2>Put ${app} on your Home Screen</h2><p class="ih-lead">${s.lead||`It takes about 20 seconds. Then ${app} opens from its own icon, full screen, like an app.`}</p><ol>${li}</ol>${s.lead?'':`<p class="ih-after">Then look for the new icon on your Home Screen.</p>`}<button type="button">Got it</button></div>`;
  const close=()=>{back.remove();document.removeEventListener('keydown',esc);opts.onClose&&opts.onClose()};
  const esc=e=>{if(e.key==='Escape')close()};
  back.addEventListener('click',e=>{if(e.target===back)close()});back.querySelector('button').addEventListener('click',close);document.addEventListener('keydown',esc);
