@@ -43,7 +43,7 @@ add=function(role,text){
  const card=document.createElement('div');card.className='bluey-remember';card.setAttribute('role','group');card.setAttribute('aria-label','Remember a preference');
  const ask=document.createElement('span');ask.append('Remember this for next time? ');const q=document.createElement('q');q.textContent=noticed;ask.appendChild(q);
  card.append(ask,
-  pill('Remember',()=>{save([...load(),noticed]);card.replaceChildren(document.createTextNode('Got it. I’ll remember that in this browser. You can change it under Remembered in the + menu.'));setTimeout(()=>card.remove(),6000)}),
+  pill('Remember',()=>{save([...load(),noticed]);card.replaceChildren(document.createTextNode('Got it. I’ll remember that in this browser. You can change it under What Bluey remembers in the + menu.'));setTimeout(()=>card.remove(),6000)}),
   pill('Not now',()=>card.remove()));
  anchor.after(card);
 };
