@@ -7,21 +7,34 @@
 //   plain-text half of Copy.
 // - blueyCopyReply(text) copies formatted HTML plus plain text, so a paste into Word or an
 //   email keeps the bullets and bold, and a paste into a text box gets clean text.
+// - Ky's own sites (portfolio, Bluey, NightAgent demo, PicTalk) become links that open in a
+//   new tab. Only these hosts: any other address the model writes stays plain text.
 // Loaded before alpha7.js so restored chats render formatted too.
 (function(){
 'use strict';
 const INLINE=/(\*\*[^*\n]+?\*\*|__[^_\n]+?__|`[^`\n]+`|\*(?=\S)[^*\n]+?\S?\*(?!\*))/g;
+const LINKS=/(?<![\w.@-])(?:https?:\/\/)?(?:www\.)?((?:ky-gray-portfolio|bluey-ai-friend|nightshift-dispatch)\.vercel\.app|pictalk-6cbff\.web\.app)((?:\/[\w\-./?=&%#]*)?)/gi;
+function linkify(parent,text){
+ let last=0;
+ for(const m of String(text).matchAll(LINKS)){
+  let path=m[2].replace(/[.?!,;:]+$/,'');const shown=m[0].slice(0,m[0].length-(m[2].length-path.length));
+  if(m.index>last)parent.append(text.slice(last,m.index));
+  const a=document.createElement('a');a.href='https://'+m[1].toLowerCase()+path;a.target='_blank';a.rel='noopener noreferrer';a.textContent=shown;
+  parent.append(a);last=m.index+shown.length;
+ }
+ if(last<text.length)parent.append(text.slice(last));
+}
 function inline(parent,text){
  let last=0;
  for(const m of String(text).matchAll(INLINE)){
-  if(m.index>last)parent.append(text.slice(last,m.index));
+  if(m.index>last)linkify(parent,text.slice(last,m.index));
   const t=m[0];let el;
   if(t.startsWith('**')||t.startsWith('__')){el=document.createElement('strong');inline(el,t.slice(2,-2))}
   else if(t.startsWith('`')){el=document.createElement('code');el.textContent=t.slice(1,-1)}
-  else{el=document.createElement('em');el.textContent=t.slice(1,-1)}
+  else{el=document.createElement('em');linkify(el,t.slice(1,-1))}
   parent.append(el);last=m.index+t.length;
  }
- if(last<text.length)parent.append(text.slice(last));
+ if(last<text.length)linkify(parent,text.slice(last));
 }
 const BULLET=/^(\s*)([-*•])\s+(.*)$/,NUMBER=/^(\s*)(\d{1,3})[.)]\s+(.*)$/,HEADING=/^\s*(#{1,6})\s+(.*?)\s*#*\s*$/,RULE=/^\s*([-*_])(\s*\1){2,}\s*$/;
 const cells=line=>line.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());

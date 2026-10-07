@@ -20,3 +20,5 @@
 .bluey-table table{border-collapse:collapse;font-size:.86em;line-height:1.4;min-width:60%}
 .bluey-table th,.bluey-table td{border:1px solid #dde8ee;padding:6px 10px;text-align:left;vertical-align:top}
 .bluey-table th{background:#f1f8fc;color:#12384f;font-weight:650}
+.bluey-formatted a{color:#0b6fa4;font-weight:600;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
+.bluey-formatted a:hover{color:#08557e}
