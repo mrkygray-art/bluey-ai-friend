@@ -1,0 +1,15 @@
+/* ease.js: "Easier to use" in the blue + menu. Text size zooms the chat itself (each item, so
+   widths still fit) and enlarges the message box text; the + menu keeps its size so it fits phones. */
+html[data-text="large"] .messages>*{zoom:1.15}
+html[data-text="larger"] .messages>*{zoom:1.3}
+html[data-text="large"] .composer textarea{font-size:20px;line-height:1.4}
+html[data-text="larger"] .composer textarea{font-size:23px;line-height:1.35}
+html[data-text="large"] .stage-copy,html[data-text="larger"] .stage-copy{font-size:1.12em}
+.bluey-ease-sizes{display:flex;gap:6px;padding:4px 8px}
+.composer .bluey-ease-sizes button{flex:1;border:1px solid #d6e8f1;border-radius:12px;background:#f6fbfe;color:#1f5d79;padding:7px 0;font:700 15px/1.1 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.composer .bluey-ease-sizes button:nth-child(2){font-size:17px}
+.composer .bluey-ease-sizes button:nth-child(3){font-size:19px}
+.bluey-ease-toggles{display:flex;gap:6px;padding:4px 8px}
+.composer .bluey-ease-toggles button{flex:1;border:1px solid #d6e8f1;border-radius:999px;background:#f6fbfe;color:#1f5d79;padding:8px 8px;font:13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.composer .bluey-ease-sizes button[aria-pressed="true"],.composer .bluey-ease-toggles button[aria-pressed="true"]{background:#e2f3fb;border-color:#9bcfea;color:#086ea8}
+.composer .bluey-ease button:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}

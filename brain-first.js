@@ -22,7 +22,7 @@
 // wrapped it. Document and photo routes from alpha7.js are kept.
 (function(){
 'use strict';
-const TASK=/\b(my|our|help|write|draft|make|create|fix|plan|explain|summari[sz]e|compare|verify|double-check|check|translate|calculate|list|need|want|please|can you|could you|would you|how (do|can|should|would) (i|we)|email|text|letter|report|code|error|actually|instead|change|rewrite|rephrase|shorter|warmer|formal|casual|simpler|bullet)\b/i;
+const TASK=/\b(my|our|help|write|draft|make|create|fix|plan|explain|summari[sz]e|compare|verify|double-check|check|translate|calculate|list|need|want|please|can you|could you|would you|how (do|can|should|would) (i|we)|email|text|letter|report|code|error|actually|instead|change|rewrite|rephrase|shorter|warmer|formal|casual|simpler|bullet|scam|scams|fraud|phishing|legit|suspicious)\b/i;
 const ROOMS=String.raw`home|house|library|workshop|office|lab|observatory|telescope|arcade|archive|garage|attic|closet|bedroom|your room|backyard|yard|basement|quiet place|the edge|edge|beach|ocean|sea|forest|woods|museum|gallery|aquarium|city|space|the moon|moon|stars`;
 const TRAVEL=new RegExp(String.raw`\b(take me|take us|bring me|go|go back|let'?s go|can we go|could we go|head|zip|visit|travel|show me|back)\b.*\b(${ROOMS})\b`,'i');
 const GO_HOME=/^(go|come|back|take me|let'?s go|zip)( back)?( to)? home[.!?]*$/i;

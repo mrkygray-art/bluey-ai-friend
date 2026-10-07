@@ -16,8 +16,11 @@
 'use strict';
 const LIMIT=250000; // characters across all documents (~100 pages); api/chat.js enforces the same
 const MAX_DOCS=5,PASTE_AS_FILE=4000,MAX_FILE_MB=25,KEY='bluey-documents';
-const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
-const PDFJS_WORKER='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+// pdf.js 4 needs newer JavaScript (Promise.withResolvers: Safari/iOS 17.4+, Chrome 119+); older
+// browsers, like older iPhones, get pdf.js's own legacy build of the same version instead.
+const MODERN=typeof Promise.withResolvers==='function';
+const PDFJS=MODERN?'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs':'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.min.mjs';
+const PDFJS_WORKER=MODERN?'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs':'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.worker.min.mjs';
 const MAMMOTH='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.13.0/mammoth.browser.min.js';
 const MAMMOTH_SRI='sha512-5hAL8cCOeSztnaZ+3xjLAflXeSwJpGrdrH6McLq2Dtl0vfvCQw+jO9q652eMASTNAU8anRvrXnlW9QqzlfN2HA==';
 const ICON={pdf:'📄',docx:'📝',csv:'📊',text:'📃'};

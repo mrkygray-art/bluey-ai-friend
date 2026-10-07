@@ -1,0 +1,9 @@
+/* safety.js: the scam-check verdict banner above Bluey's reply. */
+.bluey-safety{display:flex;align-items:flex-start;gap:10px;margin:0 0 10px;padding:11px 14px;border:1px solid;border-radius:14px;font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bluey-safety-icon{flex:none;font-size:20px;line-height:1.2}
+.bluey-safety-text{display:flex;flex-direction:column;gap:2px}
+.bluey-safety-text strong{font-size:16px}
+.bluey-safety.is-scam{background:#fdecec;border-color:#f2b8b5;color:#7a1712}
+.bluey-safety.is-warning{background:#fff4e0;border-color:#f3cf8f;color:#6b4300}
+.bluey-safety.is-unclear{background:#eaf5fc;border-color:#bcdcf0;color:#164e6e}
+.bluey-safety.is-likely-ok{background:#eaf7ef;border-color:#b9e0c7;color:#1d5a35}

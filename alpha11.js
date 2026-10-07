@@ -17,7 +17,9 @@ add=function(role,text){
   setTimeout(()=>{
    if(!blueyVoiceOn||!node?.isConnected)return;
    const currentBehavior=[...mover.classList].find(name=>valid.has(name))||'explaining';
-   speak(node.textContent,currentBehavior);
+   // The reply's own text (format.js keeps it in data-raw): a formatted bubble's textContent
+   // runs list items together ("Packing listTent and stakes").
+   speak(node.dataset.raw||node.textContent,currentBehavior);
   },0);
  }
 };

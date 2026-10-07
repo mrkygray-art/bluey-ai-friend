@@ -6,6 +6,8 @@ export default async function handler(req,res){
   if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(overLimit(req,res,"speech",60,500))return;
   if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
   const text=String(req.body?.text||"").trim();
+  // "Slower voice" in the + menu (ease.js): calmer pacing for people who find fast speech hard to follow.
+  const slow=req.body?.slow===true;
   if(!text)return res.status(400).json({error:"Add a reply for Bluey to speak"});
   if(text.length>4096)return res.status(413).json({error:"That reply is too long to speak in one go"});
   try{
@@ -16,9 +18,9 @@ export default async function handler(req,res){
         model:process.env.BLUEY_SPEECH_MODEL||"gpt-4o-mini-tts",
         voice:process.env.BLUEY_SPEECH_VOICE||"coral",
         input:text,
-        instructions:"Speak in a warm, friendly, clear conversational voice. Sound playful and curious when it fits, but never childish or rushed. Use natural pauses and crisp pronunciation. This is Bluey, a small blue digital friend who helps people feel comfortable and capable.",
+        instructions:"Speak in a warm, friendly, clear conversational voice. Sound playful and curious when it fits, but never childish or rushed. Use natural pauses and crisp pronunciation. This is Bluey, a small blue digital friend who helps people feel comfortable and capable."+(slow?" Speak noticeably slower than usual, calm and unhurried, with a short pause after each sentence, for a listener who finds fast speech hard to follow.":""),
         response_format:"mp3",
-        speed:1
+        speed:slow?0.85:1
       })
     });
     if(!response.ok){
