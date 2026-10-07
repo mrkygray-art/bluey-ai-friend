@@ -54,7 +54,18 @@ const pick=list=>list[Math.floor(Math.random()*list.length)];
 function recent(){try{const r=JSON.parse(localStorage.getItem(RECENT_KEY)||'[]');return Array.isArray(r)?r:[]}catch(_){return[]}}
 function remember(line){try{localStorage.setItem(RECENT_KEY,JSON.stringify([line,...recent().filter(x=>x!==line)].slice(0,8)))}catch(_){}}
 
+// Ky (creator.js saved his creator code on this device) gets his own hellos. Cosmetic only:
+// what Bluey believes is decided on the server.
+const CREATOR_LINES=[
+ "K.Y.! You're back. I kept the sticky note safe.",
+ "The builder returns! Pixel One, look sharp.",
+ "Hi Ky! Want to see what I learned since you last tinkered?",
+ "Ky! I've been practicing. Ask me anything.",
+ "Welcome back, Ky. Everything's still round and blue over here.",
+ "Hey, creator! The Workshop lights are on."
+];
 function returningLine(){
+ if(window.blueyIsCreator&&blueyIsCreator()){const seen=recent(),pool=CREATOR_LINES.filter(x=>!seen.includes(x)),line=pick(pool.length?pool:CREATOR_LINES);remember(line);return line}
  const now=new Date();
  if(now.getMonth()===6&&now.getDate()===4)return pick(BIRTHDAY_LINES);
  const seen=recent();
