@@ -74,7 +74,8 @@ function build(){
  const head=menu.querySelector('.bluey-plus-head');menu.insertBefore(item,head);
  refresh();
 }
-function refresh(){if(!count)return;const n=load().length+read(PREFS).length;count.textContent=n?`${n} thing${n===1?'':'s'}, saved on this device`:'Nothing yet, saved on this device'}
+const where=()=>window.blueyAccount?.user?'saved to your account':'saved on this device';
+function refresh(){if(!count)return;const n=load().length+read(PREFS).length;count.textContent=n?`${n} thing${n===1?'':'s'}, ${where()}`:`Nothing yet, ${where()}`}
 
 function openPage(){
  const back=document.createElement('div');back.className='bluey-memory-back';back.setAttribute('role','dialog');back.setAttribute('aria-modal','true');back.setAttribute('aria-label','What Bluey remembers');
@@ -83,7 +84,7 @@ function openPage(){
  function draw(){
   sheet.replaceChildren();
   const h=document.createElement('h2');h.textContent='What Bluey remembers';
-  const lead=document.createElement('p');lead.className='bluey-memory-lead';lead.textContent='Saved only on this device, so it stays private and goes away if you clear your browser. Tap Forget on anything you want Bluey to let go of.';
+  const lead=document.createElement('p');lead.className='bluey-memory-lead';lead.textContent=window.blueyAccount?.user?'Saved to your account, so it follows you to your other devices. Only you can see it. Tap Forget on anything you want Bluey to let go of.':'Saved only on this device, so it stays private and goes away if you clear your browser. Tap Forget on anything you want Bluey to let go of.';
   sheet.append(h,lead);
   const facts=load(),prefs=read(PREFS).filter(p=>typeof p==='string');
   const group=(title,rows)=>{if(!rows.length)return;const g=document.createElement('section');const t=document.createElement('h3');t.textContent=title;g.append(t);for(const [text,drop] of rows){const r=document.createElement('div');r.className='bluey-memory-row';const s=document.createElement('span');s.textContent=text;const b=document.createElement('button');b.type='button';b.textContent='Forget';b.setAttribute('aria-label','Forget: '+text);b.addEventListener('click',()=>{drop();draw()});r.append(s,b);g.append(r)}sheet.append(g)};
