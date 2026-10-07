@@ -1,6 +1,0 @@
-/* Alpha 38: a tidy multiline composer and visible screenshot paste workflow. */
-.composer textarea{display:block;width:100%;min-height:42px;max-height:132px;font-size:18px;line-height:1.45;overflow-y:auto;overscroll-behavior:contain}
-.composer textarea:focus-visible{outline:0}
-.composer:focus-within{border-color:#82c9e9;box-shadow:0 0 0 3px rgba(57,174,222,.12),0 8px 26px rgba(0,0,0,.05)}
-#bluey-photo-preview{flex-shrink:0}
-@media(max-width:520px){.composer textarea{font-size:16px;line-height:1.4}.composer button{min-height:42px;touch-action:manipulation}}

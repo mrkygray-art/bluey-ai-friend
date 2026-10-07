@@ -1,0 +1,215 @@
+/* base.css: the app's original layered styles, merged in their original load order (they were
+   alpha7.css, alpha8.css, alpha10.css, alpha11.css, alpha36.css, alpha37.css, alpha38.css, alpha39.css,
+   alpha40.css). Later sections still override earlier ones, exactly as the separate files did.
+   Feature styles (steer, tips, controls, files...) stay in their own files and load after this one. */
+
+/* ===== was alpha7.css ===== */
+#bluey-tools{width:min(780px,calc(100% - 28px));margin:0 auto 7px;display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;color:#667684;font:13px/1.2 system-ui,sans-serif}
+#bluey-tools button{border:1px solid #dce7ee;background:#f5fbff;color:#147bb0;border-radius:999px;padding:7px 10px;font:inherit;cursor:pointer}
+#bluey-tools button[aria-pressed="true"]{background:#e7f5ff;border-color:#9bcfea;color:#086ea8}
+#bluey-tools .bluey-tool-group{display:flex;gap:6px;align-items:center}
+#bluey-upload-icon{font-size:17px;font-weight:700;color:#0796dc;line-height:1}
+#bluey-files{font-size:12px;color:#768897;max-width:52vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bluey-suggestion{display:inline-flex;align-items:center;gap:8px;border:1px solid #cde5f2;background:#f3fbff;border-radius:14px;padding:8px 11px;margin:-9px 0 20px;color:#547083;font:14px/1.35 system-ui,sans-serif}
+.bluey-suggestion button{border:0;border-radius:9px;background:#0c8fca;color:white;padding:6px 9px;font:inherit;cursor:pointer}
+.bluey-download{display:inline-flex;align-items:center;gap:7px;margin:-6px 0 22px;padding:10px 14px;border-radius:14px;background:#eaf7fd;color:#0877ad;text-decoration:none;font:600 15px system-ui,sans-serif}
+.bluey-object-fade{opacity:0!important;transform:translateY(-8px) scale(.85)!important;transition:opacity .8s,transform .8s!important;pointer-events:none!important}
+@media(max-width:520px){#bluey-tools{font-size:12px}#bluey-tools button{padding:7px 9px}.composer{gap:6px}.composer input{font-size:16px}}
+
+/* ===== was alpha8.css ===== */
+/* Alpha 8: Bluey's world belongs in the stage, with room to move. */
+.stage{isolation:isolate;touch-action:pan-y}
+.rig{z-index:4;will-change:transform,filter;transform-origin:50% 58%}
+.stage .bluey-prop,.stage .bluey-interactive-object,.stage .bluey-work-chip,
+.stage .bluey-world-object,.stage .bluey-world-bit,.stage .bluey-marble,
+.stage .bluey-pixel-one,.stage .bluey-starfield,.stage .bluey-edge-mark{
+ position:absolute!important;
+}
+.stage .bluey-interactive-object{z-index:5}
+.stage .bluey-prop,.stage .bluey-work-chip,.stage .bluey-world-object{z-index:2}
+.stage .bluey-starfield{inset:0!important}
+.stage .bluey-edge-mark{right:7%;top:38%;z-index:1}
+.stage.bluey-stage-active .rig{z-index:8}
+.stage.bluey-stage-wandering .rig{animation:blueyStageWander 5.1s cubic-bezier(.42,0,.58,1) both}
+.stage .rig.bluey-stage-front{animation:blueyStageFront 2.3s cubic-bezier(.2,.9,.25,1) both;z-index:9}
+.stage.bluey-stage-active .greeting,.stage.bluey-stage-active .status,.stage.bluey-stage-active .nudge{position:relative;z-index:2}
+@keyframes blueyStageWander{
+ 0%{transform:translate3d(0,0,0) scale(1)}
+ 9%{transform:translate3d(-4vw,-3px,0) scale(.96)}
+ 20%{transform:translate3d(-31vw,-4px,0) scale(.83);filter:blur(.25px) drop-shadow(0 7px 12px rgba(0,140,220,.18))}
+ 27%{transform:translate3d(-31vw,-4px,0) scale(.83)}
+ 48%{transform:translate3d(0,-20px,0) scale(1.04)}
+ 70%{transform:translate3d(31vw,-3px,0) scale(.84);filter:blur(.2px) drop-shadow(0 7px 12px rgba(0,140,220,.18))}
+ 77%{transform:translate3d(31vw,-3px,0) scale(.84)}
+ 91%{transform:translate3d(4vw,-10px,0) scale(.96)}
+ 100%{transform:translate3d(0,0,0) scale(1);filter:none}
+}
+@keyframes blueyStageFront{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  17%{transform:translate3d(0,9px,0) scale(.91)}
+  36%{transform:translate3d(0,-25px,0) scale(1.12)}
+  52%{transform:translate3d(0,-3px,0) scale(1.02)}
+  67%{transform:translate3d(-9px,-15px,0) scale(1.08) rotate(-2deg)}
+  82%{transform:translate3d(9px,-12px,0) scale(1.06) rotate(2deg)}
+  100%{transform:translate3d(0,0,0) scale(1)}
+}
+@media(max-width:520px){
+ .stage.bluey-stage-wandering .rig{animation-name:blueyStageWanderMobile}
+ @keyframes blueyStageWanderMobile{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  20%{transform:translate3d(-26vw,-3px,0) scale(.83)}
+  48%{transform:translate3d(0,-15px,0) scale(1.03)}
+  72%{transform:translate3d(26vw,-3px,0) scale(.84)}
+  100%{transform:translate3d(0,0,0) scale(1)}
+ }
+}
+@media(prefers-reduced-motion:reduce){.stage.bluey-stage-wandering .rig,.stage .rig.bluey-stage-front{animation:none!important;transform:none!important}}
+
+/* ===== was alpha10.css ===== */
+/* Alpha 10: keep the chat controls available on a fresh or reloaded page. */
+.app:not(.working) .workspace{
+ display:flex;
+ top:auto;
+ bottom:0;
+ height:190px;
+ padding-top:8px;
+ background:linear-gradient(to bottom,rgba(255,255,255,.94),#fff 24%);
+ z-index:10;
+}
+.app:not(.working) .messages{display:none}
+.app:not(.working) #bluey-tools,
+.app:not(.working) #bluey-photo-preview,
+.app:not(.working) .composer{flex-shrink:0}
+#bluey-photo-preview{
+ width:min(780px,calc(100% - 28px));
+ min-height:0;
+ margin:0 auto 7px;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ overflow-x:auto;
+ color:#647b8a;
+ font:13px/1.3 system-ui,sans-serif;
+}
+#bluey-photo-preview:empty{display:none}
+.bluey-photo-chip{position:relative;flex:0 0 auto;width:44px;height:44px;border:1px solid #b9dced;border-radius:12px;overflow:hidden;background:#eff9ff}
+.bluey-photo-chip img{display:block;width:100%;height:100%;object-fit:cover}
+.bluey-photo-chip button{position:absolute;top:1px;right:1px;width:19px;height:19px;padding:0;border:0;border-radius:50%;background:rgba(18,36,48,.78);color:#fff;font:15px/19px system-ui,sans-serif;cursor:pointer}
+.bluey-photo-note{white-space:nowrap}
+.app:not(.working) #bluey-photo-preview{justify-content:center}
+@media(max-width:520px){
+ .app:not(.working) .workspace{height:190px;padding-bottom:env(safe-area-inset-bottom)}
+ #bluey-photo-preview{width:calc(100% - 28px)}
+}
+
+/* ===== was alpha11.css ===== */
+/* Alpha 11: discreet version stamp, anchored to the viewport on desktop and mobile. */
+#bluey-version{
+ position:fixed;
+ right:max(8px,env(safe-area-inset-right));
+ bottom:max(5px,env(safe-area-inset-bottom));
+ z-index:1000;
+ padding:2px 4px;
+ color:rgba(75,91,106,.48);
+ font:10px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;
+ letter-spacing:.02em;
+ pointer-events:none;
+ user-select:none;
+}
+@media(max-width:520px){#bluey-version{font-size:9px;right:max(7px,env(safe-area-inset-right));bottom:max(4px,env(safe-area-inset-bottom))}}
+/* Moved from alpha15.css (the removed prompt workshop) when it was deleted; same cascade position. */
+.msg.assistant{white-space:pre-line}
+
+/* ===== was alpha36.css ===== */
+/* Alpha 36: phone-first voice and conversation controls. */
+#bluey-tools{justify-content:flex-start;gap:7px}
+.bluey-session-tools{margin-left:auto}
+.bluey-reply-actions{display:flex;gap:7px;margin:-14px 0 22px 1px}
+.bluey-reply-actions button{border:1px solid #d9e8ef;border-radius:999px;background:#f7fbfd;color:#39728d;padding:5px 10px;font:12px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.bluey-reply-actions button:active{background:#e7f6fc}
+#bluey-tools button:focus-visible,.bluey-reply-actions button:focus-visible,.composer button:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
+.composer{padding-bottom:max(7px,env(safe-area-inset-bottom));margin-bottom:max(12px,env(safe-area-inset-bottom))}
+@media(max-width:520px){
+ #bluey-tools{gap:5px}
+ #bluey-tools .bluey-tool-group{gap:5px;flex-wrap:wrap}
+ #bluey-tools .bluey-session-tools{margin-left:0;width:100%;justify-content:flex-end}
+ #bluey-tools .bluey-session-tools button{font-size:11px;padding:6px 8px}
+ .bluey-reply-actions{margin-top:-14px;gap:5px}
+}
+
+/* ===== was alpha37.css ===== */
+/* Alpha 37: a phone-friendly room with a visible sense of forward/back depth. */
+.stage{perspective:1050px;perspective-origin:50% 45%;transform-style:preserve-3d}
+.bluey-depth-room{position:absolute;inset:0;z-index:1;pointer-events:none;transform-style:preserve-3d}
+.stage>.greeting,.stage>.status,.stage>.nudge{position:relative;z-index:2}
+.bluey-flight-layer{position:absolute;inset:0;display:grid;place-items:center;transform-style:preserve-3d;pointer-events:none;will-change:transform,filter}
+.bluey-flight-layer .rig{pointer-events:auto;transform-style:preserve-3d}
+.bluey-depth-room::after{content:"";position:absolute;left:50%;bottom:9%;width:min(58vw,390px);height:28px;transform:translateX(-50%) rotateX(72deg);border-radius:50%;background:radial-gradient(ellipse,rgba(22,134,187,.10),rgba(22,134,187,0) 72%);pointer-events:none}
+.app.working .bluey-flight-layer{place-items:start center;padding-top:8px}
+.app.working .stage .greeting{margin-top:126px}
+.app.working .bluey-depth-room::after{bottom:18%;width:min(42vw,220px);height:18px}
+.stage .bluey-interactive-object{z-index:7!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:58px;min-height:58px;padding:6px;border:1px solid rgba(139,199,220,.58);border-radius:15px;background:linear-gradient(150deg,rgba(255,255,255,.94),rgba(228,247,255,.86));box-shadow:0 10px 22px rgba(24,91,126,.12),inset 0 1px 0 white;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);transform:perspective(480px) rotateY(-7deg) translateZ(var(--object-depth,90px));transform-origin:center;opacity:.96;animation:blueyObjectArrive .75s ease both}
+.stage .bluey-interactive-object:nth-of-type(even){transform:perspective(480px) rotateY(7deg) translateZ(var(--object-depth,90px))}
+.stage .bluey-interactive-object:hover,.stage .bluey-interactive-object:focus-visible{opacity:1;transform:perspective(480px) rotateY(0deg) translateY(-4px) translateZ(135px) scale(1.08);outline:3px solid rgba(48,172,222,.55);outline-offset:2px}
+.bluey-item-label{display:block;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#527487;font:600 9px/1.1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.01em}
+.stage .bluey-interactive-object.bluey-object-leaving{opacity:0;filter:blur(3px);transform:translate3d(0,18px,-100px) scale(.68);pointer-events:none;transition:opacity .36s ease,transform .36s ease,filter .36s ease}
+.stage.bluey-stage-active .bluey-interactive-object{transition:transform .35s ease,opacity .35s ease,filter .35s ease}
+body.world-bedroom .stage{background:radial-gradient(ellipse at 52% 34%,rgba(68,156,210,.13),transparent 54%),linear-gradient(180deg,#eef6ff 0 55%,#fff 100%)}
+body.world-house .stage{background:radial-gradient(ellipse at 20% 44%,rgba(248,213,154,.21),transparent 38%),linear-gradient(180deg,#f8fbff 0 58%,#fff 100%)}
+body.world-workshop .stage,body.world-garage .stage{background:radial-gradient(ellipse at 50% 74%,rgba(63,155,191,.11),transparent 55%),linear-gradient(180deg,#eff7fa 0 53%,#fff 100%)}
+@keyframes blueyDepthCruise{
+ 0%,100%{transform:translate3d(0,0,0) scale(1)}18%{transform:translate3d(-22vw,7px,-245px) scale(.78)}37%{transform:translate3d(-16vw,-15px,115px) scale(1.13)}57%{transform:translate3d(18vw,-8px,45px) scale(1.06)}78%{transform:translate3d(24vw,9px,-280px) scale(.72)}90%{transform:translate3d(10vw,-16px,-80px) scale(.94)}
+}
+.bluey-flight-layer.bluey-depth-cruise{animation:blueyDepthCruise 7.9s cubic-bezier(.42,0,.58,1) both}
+@media(max-width:520px){
+ .stage{perspective:780px;perspective-origin:50% 38%}
+ .stage .bluey-interactive-object{min-width:52px;min-height:52px;padding:5px;border-radius:13px;font-size:24px}
+ .bluey-item-label{max-width:70px;font-size:8px}
+ .app.working .stage .greeting{margin-top:124px}
+ .stage .bluey-interactive-object:nth-of-type(even){transform:perspective(390px) rotateY(6deg) translateZ(var(--object-depth,70px))}
+ .stage.bluey-stage-wandering .rig{animation-name:none}
+}
+@media(prefers-reduced-motion:reduce){.bluey-flight-layer.bluey-depth-cruise{animation:none!important}.bluey-depth-room::after{display:none}}
+
+/* ===== was alpha38.css ===== */
+/* Alpha 38: a tidy multiline composer and visible screenshot paste workflow. */
+.composer textarea{display:block;width:100%;min-height:42px;max-height:132px;font-size:18px;line-height:1.45;overflow-y:auto;overscroll-behavior:contain}
+.composer textarea:focus-visible{outline:0}
+.composer:focus-within{border-color:#82c9e9;box-shadow:0 0 0 3px rgba(57,174,222,.12),0 8px 26px rgba(0,0,0,.05)}
+#bluey-photo-preview{flex-shrink:0}
+@media(max-width:520px){.composer textarea{font-size:16px;line-height:1.4}.composer button{min-height:42px;touch-action:manipulation}}
+
+/* ===== was alpha39.css ===== */
+/* Alpha 39: viewport sizing fallback and older Safari compositing support. */
+@supports not (height:100dvh){
+ .app{height:100vh}
+ .stage{height:58vh}
+}
+.bluey-work-token,.bluey-interactive-object{-webkit-backdrop-filter:blur(5px)}
+
+/* ===== was alpha40.css ===== */
+/* Alpha 40: clickable room and travel props live inside Bluey's stage. */
+.stage .bluey-interactive-object{position:absolute!important;z-index:7!important;pointer-events:auto;touch-action:manipulation}
+.stage .bluey-trip-object{position:absolute!important;z-index:6!important;pointer-events:auto;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 5px 8px rgba(20,75,110,.2));outline-offset:5px}
+.stage .bluey-trip-object:focus-visible{outline:3px solid #4ab7e5;opacity:1;transform:scale(1.12)}
+.stage .bluey-interactive-object:focus-visible{outline:3px solid #4ab7e5;outline-offset:4px}
+
+/* Mobile Stage V1 — room props yield the screen to the conversation. */
+.bluey-explore-room{display:none;position:fixed;z-index:40;border:1px solid #b9deee;background:rgba(247,253,255,.96);color:#087fc4;border-radius:999px;padding:8px 13px;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 5px 18px rgba(16,92,130,.12);cursor:pointer;touch-action:manipulation}
+@media(max-width:700px){
+ .stage .bluey-interactive-object,.stage .bluey-trip-object{transition:opacity .22s ease,transform .22s ease,visibility .22s step-end}
+ .app.working .stage .bluey-interactive-object,
+ .app.working .stage .bluey-trip-object,
+ body.bluey-mobile-stage-collapsed .stage .bluey-interactive-object,
+ body.bluey-mobile-stage-collapsed .stage .bluey-trip-object{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:scale(.86)!important}
+ /* Explicit explore mode must beat both working and collapsed selectors. */
+ body.bluey-mobile-stage-exploring .app.working .stage .bluey-interactive-object,
+ body.bluey-mobile-stage-exploring .app.working .stage .bluey-trip-object,
+ body.bluey-mobile-stage-exploring .stage .bluey-interactive-object,
+ body.bluey-mobile-stage-exploring .stage .bluey-trip-object{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important}
+ body.bluey-mobile-stage-collapsed .bluey-explore-room,
+ body.bluey-mobile-stage-exploring .bluey-explore-room{display:block;right:14px;top:max(10px,env(safe-area-inset-top))}
+ .app.working .stage{overflow:hidden}
+ .app.working .greeting,.app.working .status,.app.working .nudge{position:relative;z-index:9;max-width:calc(100vw - 36px)}
+}
+@media(max-width:430px){.bluey-explore-room{font-size:13px;padding:8px 11px}}

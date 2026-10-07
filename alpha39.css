@@ -1,6 +1,0 @@
-/* Alpha 39: viewport sizing fallback and older Safari compositing support. */
-@supports not (height:100dvh){
- .app{height:100vh}
- .stage{height:58vh}
-}
-.bluey-work-token,.bluey-interactive-object{-webkit-backdrop-filter:blur(5px)}
