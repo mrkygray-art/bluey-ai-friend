@@ -26,7 +26,7 @@ add=function(role,text){
  if(role!=='assistant')return;
  const chat=lastChat;lastChat=null;
  const list=Array.isArray(chat?.sources)?chat.sources.filter(s=>s&&/^https?:\/\//i.test(String(s.url||''))):[];
- if(!list.length||chat.reply!==text)return;
+ if(!list.length||chat.reply!==text||chat.handoff)return; // the hand-off card shows its own Official help links
  // Right after this reply's Copy / Play again row.
  let anchor=null;
  for(let el=messages.lastElementChild;el;el=el.previousElementSibling){if(el.classList.contains('msg'))break;if(el.classList.contains('bluey-reply-actions')){anchor=el;break}}

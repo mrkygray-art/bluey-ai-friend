@@ -58,6 +58,11 @@ export default async function handler(req,res){
     // Files the user attached in the chat (files.js): their full text, same cap as api/chat.js.
     const documents=(Array.isArray(req.body?.documents)?req.body.documents:[]).filter(d=>d&&typeof d.text==="string"&&d.text.trim()).slice(0,5);
     if(documents.reduce((n,d)=>n+d.text.length,0)>250000)return res.status(413).json({error:"Those files are too long for me to read all at once. Try a shorter file, or just the part you need."});
+    // Exact content from the app (the hand-off kit PDF): rendered as given, no model call.
+    let data=null;
+    const direct=req.body?.content;
+    if(direct&&typeof direct==="object"&&typeof direct.title==="string"){const strs=x=>(Array.isArray(x)?x:[]).filter(s=>typeof s==="string").map(s=>s.slice(0,8000)).slice(0,60);data={title:direct.title.slice(0,200),paragraphs:strs(direct.paragraphs),bullets:strs(direct.bullets),headers:[],rows:[]};}
+    if(!data){
     const input=messages.map((m,i)=>({role:m.role==="assistant"?"assistant":"user",content:[{type:m.role==="assistant"?"output_text":"input_text",text:String(m.content||"")},...(m.role!=="assistant"&&i===messages.length-1?images.map(x=>({type:"input_image",image_url:`data:${x.mime};base64,${x.buffer.toString("base64")}`,detail:"high"})):[])]}));
     if(!input.length)input.push({role:"user",content:[{type:"input_text",text:"Create a useful starter document with a friendly, concise structure."}]});
     if(documents.length)input.unshift({role:"user",content:[{type:"input_text",text:"Files the user attached to this chat. Each is the complete text, between its markers. Use them accurately and do not invent content that is not in them.\n\n"+documents.map((d,i)=>`<<<FILE ${i+1}: ${String(d.name||"Document").replace(/[\r\n<>]+/g," ").slice(0,120)}>>>\n${d.text}\n<<<END FILE ${i+1}>>>`).join("\n\n")}]});
@@ -65,7 +70,8 @@ export default async function handler(req,res){
     const response=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,"Content-Type":"application/json"},body:JSON.stringify({model:process.env.BLUEY_MODEL||"gpt-6-luna",instructions:"You prepare clear, accurate document content for Bluey, a kind and capable digital friend. Keep the tone natural and useful.",input,max_output_tokens:documents.length?6000:2400,text:{format:{type:"json_schema",name:"bluey_document",strict:true,schema}}})});
     const raw=await response.json();
     if(!response.ok){console.error("Bluey document model error",response.status,raw);return res.status(response.status).json({error:raw?.error?.message||"Bluey couldn't prepare the document."})}
-    let data;try{data=JSON.parse(outputText(raw))}catch{return res.status(502).json({error:"Bluey couldn't format the document content."})}
+    try{data=JSON.parse(outputText(raw))}catch{return res.status(502).json({error:"Bluey couldn't format the document content."})}
+    }
     const base=safeName(req.body?.filename||data.title);
     let bytes,mime,filename;
     if(format==="xlsx"){

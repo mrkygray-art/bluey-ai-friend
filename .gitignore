@@ -4,3 +4,4 @@ node_modules/
 .vercel/
 scripts/tip-eval-last.json
 scripts/search-eval-*.json
+scripts/handoff-eval-last.json
