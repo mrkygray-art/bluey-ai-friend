@@ -6,7 +6,9 @@
 //   - Chrome, Firefox, and Edge on iPhone; DuckDuckGo, Firefox, and Samsung Internet on Android.
 //   - In-app browsers (Instagram, Facebook, Gmail, LinkedIn...): open the page in Safari first.
 // Self-contained (styles included). Copied into each app; keep the copies in sync:
-// bluey-ai-friend/install-help.js, ky-gray-portfolio/assets/install-help.js.
+// bluey-ai-friend/install-help.js, ky-gray-portfolio/assets/install-help.js,
+// nightshift-dispatch/app/static/install-help.js, and the React version of the same steps in
+// pictalk/src/InstallLink.jsx.
 // API: window.installHelp.{isIOS, isInstalled, browser, open(appName)}
 (function(){
 'use strict';
