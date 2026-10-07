@@ -33,7 +33,7 @@ const moving=()=>{try{return stage.getAnimations({subtree:true}).some(a=>a.playS
 function loop(){
  place();
  if(moving())requestAnimationFrame(loop);
- else setTimeout(loop,66);
+ else setTimeout(loop,document.body.classList.contains('bluey-resting')?500:66); // resting (rest.js): he's still, so check twice a second
 }
 loop();
 addEventListener('resize',place);
