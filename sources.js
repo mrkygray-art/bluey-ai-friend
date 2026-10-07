@@ -1,5 +1,6 @@
 // Sources under a reply that used web search (api/chat.js returns `sources`, keeping only links
-// the search really returned). Shown as a small list: page title + site, opening in a new tab.
+// the search really returned). Shown as a small list: page title + site, opening in a new tab,
+// with the page's own preview picture as a thumbnail when it has one.
 // Also: when a reply is taking a while (searching can take 20-40 seconds), the "Thinking…"
 // status changes to a friendlier note so the wait doesn't look broken.
 (function(){
@@ -38,7 +39,16 @@ add=function(role,text){
   a.href=s.url;a.target='_blank';a.rel='noopener noreferrer';
   a.textContent=s.title||site(s.url);
   const where=document.createElement('span');where.className='bluey-sources-site';where.textContent=site(s.url);
-  li.append(a,where);ol.appendChild(li);
+  // The page's own preview picture (api/_previews.js), when it has one. It links to the page too;
+  // if it doesn't load, it quietly goes away.
+  if(/^https:\/\//i.test(String(s.image||''))){
+   const pic=document.createElement('a');pic.className='bluey-sources-thumb';pic.href=s.url;pic.target='_blank';pic.rel='noopener noreferrer';pic.tabIndex=-1;pic.setAttribute('aria-hidden','true');
+   const img=document.createElement('img');img.src=s.image;img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+   img.addEventListener('error',()=>{pic.remove();li.classList.remove('has-thumb')});
+   pic.append(img);li.classList.add('has-thumb');li.append(pic);
+  }
+  const words=document.createElement('span');words.className='bluey-sources-words';words.append(a,where);
+  li.append(words);ol.appendChild(li);
  }
  box.appendChild(ol);
  (anchor||messages.lastElementChild).after(box);
