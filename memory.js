@@ -17,7 +17,7 @@ const load=()=>read(KEY).filter(m=>m&&typeof m.fact==='string'&&typeof m.subject
 const save=list=>{try{localStorage.setItem(KEY,JSON.stringify(list.slice(-MAX)))}catch(_){}refresh()};
 const same=(a,b)=>String(a).trim().toLowerCase()===String(b).trim().toLowerCase();
 // Facts are stored about the person ("Their name is Jason.") for Bluey; shown to them as "Your name is Jason."
-const toYou=f=>String(f).replace(/^They are/i,'You are').replace(/^They're/i,'You’re').replace(/^They/i,'You').replace(/^Their/i,'Your').replace(/(their)/gi,'your').replace(/(them)/gi,'you').replace(/(they are)/gi,'you are');
+const toYou=f=>String(f).replace(/^They are\b/i,'You are').replace(/^They're\b/i,'You’re').replace(/^They\b/i,'You').replace(/^Their\b/i,'Your').replace(/\b(their)\b/gi,'your').replace(/\b(them)\b/gi,'you').replace(/\b(they are)\b/gi,'you are');
 
 function remember(m){const list=load(),old=list.find(x=>same(x.subject,m.subject));const next=list.filter(x=>x!==old);next.push({kind:m.kind,subject:m.subject,fact:m.fact,at:Date.now()});save(next);return old||null}
 function forget(subject){
