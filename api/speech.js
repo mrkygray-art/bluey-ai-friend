@@ -16,9 +16,9 @@ export default async function handler(req,res){
       headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,"Content-Type":"application/json"},
       body:JSON.stringify({
         model:process.env.BLUEY_SPEECH_MODEL||"gpt-4o-mini-tts",
-        voice:process.env.BLUEY_SPEECH_VOICE||"coral",
+        voice:process.env.BLUEY_SPEECH_VOICE||"echo",
         input:text,
-        instructions:"Speak in a warm, friendly, clear conversational voice. Sound playful and curious when it fits, but never childish or rushed. Use natural pauses and crisp pronunciation. This is Bluey, a small blue digital friend who helps people feel comfortable and capable."+(slow?" Speak noticeably slower than usual, calm and unhurried, with a short pause after each sentence, for a listener who finds fast speech hard to follow.":""),
+        instructions:"Speak in a warm, friendly, clear conversational voice. Sound playful and curious when it fits, but never childish or rushed. Use natural pauses and crisp pronunciation. This is Bluey, a small blue digital friend who helps people feel comfortable and capable. Speak with a warm, gentle Irish accent."+(slow?" Speak noticeably slower than usual, calm and unhurried, with a short pause after each sentence, for a listener who finds fast speech hard to follow.":""),
         response_format:"mp3",
         speed:slow?0.85:1
       })

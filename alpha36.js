@@ -22,7 +22,8 @@ function blueyBrowserSpeech(text,b){
  if(!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance!=='function')return false;
  try{
   const utterance=new SpeechSynthesisUtterance(text),voices=speechSynthesis.getVoices()||[];
-  utterance.voice=voices.find(v=>/coral|samantha|aria|jenny|ava/i.test(v.name)&&/^en/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang))||null;
+  // Backup voice to match Echo (Irish): Irish or British male first.
+  utterance.voice=(vs=>{const en=vs.filter(v=>/^en/i.test(v.lang)),by=re=>en.find(v=>re.test(v.name));return by(/connor/i)||by(/\b(daniel|arthur|oliver|ryan|george|thomas|uk english male)\b/i)||en.find(v=>/^en-ie/i.test(v.lang))||en.find(v=>/^en-gb/i.test(v.lang))||by(/\b(aaron|alex|guy|david|fred|tom|eric)\b/i)||en[0]||null})(voices);
   utterance.rate=.97;utterance.onstart=()=>behavior(b==='serious'?'serious':b==='curious'?'curious':b==='happy'?'happy':'explaining');
   utterance.onend=()=>behavior('idle');speechSynthesis.speak(utterance);return true;
  }catch(_){return false}
