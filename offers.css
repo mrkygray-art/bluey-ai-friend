@@ -1,0 +1,7 @@
+/* offers.js: things to do together, as tappable buttons under Bluey's reply (each with a tiny blue ball). */
+.bluey-offers{display:flex;flex-wrap:wrap;gap:8px;margin:-10px 0 24px 1px}
+.bluey-offers button{display:inline-flex;align-items:center;gap:8px;border:1px solid #bfe0ee;border-radius:999px;background:#eef8fd;color:#155f82;padding:8px 14px 8px 10px;font:600 14px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;touch-action:manipulation;transition:background .15s ease,transform .15s ease}
+.bluey-offers button::before{content:"";flex:none;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#bdeeff 0 14%,#29a9ea 50%,#0a78c2 100%);box-shadow:0 1px 2px rgba(10,120,194,.35)}
+.bluey-offers button:hover{background:#e0f2fb}
+.bluey-offers button:active{transform:scale(.97)}
+.bluey-offers button:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}

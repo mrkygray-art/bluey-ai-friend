@@ -3,6 +3,9 @@
 // blueyReturningMeet 420 ms after load, so redefining them here (loaded at the end of
 // <body>) takes effect. Time-of-day lines are left to the status line (blueyTimeRitual),
 // so the greeting and the status never both say "Good morning".
+// The greeting on screen goes with every /api/chat request (`greeting`), so when a line
+// promises something ("I had a thought just for you", "I found a beautiful 404 page"),
+// Bluey's brain knows and delivers it instead of saying he has nothing saved.
 (function(){
 'use strict';
 const RETURNING=[
@@ -28,7 +31,7 @@ const RETURNING=[
  "Hey! Let's do something great. Or something small. Both count.",
  "Welcome back! I kept your spot warm. Well, glowy.",
  "Hi there! I've been practicing my wise-orb face. How's it look?",
- "There you are! I had a thought and saved it just for you.",
+ "There you are! I had a thought just for you. Ask me what it is!",
  "Ooh, a visitor! Hang on, let me look casual.",
  "Hey! I checked: the magnets are still suspicious. All good otherwise.",
  "Oh! Perfect timing. I just ran out of things to wonder about.",
@@ -79,6 +82,16 @@ blueyFirstMeet=function(){
   setBlueyState('warm');
  },1850);
  try{localStorage.setItem(BLUEY_MET_KEY,'yes')}catch(_){}
+};
+
+const blueyFetchBeforeGreeting=window.fetch;
+window.fetch=function(resource,init){
+ const url=typeof resource==='string'?resource:resource?.url||'';
+ const shown=(document.querySelector('.stage-copy>.greeting')?.textContent||'').trim();
+ if(shown&&/\/api\/chat(\?|$)/.test(url)&&typeof init?.body==='string'){
+  try{const body=JSON.parse(init.body);body.greeting=shown.slice(0,200);init={...init,body:JSON.stringify(body)}}catch(_){}
+ }
+ return blueyFetchBeforeGreeting.call(this,resource,init);
 };
 
 blueyReturningMeet=function(){
