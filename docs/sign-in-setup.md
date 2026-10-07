@@ -5,7 +5,7 @@ what Bluey remembers follow a person to their other devices. The code is already
 the + menu item stays hidden until at least one sign-in method is switched on below.
 
 To preview the sign-in screen on one device before then, open
-`https://bluey-ai-friend.vercel.app/?signin=1` (and `?signin=0` to hide it again).
+`https://bluey-ai-friend.vercel.app/?signin=1`: it shows the methods already switched on (email first). `?signin=all` shows every button, and `?signin=0` hides it again.
 
 All of this happens in the Supabase dashboard for the project **Bluey-AI-Friend**
 (https://supabase.com/dashboard/project/pmvgicmongeqlgzfmqmj).

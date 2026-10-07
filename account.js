@@ -18,8 +18,10 @@ const SUPABASE_KEY='sb_publishable_lCmANKdoQ8nfVUG2820oVg_mb6jdei5';
 const LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js';
 const SESSION='sb-pmvgicmongeqlgzfmqmj-auth-token';
 // Sign-in methods switched on in Supabase (Authentication > Sign In / Providers).
-// Empty: the + menu item stays hidden. Open Bluey with ?signin=1 to preview every method on one device.
+// READY: shown to everyone (empty: the + menu item stays hidden). TESTING: switched on in Supabase but
+// only shown on a device opened once with ?signin=1 (?signin=all shows every button; ?signin=0 hides).
 const READY=[]; // 'google', 'apple', 'email'
+const TESTING=['email'];
 const ALL=['google','apple','email'];
 const MEM='bluey-memory',PREFS='bluey-preferences';
 // The chat on screen (saved by alpha36.js), which chat it is in the account, and the last message copied there.
@@ -27,8 +29,8 @@ const CONV='bluey-alpha36-conversation',CONV_ID='bluey-conversation-id',CONV_SYN
 const KINDS=['about_me','project','goal','other'];
 
 let preview=false;
-try{const q=new URLSearchParams(location.search).get('signin');if(q==='1')localStorage.setItem('bluey-signin-preview','1');if(q==='0')localStorage.removeItem('bluey-signin-preview');preview=localStorage.getItem('bluey-signin-preview')==='1'}catch(_){}
-const methods=()=>preview?ALL:READY;
+try{const q=new URLSearchParams(location.search).get('signin');if(q==='1'||q==='all')localStorage.setItem('bluey-signin-preview',q);if(q==='0')localStorage.removeItem('bluey-signin-preview');preview=localStorage.getItem('bluey-signin-preview')||false}catch(_){}
+const methods=()=>preview==='all'?ALL:preview?ALL.filter(m=>READY.includes(m)||TESTING.includes(m)):READY;
 
 let sb=null,loading=null,user=null,rows=new Map(),quiet=false;
 const account={get user(){return user},open:()=>openSheet()};
