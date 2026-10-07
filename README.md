@@ -204,9 +204,13 @@ Account sign-in, cross-device memory, and a semantic, user-controlled memory ser
 
 Troubleshot by hand on desktop and Android across Chrome, Firefox, and DuckDuckGo: the mobile layout, tap-to-talk, the soft keyboard, pasting images, and room travel. Fixes include screen-height fallbacks for browsers without dynamic viewport units and a keyboard-send fallback when `form.requestSubmit()` is missing. On computers, the greeting used to sit at the top of the window, away from Bluey, and on phones it stayed in the middle when he drifted to one side. Now, on every screen, the greeting and status stay in a column just under Bluey and follow him as he drifts left and right and forward and back ([`follow-copy.js`](follow-copy.js)).
 
+Safari's engine is covered too: the app runs in WebKit (the engine inside Safari and every iPhone browser) with iPhone 13, iPhone SE, and desktop Safari emulation, checking chat, formatted replies, tappable offers, the + menu, text sizes, the scam banner, and reading PDF and Word files, including a real chat through the service worker. Bluey was tested once on a real iPhone on an earlier version; the [iPhone checklist](docs/iphone-test-checklist.md) is ready for the latest one.
+
+Cleanups are checked with a before/after snapshot ([`scripts/snapshot.cjs`](scripts/snapshot.cjs)): the computed style of every element in eight screens on phone and desktop, plus which messages reach the brain and which stay app actions, with the AI mocked so runs repeat exactly. Removing the unreachable prompt workshop, stale canned replies, and nine separate stylesheets was verified this way.
+
 ## Not measured yet
 
-- iPhone and Safari (no regular access to an iPhone yet)
+- A real-iPhone run of the latest version (an earlier version was tested once on an iPhone, and WebKit emulation passes; voice, microphone, camera, and home-screen install need the real phone)
 - Testing with people who aren't AI users, which is the real measure of "teaching without teaching"
 - Long-term memory quality, because durable semantic memory isn't built yet
 - Cost, load, and abuse behavior at scale
