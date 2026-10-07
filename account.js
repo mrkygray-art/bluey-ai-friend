@@ -21,7 +21,7 @@ const SESSION='sb-pmvgicmongeqlgzfmqmj-auth-token';
 // READY: shown to everyone (empty: the + menu item stays hidden). TESTING: switched on in Supabase but
 // only shown on a device opened once with ?signin=1 (?signin=all shows every button; ?signin=0 hides).
 const READY=[]; // 'google', 'apple', 'email'
-const TESTING=['email'];
+const TESTING=['google','email'];
 const ALL=['google','apple','email'];
 const MEM='bluey-memory',PREFS='bluey-preferences';
 // The chat on screen (saved by alpha36.js), which chat it is in the account, and the last message copied there.
