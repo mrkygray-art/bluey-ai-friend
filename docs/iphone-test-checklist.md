@@ -35,8 +35,8 @@ Before you start: turn the ringer on (switch on the side) and the volume up, so 
 19. Try a screenshot instead: screenshot a spam text, add it with **+ > Add photos & files**, and send `Is this a scam?`
 
 ## 6. Home screen (2 min)
-20. In **+**, tap **Add Bluey to your home screen**. It shows the steps: Share button, then "Add to Home Screen".
-21. Follow them. The icon on your home screen is a round blue ball named Bluey.
+20. In **+**, tap **Add Bluey to your home screen**. A guide opens with pictures of each button: tap **⋯** next to the address bar, tap **Share**, scroll down and tap **Add to Home Screen**, keep **Open as Web App** on, and tap **Add**. (On a second visit, Bluey also offers this with a "Make Bluey an app on your iPhone" card.)
+21. Follow the steps. The icon on your Home Screen is a round blue ball named Bluey.
 22. Open Bluey from the icon: it opens full screen, without Safari's address bar. The home-screen item is gone from the + menu.
 23. Turn on Airplane Mode and open Bluey from the icon again. It opens, and the status line says "No signal right now." Turn Airplane Mode off.
 

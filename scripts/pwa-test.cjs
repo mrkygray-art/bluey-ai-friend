@@ -8,7 +8,9 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const UAS={
  duckduckgo:['Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/129.0 Mobile DuckDuckGo/5 Safari/537.36','Add to Home Screen'],
  firefox:['Mozilla/5.0 (Android 14; Mobile; rv:131.0) Gecko/131.0 Firefox/131.0','Add app to Home screen'],
- iphone:['Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1','Share button'],
+ iphone:['Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1','Open as Web App'],
+ 'iphone-chrome':['Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/140.0 Mobile/15E148 Safari/604.1','address bar'],
+ 'iphone-instagram':['Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 350.0','Open in Safari'],
  samsung:['Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0 Mobile Safari/537.36','Add page to'],
 };
 (async()=>{
@@ -59,12 +61,26 @@ const UAS={
   await p.goto(BASE+'/',{waitUntil:'networkidle0'});await wait(800);
   await p.tap('.bluey-plus-toggle');await wait(300);
   const shown=await p.$eval('.bluey-install',el=>!el.hidden).catch(()=>false);
-  if(shown){await p.tap('.bluey-install');await wait(200)}
-  const text=await p.$eval('.bluey-install-help',el=>el.hidden?'':el.textContent).catch(()=>'');
-  check(shown&&text.includes(expect),`${name}: steps shown`,text);
+  if(shown){await p.tap('.bluey-install');await wait(400)}
+  // The steps open in install-help.js's sheet, with pictures of the buttons
+  const text=await p.$eval('.ih-sheet',el=>el.innerText).catch(()=>'');
+  check(shown&&text.includes(expect)&&/Home Screen/i.test(text),`${name}: install guide shows that browser's steps`,text.replace(/\s+/g,' ').slice(0,160));
+  if(text){await p.tap('.ih-sheet button');await wait(200);check(!(await p.$('.ih-back')),`${name}: Got it closes the guide`)}
   if(name==='firefox')await p.screenshot({path:process.env.SHOT||require('os').tmpdir()+'/bluey-pwa-firefox.png'});
   await p.close();
  }
+ // iPhone: a one-time "Make Bluey an app" card from the second visit; Show me or Not now hides it for good
+ const ip=await browser.newPage();await ip.setUserAgent(UAS.iphone[0]);await ip.setViewport({width:390,height:844,isMobile:true,hasTouch:true});
+ await ip.goto(BASE+'/',{waitUntil:'networkidle0'});await ip.evaluate(()=>{localStorage.removeItem('bluey-visits');localStorage.removeItem('bluey-install-nudge')});
+ await ip.reload({waitUntil:'networkidle0'});await wait(3200);
+ check(!(await ip.$('.bluey-install-nudge')),'iPhone, first visit: no nudge yet');
+ await ip.reload({waitUntil:'networkidle0'});await wait(3200);
+ check(!!(await ip.$('.bluey-install-nudge')),'iPhone, second visit: "Make Bluey an app" card');
+ if(await ip.$('.bluey-install-nudge .is-yes')){await ip.tap('.bluey-install-nudge .is-yes');await wait(400);check(!!(await ip.$('.ih-sheet')),'iPhone: Show me opens the install guide');
+  await ip.screenshot({path:process.env.SHOT_GUIDE||require('os').tmpdir()+'/bluey-ios-guide.png'})}
+ await ip.reload({waitUntil:'networkidle0'});await wait(3200);
+ check(!(await ip.$('.bluey-install-nudge')),'iPhone, after Show me: the card never comes back');
+ await ip.close();
  // Already installed: no install item
  const inst=await browser.newPage();
  // Headless Chrome ignores display-mode emulation, so use the iPhone home-screen flag pwa.js also checks.
