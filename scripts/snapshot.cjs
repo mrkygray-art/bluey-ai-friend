@@ -14,12 +14,12 @@ if(process.argv[2]==='--diff'){
   if(k.endsWith('/styles')&&a[k]&&b[k]){
    // Element by element, property by property.
    for(const el of new Set([...Object.keys(a[k]),...Object.keys(b[k])])){
-    if(!a[k][el]||!b[k][el]){n++;if(n<=80)console.log('DIFF',k,el,a[k][el]?'only before':'only after');continue}
-    for(const prop of new Set([...Object.keys(a[k][el]),...Object.keys(b[k][el])]))if(a[k][el][prop]!==b[k][el][prop]){n++;if(n<=80)console.log('DIFF',k,el,prop+':',a[k][el][prop],'->',b[k][el][prop])}
+    if(!a[k][el]||!b[k][el]){n++;if(n<=(+process.env.SHOW||80))console.log('DIFF',k,el,a[k][el]?'only before':'only after');continue}
+    for(const prop of new Set([...Object.keys(a[k][el]),...Object.keys(b[k][el])]))if(a[k][el][prop]!==b[k][el][prop]){n++;if(n<=(+process.env.SHOW||80))console.log('DIFF',k,el,prop+':',a[k][el][prop],'->',b[k][el][prop])}
    }
    continue;
   }
-  const x=JSON.stringify(a[k]),y=JSON.stringify(b[k]);if(x!==y){n++;if(n<=80)console.log('DIFF',k,'\n  before:',x?.slice(0,300),'\n  after: ',y?.slice(0,300))}
+  const x=JSON.stringify(a[k]),y=JSON.stringify(b[k]);if(x!==y){n++;if(n<=(+process.env.SHOW||80))console.log('DIFF',k,'\n  before:',x?.slice(0,300),'\n  after: ',y?.slice(0,300))}
  }
  console.log(n?`${n} differences`:`identical (${keys.size} entries)`);process.exit(n?1:0);
 }
@@ -83,6 +83,10 @@ async function styles(p){
   snap[`${tag}/ask/plan`]=await ask('Make me a plan for Saturday');
   // local app actions (these must not reach the brain)
   for(const t of ['where are we?','take me to the library','tell me about the lamp','go home','tell me a story','dance for me'])snap[`${tag}/local/${t}`]=await ask(t);
+  // canned-reply topics: outside a game they belong to the brain; inside a story they used to get canned lines
+  for(const t of ["what's your favorite color?",'what does bluey stand for?','does this work on my iphone?','hi'])snap[`${tag}/topic/${t}`]=await ask(t);
+  snap[`${tag}/story/start`]=await ask('tell me a story');
+  for(const t of ['hi',"what's your favorite color?",'does this work on my iphone?'])snap[`${tag}/story/${t}`]=await ask(t);
   await state('after-local');
   await p.evaluate(()=>{localStorage.setItem('bluey-ease',JSON.stringify({text:'larger'}))});await p.reload({waitUntil:'networkidle2'});await wait(2500);await state('larger-restored');
   snap[`${tag}/errors`]=errs;

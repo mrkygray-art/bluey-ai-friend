@@ -146,11 +146,6 @@ const blueySend37Base=send;
 send=async function(text){
  const clean=String(text||'').trim();if(!clean)return;
  const lower=clean.toLowerCase();
- if(/\bwhat does b\s*[.·]?\s*l\s*[.·]?\s*u\s*[.·]?\s*e\s*[.·]?\s*y\s*[.·]? mean|\bwhat is b\.?l\.?u\.?e\.?y\.?|\bwhat does bluey stand for|\bwhat is the bluey promise\b/i.test(clean)){
-  add('user',clean);input.value='';
-  const answer=`B.L.U.E.Y. is the way I try to show up: ${BLUEY_BRAND_CANON.tagline}\n\nB — ${BLUEY_BRAND_CANON.letters.B.split(' — ')[1]}\nL — ${BLUEY_BRAND_CANON.letters.L.split(' — ')[1]}\nU — ${BLUEY_BRAND_CANON.letters.U.split(' — ')[1]}\nE — ${BLUEY_BRAND_CANON.letters.E.split(' — ')[1]}\nY — ${BLUEY_BRAND_CANON.letters.Y.split(' — ')[1]}`;
-  setTimeout(()=>add('assistant',answer),350);characterMove('curiosity',900);return;
- }
  let room=null;
  if(/\b(office|workshop)\b/i.test(lower))room='workshop';
  else if(/\bgarage\b/i.test(lower))room='garage';
