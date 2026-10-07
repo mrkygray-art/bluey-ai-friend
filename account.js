@@ -180,6 +180,7 @@ function openSheet(){
  const note=el('p','bluey-account-note');note.setAttribute('role','status');note.setAttribute('aria-live','polite');
  const say=t=>{note.textContent=t};
  function actions(...extra){const a=el('div','bluey-memory-actions');a.append(...extra);return a}
+ const privacy=()=>{const p=el('p','bluey-account-privacy');const a=el('a',null,'How Bluey handles your information');a.href='/privacy.html';a.target='_blank';a.rel='noopener';p.append(a);return p};
 
  function signedOut(){
   sheet.replaceChildren(el('h2',null,'Sign in (optional)'),el('p','bluey-memory-lead','You don’t need an account to use Bluey. Signing in just means what Bluey remembers about you follows you to your phone, tablet, and computer.'));
@@ -198,7 +199,7 @@ function openSheet(){
     catch(err){send.disabled=false;say(/rate|seconds/i.test(err?.message||'')?'Please wait a minute before asking for another email.':'I couldn’t send that email just now. Please check the address and try again.')}});
    sheet.append(form);
   }
-  sheet.append(note,actions(button('Keep using Bluey without signing in','is-quiet',close)));
+  sheet.append(note,actions(button('Keep using Bluey without signing in','is-quiet',close)),privacy());
  }
 
  function codeStep(email){
@@ -226,7 +227,7 @@ function openSheet(){
    try{const {error}=await sb.rpc('delete_my_account');if(error)throw error;try{await sb.auth.signOut({scope:'local'})}catch(_){}writeQuiet(MEM,[]);writeQuiet(PREFS,[]);clearChatHere();user=null;rows=new Map();redraw();close();status('Your account and everything in it are deleted.',5000)}
    catch(_){del.disabled=false;say('I couldn’t delete it just now. Please try again in a moment.')}
   });
-  sheet.append(note,actions(see,chats),actions(out,del,button('Done',null,close)));
+  sheet.append(note,actions(see,chats),actions(out,del,button('Done',null,close)),privacy());
  }
 
  (user?signedIn:signedOut)();

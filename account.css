@@ -20,3 +20,5 @@
 .bluey-chat-buttons{display:flex;gap:6px;flex:none}
 .bluey-chat-row .bluey-chat-buttons button.is-danger{color:#a23b2a;border-color:#ecc6bf}
 .bluey-chat-row button:disabled{opacity:.6;cursor:default}
+.bluey-account-privacy{margin:0;text-align:center;font-size:13px}
+.bluey-account-privacy a{color:#2f6f8c}

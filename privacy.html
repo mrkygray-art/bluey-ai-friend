@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bluey Privacy</title>
+<meta name="description" content="What Bluey keeps, where it lives, and how to delete it.">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png">
+<style>
+:root{--bg:#f6fafd;--card:#fff;--ink:#14263a;--soft:#4a5d6e;--line:#e3ebf1;--blue:#0a78c2;--blue-soft:#e8f4fb}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1822;--card:#15222f;--ink:#e6eef5;--soft:#a9bccb;--line:#243443;--blue:#5cb8f0;--blue-soft:#17324a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.ball{width:44px;height:44px;border-radius:50%;flex:none;background:radial-gradient(circle at 32% 28%,#fff 0 6%,#5fd0ff 14%,#0a8fd6 52%,#065a9a 100%);box-shadow:0 6px 16px rgba(6,90,154,.3)}
+h1{font-size:30px;line-height:1.2;margin:0}
+.updated{color:var(--soft);font-size:15px;margin:4px 0 24px}
+.lead{font-size:19px;background:var(--blue-soft);border-radius:16px;padding:16px 18px;margin:0 0 28px}
+h2{font-size:21px;margin:32px 0 8px}
+p,ul{margin:0 0 12px}
+ul{padding-left:22px}
+li{margin:4px 0}
+a{color:var(--blue)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px 18px 10px;margin:12px 0}
+.back{display:inline-block;margin-top:32px;font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<header><div class="ball" aria-hidden="true"></div><h1>Bluey’s privacy promise</h1></header>
+<p class="updated">Last updated October 7, 2026</p>
+<p class="lead">You don’t need an account to use Bluey. Bluey never sells your information or shows you ads. You can see, and delete, everything Bluey remembers about you.</p>
+
+<h2>If you use Bluey without signing in</h2>
+<p>Everything stays in your own browser, on your own device:</p>
+<ul>
+<li>your current chat (so a refresh doesn’t erase it),</li>
+<li>what Bluey remembers about you (like your name or a project you mentioned),</li>
+<li>preferences you chose to save, and settings like text size and voice.</li>
+</ul>
+<p>Clearing your browser’s site data removes all of it. Files you add (PDF, Word, text, CSV) are read inside your browser, kept only for that browser tab, and gone when you start a New chat or close the tab.</p>
+
+<h2>If you choose to sign in</h2>
+<p>Signing in (with Google or an email link) is optional. It lets what Bluey remembers, and your chats, follow you to your other devices. We then store, in your account:</p>
+<ul>
+<li>your email address (and your name, if Google shares it),</li>
+<li>what Bluey remembers about you and the preferences you saved,</li>
+<li>the chats you have while signed in.</li>
+</ul>
+<p>This is kept with <a href="https://supabase.com/privacy">Supabase</a>, our database provider, and protected so that only you can read or change your own information. Bluey never keeps things like passwords, ID or card numbers, health details, or exact addresses as memories.</p>
+
+<h2>What leaves your device when you talk to Bluey</h2>
+<div class="card">
+<ul>
+<li><strong>Your messages</strong>, the files and photos you add, and what Bluey remembers about you are sent to <a href="https://openai.com/policies/privacy-policy">OpenAI</a> to write Bluey’s reply. OpenAI doesn’t use data sent this way to train its models.</li>
+<li><strong>Voice:</strong> if you talk to Bluey or have him speak, the audio or text goes to OpenAI to turn speech into text, or text into speech.</li>
+<li><strong>Web search and pictures:</strong> when a question needs current facts, a search is run for it; pictures come from Wikipedia and Wikimedia Commons.</li>
+<li><strong>Hosting:</strong> Bluey runs on <a href="https://vercel.com/legal/privacy-policy">Vercel</a>, which, like any website host, briefly sees your IP address. We use it only to keep usage fair (limits on how many messages one visitor can send per hour).</li>
+</ul>
+</div>
+
+<h2>Seeing and deleting your information</h2>
+<ul>
+<li><strong>What Bluey remembers</strong> in the blue + menu lists everything, with Forget on each item and Forget everything.</li>
+<li><strong>New chat</strong> clears the chat on your device.</li>
+<li>Signed in: <strong>Your account → Your saved chats</strong> lets you delete any chat, <strong>Sign out</strong> removes your information from that device, and <strong>Delete my account</strong> permanently deletes your account and everything in it.</li>
+</ul>
+
+<h2>Children</h2>
+<p>Bluey is made for adults who are new to AI. Accounts are for people 13 and older.</p>
+
+<h2>Changes and questions</h2>
+<p>If this page changes, the date at the top changes too. Questions? Reach Ky Gray, who built Bluey, through the <a href="https://ky-gray-portfolio.vercel.app/#contact">contact form on Ky’s portfolio site</a>.</p>
+
+<a class="back" href="/">← Back to Bluey</a>
+</main>
+</body>
+</html>
