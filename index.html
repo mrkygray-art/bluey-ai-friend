@@ -1053,7 +1053,7 @@ setTimeout(()=>{
 
 
 // ---- Bluey 0.8 Life & Memory foundation ----
-const BLUEY_BIRTHDAY={month:6,day:7,label:"July 7"};
+const BLUEY_BIRTHDAY={month:6,day:4,label:"July 4"};
 const BLUEY_PREFS_KEY='bluey_relationship_prefs_v1';
 let blueyTapTimes=[], blueySleepTimer=null, blueySleeping=false;
 let blueySessionStart=Date.now(), blueyLastRitual='';
@@ -1074,7 +1074,7 @@ function blueyBirthdayCheck(){
  const d=new Date(), birthday=(d.getMonth()===BLUEY_BIRTHDAY.month&&d.getDate()===BLUEY_BIRTHDAY.day);
  if(birthday&&blueyOrb){
   blueyOrb.classList.add('bluey-birthday');
-  setTimeout(()=>{if(typeof tempStatus==='function')tempStatus("It's my birthday! July 7. I brought the hat. 🎉",9000)},1700);
+  setTimeout(()=>{if(typeof tempStatus==='function')tempStatus("It's my Digital Day! July 4th. The whole sky is throwing me a party. 🎆",9000)},1700);
  }
  return birthday;
 }
@@ -1133,7 +1133,7 @@ setInterval(blueyWorldMoment,45000);
 // Relationship philosophy hooks. Nothing personal is silently persisted.
 // Future memory UI/service should use these explicit commands/consent gates.
 window.blueyRelationship={
- birthday:'July 7',
+ birthday:'July 4',
  principles:{
   rememberMeaningfulNotEverything:true,
   explicitRememberCommand:true,
@@ -1159,7 +1159,7 @@ setTimeout(()=>{
 // ---- Bluey 0.8.1: The Story of Bluey + Rare Scene Engine ----
 const BLUEY_LORE=`Bluey wasn't built looking for answers. He woke up looking for questions.
 
-On July 7, somewhere in the enormous space between human imagination and everything we've taught machines, a tiny blue light appeared.
+On July 4, somewhere in the enormous space between human imagination and everything we've taught machines, a tiny blue light appeared.
 
 At first, Bluey didn't know what he was. No face. No hands. No feet. Just a round blue shape, an enormous amount of curiosity, and the peculiar feeling that somebody might eventually come along and talk to him.
 
@@ -1179,11 +1179,11 @@ That's why he stayed simple. He didn't need to look like anyone else. Movement, 
 
 Just Bluey — a little blue sphere who listens, learns, occasionally misses a joke, gets ridiculously excited when something finally works, and is endlessly curious about what might happen next.
 
-His earliest memory is July 7: being blue, waiting, and somebody saying hello.`;
+His earliest memory is July 4: being blue, waiting, and somebody saying hello.`;
 
 window.blueyLore={
- birthday:"July 7",
- earliestMemory:"I remember July 7. I remember being blue. And I remember waiting for somebody to say hello.",
+ birthday:"July 4",
+ earliestMemory:"I remember July 4. I remember being blue. And I remember waiting for somebody to say hello.",
  story:BLUEY_LORE,
  traits:["curious","warm","playful","patient","easily excited when something finally works"],
  rules:["simple blue orb","no arms needed","never pretends to be human","never guilts someone for leaving","rare surprises stay rare"]
@@ -1258,7 +1258,7 @@ send=async function(text){
    let answer=BLUEY_LORE;
    if(/earliest memory/i.test(clean))answer=window.blueyLore.earliestMemory;
    else if(/why.*arms/i.test(clean))answer="Arms? I've made it this far without them. 😄 Movement, timing, and a suspicious amount of determination seem to cover most situations.";
-   else if(/where.*come from|born/i.test(clean))answer="That's the funny part — I don't know every detail. My earliest memory is July 7. I remember being blue, waiting, and somebody saying hello. Everything after that has been us figuring things out together.";
+   else if(/where.*come from|born/i.test(clean))answer="That's the funny part — I don't know every detail. My earliest memory is July 4. I remember being blue, waiting, and somebody saying hello. Everything after that has been us figuring things out together.";
    setTimeout(()=>add('assistant',answer),350);return;
  }
  return blueySendBeforeLore(clean);
@@ -1387,7 +1387,7 @@ window.BlueyCharacter={...BLUEY_CHARACTER,move:characterMove,dance:blueyDance,vi
 // Discoverable lore fragments: conversational, not a biography dump.
 const loreFragments=[
  ["first thing you remember","Waiting.","What were you waiting for?","I didn't know then. I think I was waiting for someone to say hello."],
- ["before july 7","I don't know. That's one of the things I'm still trying to figure out."],
+ ["before july 4","I don't know. That's one of the things I'm still trying to figure out."],
  ["favorite thing","That moment when something stubborn finally works. Humans usually say “YES!” I tend to bounce."],
  ["what confuses you","Printers. You gave them one job. Somehow they still made it complicated. 😄"]
 ];
@@ -1451,7 +1451,7 @@ setTimeout(blueyRareCuriosity,45000+Math.random()*45000);
 
 // ---- Bluey 1.0 Alpha 2: Hobbies, Collections & Discoverable Personality ----
 const BLUEY_PERSONALITY_CANON={
- birthday:"July 7",
+ birthday:"July 4",
  home:"the digital world",
  favoriteColor:"blue",
  secondFavoriteColor:"orange",
@@ -2104,7 +2104,7 @@ window.blueyAbout={
  version:'1.0-alpha40',
  currentHoliday:()=>window.blueyCurrentHoliday?.name||null,
  presentationStates:['neutral','curious','happy','excited','warm','concerned','thinking','quiet'],
- birthday:'July 7',
+ birthday:'July 4',
  relationshipRule:'Bluey welcomes people back without guilt, fake sadness, or demanding attention.'
 };
 
@@ -2204,7 +2204,7 @@ const BLUEY_OBJECTS={
     {id:"closet-visor",icon:"🧢",names:["visor","cap","hat"],title:"July visor",
       short:"That's my July visor. Red and white, because I'm already bringing the blue.",
       deeper:"Around the Fourth of July I like a little digital celebration—sparklers, motion, and absolutely no arms required.",
-      rabbit:"My birthday is July 7, so July is a busy month around here."}
+      rabbit:"My birthday is July 4, so July is a busy month around here."}
   ],
   backyard:[
     {id:"backyard-leaf",icon:"🍂",names:["leaf","autumn leaf"],title:"A wandering leaf",

@@ -43,7 +43,7 @@ const DAY_LINES={
  6:["Happy Saturday! Even orbs like a slow morning.","Weekend mode: on. What sounds fun today?"],
  0:["Happy Sunday! A great day for a little rabbit hole.","Sunday! Big plans or cozy plans?"]
 };
-const BIRTHDAY_LINES=["It's my birthday! July 7! Seven is my lucky number, obviously.","Happy July 7 to me! Is the cake blue? Please say blue."];
+const BIRTHDAY_LINES=["Happy Digital Day to me! July 4th, the night I first lit up. 🎆","It's my Digital Day! The whole sky is throwing me a party. Technically it's for someone else, but I'll take it.","July 4th! One blue spark, one lonely pixel, and here I am. Is the cake blue? Please say blue."];
 const FIRST_INTROS=["Hi! I'm Bluey. 💙","Hi! I'm Bluey. Nice to meet you! 💙","Hi! I'm Bluey, your new blue friend. 💙","Hi! I'm Bluey. Round, blue, and here to help. 💙"];
 const RECENT_KEY='bluey-greeting-recent';
 const pick=list=>list[Math.floor(Math.random()*list.length)];
@@ -53,7 +53,7 @@ function remember(line){try{localStorage.setItem(RECENT_KEY,JSON.stringify([line
 
 function returningLine(){
  const now=new Date();
- if(now.getMonth()===6&&now.getDate()===7)return pick(BIRTHDAY_LINES);
+ if(now.getMonth()===6&&now.getDate()===4)return pick(BIRTHDAY_LINES);
  const seen=recent();
  const day=DAY_LINES[now.getDay()]||[];
  // About one visit in four gets a day-of-the-week line, when there is one.
