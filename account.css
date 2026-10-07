@@ -15,3 +15,8 @@
 .bluey-account-sheet .bluey-memory-actions button.is-danger{color:#a23b2a;border-color:#ecc6bf}
 .bluey-account-sheet button:focus-visible,.bluey-account-sheet input:focus-visible{outline:3px solid #64c8ef;outline-offset:2px}
 .composer .bluey-plus-menu .bluey-account-item[hidden]{display:none}
+.bluey-chat-row span:first-child{display:flex;flex-direction:column;gap:2px}
+.bluey-chat-row small{color:#6a7c8b;font-size:13px}
+.bluey-chat-buttons{display:flex;gap:6px;flex:none}
+.bluey-chat-row .bluey-chat-buttons button.is-danger{color:#a23b2a;border-color:#ecc6bf}
+.bluey-chat-row button:disabled{opacity:.6;cursor:default}
