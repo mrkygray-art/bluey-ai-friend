@@ -62,7 +62,7 @@ const UAS={
   if(shown){await p.tap('.bluey-install');await wait(200)}
   const text=await p.$eval('.bluey-install-help',el=>el.hidden?'':el.textContent).catch(()=>'');
   check(shown&&text.includes(expect),`${name}: steps shown`,text);
-  if(name==='firefox')await p.screenshot({path:process.env.SHOT||'pwa-firefox.png'});
+  if(name==='firefox')await p.screenshot({path:process.env.SHOT||require('os').tmpdir()+'/bluey-pwa-firefox.png'});
   await p.close();
  }
  // Already installed: no install item

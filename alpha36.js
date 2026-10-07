@@ -122,7 +122,6 @@ const blueySessionTools=document.createElement('div');blueySessionTools.classNam
 const blueyNewChat=document.createElement('button');blueyNewChat.type='button';blueyNewChat.textContent='New chat';blueyNewChat.setAttribute('aria-label','Start a new chat');
 blueyNewChat.addEventListener('click',()=>{
  if(history.length&&!window.confirm('Start a new chat? This clears the conversation saved on this device.'))return;
- if(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive&&typeof blueyWorkshopFinish==='function')blueyWorkshopFinish();
  blueyStopVoice();history.length=0;messages.replaceChildren();localStorage.removeItem(blueyConversationKey);blueyPhotos=[];blueyRecentPhotos=[];if(window.blueyClearDocuments)blueyClearDocuments();
  if(typeof blueySyncControls==='function')blueySyncControls();input.value='';statusEl.textContent='';app.classList.remove('working');tempStatus('Fresh page, fresh start. I’m right here.',3000);input.focus();
 });

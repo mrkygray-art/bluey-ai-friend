@@ -27,17 +27,15 @@ window.send=async function(t){const text=String(t||'').trim();if(text&&asksHome(
 window.addEventListener('bluey:world',e=>{const r=e.detail?.room||room();if(r!==HOME||Date.now()>=objectsVisibleUntil)clearObjects();if(r===HOME){setTimeout(quietHome,20);setTimeout(quietHome,160)}});
 window.addEventListener('bluey:alpha47-ready',()=>{if(room()===HOME)quietHome()});
 
-function isBuildPromptControl(el){const s=[el.textContent,el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.id,el.className].filter(Boolean).join(' ').toLowerCase();return /build\s*prompt|prompt\s*builder|buildprompt/.test(s)}
-function simplifyControls(){document.querySelectorAll('button,a,[role="button"],input[type="button"]').forEach(el=>{if(isBuildPromptControl(el)){el.style.setProperty('display','none','important');el.hidden=true;el.setAttribute('aria-hidden','true');el.tabIndex=-1}})}
 function enforceHome(){if(room()!==HOME)return;const S=stage();if(!S)return;S.style.setProperty('background','#fff','important');clearScenery();if(Date.now()>=objectsVisibleUntil)clearObjects();else deduplicateObjects()}
-function startHomeGuard(){clearInterval(homeGuard);watchStageObjects();homeGuard=setInterval(()=>{simplifyControls();enforceHome();deduplicateObjects()},500)}
+function startHomeGuard(){clearInterval(homeGuard);watchStageObjects();homeGuard=setInterval(()=>{enforceHome();deduplicateObjects()},500)}
 
 let tapBusy=false;
 async function tapToTalk(e){if(e){e.preventDefault();e.stopPropagation()}if(tapBusy)return;tapBusy=true;const O=orb();try{if(typeof window.listen!=='function')throw new Error('listen-unavailable');O?.classList.add('bluey-listening');await window.listen()}catch(err){console.warn('[Bluey] tap-to-talk failed',err);O?.classList.remove('bluey-listening');if(typeof window.tempStatus==='function')window.tempStatus('I can’t start the microphone here yet. Check this site’s microphone permission, then tap me again.',8500)}finally{setTimeout(()=>{tapBusy=false},220)}}
 function bindTapToTalk(){const O=orb();if(!O)return false;O.setAttribute('role','button');O.setAttribute('tabindex','0');O.setAttribute('aria-label','Talk to Bluey');O.style.touchAction='manipulation';O.onclick=tapToTalk;O.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')tapToTalk(e)};return true}
 const css=document.createElement('style');css.textContent=`body.bluey-world43-home .stage,.stage[data-bluey-world="home"]{background:#fff!important}.bluey-explore-room{display:none!important}#orb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}`;document.head.appendChild(css);
-setTimeout(()=>{if(room()===HOME)quietHome();simplifyControls();bindTapToTalk();startHomeGuard()},450);
-setTimeout(()=>{simplifyControls();bindTapToTalk();enforceHome()},1500);
-window.BlueyQuietStage={version:'1.4',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,simplifyControls,bindTapToTalk};
+setTimeout(()=>{if(room()===HOME)quietHome();bindTapToTalk();startHomeGuard()},450);
+setTimeout(()=>{bindTapToTalk();enforceHome()},1500);
+window.BlueyQuietStage={version:'1.4',clearObjects,revealObjects,quietHome,forceHome,asksToSeeObjects,bindTapToTalk};
 console.info('[Bluey] Alpha 47.5 blank Home enforcement ready');
 })();

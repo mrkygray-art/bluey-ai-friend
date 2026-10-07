@@ -11,7 +11,7 @@
 //   - stage objects ("tell me about the lamp", "where did the welcome mat go?")
 //   - the built-in story and guessing games, and replies while one is running
 //   - dancing, and "where are we?" (only the app knows the current room)
-//   - the prompt workshop while it's open, and photo-only messages
+//   - photo-only messages
 // A message sent with a newly added file (files.js) always goes to the brain, and Send with
 // only a file sends "Please take a look at this." so Bluey sums it up and asks what you need.
 // Anything with task words (my, help, write, please…) goes to the brain even if it names a room
@@ -74,7 +74,7 @@ function install(){
  const guard=async function(text){
   const newFile=!!(window.blueyDocsPending&&blueyDocsPending());
   const clean=String(text||'').trim()||(newFile?'Please take a look at this.':'');
-  if(!clean||(typeof blueyWorkshopActive!=='undefined'&&blueyWorkshopActive)||(!newFile&&isLocalAction(clean)))return sendThroughOldLayers(text);
+  if(!clean||(!newFile&&isLocalAction(clean)))return sendThroughOldLayers(text);
   // Going to the brain also ends any little local game, story, or object chat.
   blueyStory=null;blueyGame=null;blueyObjectFocus=null;
   const format=blueyDocumentFormat(clean);

@@ -12,3 +12,5 @@
  user-select:none;
 }
 @media(max-width:520px){#bluey-version{font-size:9px;right:max(7px,env(safe-area-inset-right));bottom:max(4px,env(safe-area-inset-bottom))}}
+/* Moved from alpha15.css (the removed prompt workshop) when it was deleted; same cascade position. */
+.msg.assistant{white-space:pre-line}

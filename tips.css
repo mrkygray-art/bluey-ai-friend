@@ -29,5 +29,5 @@
 .bluey-tip-go:disabled{background:#d6dde3;color:#7d8b96;cursor:default}
 .bluey-tip-sent{margin:0!important;color:#1b5a3d;font-weight:600}
 /* The light bulb replaces the older, heavier "Build prompt" flow. */
-#bluey-prompt-start{display:none!important}
+
 @media (min-width:701px){.bluey-tip-go{display:inline-block;width:auto;padding:0 26px}}
