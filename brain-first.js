@@ -14,6 +14,8 @@
 //   - photo-only messages
 // A message sent with a newly added file (files.js) always goes to the brain, and Send with
 // only a file sends "Please take a look at this." so Bluey sums it up and asks what you need.
+// During a practice talk (practice.js) every line goes to the brain, so "can we meet at the office?"
+// stays part of the role-play instead of becoming room travel.
 // Anything with task words (my, help, write, please…) goes to the brain even if it names a room
 // ("go home and finish my lab report").
 //
@@ -74,7 +76,7 @@ function install(){
  const guard=async function(text){
   const newFile=!!(window.blueyDocsPending&&blueyDocsPending());
   const clean=String(text||'').trim()||(newFile?'Please take a look at this.':'');
-  if(!clean||(!newFile&&isLocalAction(clean)))return sendThroughOldLayers(text);
+  if(!clean||(!newFile&&!(window.blueyPracticeActive&&blueyPracticeActive())&&isLocalAction(clean)))return sendThroughOldLayers(text);
   // Going to the brain also ends any little local game, story, or object chat.
   blueyStory=null;blueyGame=null;blueyObjectFocus=null;
   const format=blueyDocumentFormat(clean);

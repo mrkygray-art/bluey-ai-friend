@@ -1,0 +1,9 @@
+/* practice.js: the practice-talk banner above the message box and the 🎭 role tag on in-character replies. */
+#bluey-practice-bar{width:min(780px,calc(100% - 28px));margin:0 auto 7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 8px 8px 13px;border:1px solid #e2c9f2;border-radius:14px;background:#f8f1fd;color:#4b2a63;font:14px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif}
+#bluey-practice-bar[hidden]{display:none}
+.bluey-practice-label{flex:1;min-width:160px}
+#bluey-practice-bar button{border:1px solid #d9bdee;border-radius:999px;background:#fff;color:#5b2f7d;padding:7px 12px;font:600 13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;touch-action:manipulation}
+#bluey-practice-bar button.is-end{background:#6b3a91;border-color:#6b3a91;color:#fff}
+#bluey-practice-bar button:focus-visible{outline:3px solid #b98ae0;outline-offset:2px}
+.bluey-practice-tag{display:inline-block;margin:0 0 6px;padding:3px 10px;border-radius:999px;background:#f3e8fb;color:#5b2f7d;font:600 12.5px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif}
+.msg.assistant.is-in-character{border-left:3px solid #d9bdee;padding-left:12px}
