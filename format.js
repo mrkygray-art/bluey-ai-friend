@@ -105,12 +105,19 @@ window.blueyCopyReply=async function(text){
  await navigator.clipboard.writeText(plain);
 };
 
+// Names voices get wrong. Lowercase "ky" (in ky-gray-portfolio.vercel.app) is read as the
+// letters "K Y"; capitalized "Ky" is said right. Only what's spoken changes; the screen and
+// Copy keep the real address. api/speech.js does the same for generated speech.
+window.blueySpeakable=function(text){
+ return String(text||'').replace(/\bky[-\s]gray[-\s]portfolio\b/gi,'Ky Gray portfolio').replace(/\bky(?=[-\s]gray\b)/g,'Ky');
+};
+
 // Speech reads the reply without Markdown symbols. speak() is redefined by alpha7/11/36,
 // so wrap whichever one is current once every script has run.
 document.addEventListener('DOMContentLoaded',()=>{
  if(typeof speak!=='function'||speak.blueyPlain)return;
  const previous=speak;
- speak=function(text,...rest){return previous.call(this,blueyPlain(text),...rest)};
+ speak=function(text,...rest){return previous.call(this,blueySpeakable(blueyPlain(text)),...rest)};
  speak.blueyPlain=true;
 });
 })();

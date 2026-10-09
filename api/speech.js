@@ -5,7 +5,11 @@ export const config={api:{bodyParser:{sizeLimit:"64kb"}}};
 export default async function handler(req,res){
   if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});if(overLimit(req,res,"speech",60,500))return;
   if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:"OPENAI_API_KEY is not configured in Vercel"});
-  const text=String(req.body?.text||"").trim();
+  // Lowercase "ky" (ky-gray-portfolio.vercel.app) is read as the letters "K Y"; "Ky" is said
+  // right. Only the audio changes (format.js blueySpeakable does the same for the browser voice).
+  const text=String(req.body?.text||"").trim()
+    .replace(/\bky[-\s]gray[-\s]portfolio\b/gi,"Ky Gray portfolio")
+    .replace(/\bky(?=[-\s]gray\b)/g,"Ky");
   // "Slower voice" in the + menu (ease.js): calmer pacing for people who find fast speech hard to follow.
   const slow=req.body?.slow===true;
   if(!text)return res.status(400).json({error:"Add a reply for Bluey to speak"});
