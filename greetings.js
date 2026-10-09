@@ -88,7 +88,7 @@ blueyFirstMeet=function(){
   const el=document.querySelector('.stage-copy>.greeting');if(el)el.textContent=intro;
  },950);
  setTimeout(()=>{
-  if(typeof tempStatus==='function')tempStatus("You can talk to me or type whenever you want. What should we do first?",9000);
+  if(typeof tempStatus==='function')tempStatus("Tap me to talk, and tap me again when you’re done. Or just type below. What should we do first?",12000);
   blueyOrb.classList.remove('bluey-meeting');
   setBlueyState('warm');
  },1850);
