@@ -54,7 +54,7 @@ const pick=list=>list[Math.floor(Math.random()*list.length)];
 function recent(){try{const r=JSON.parse(localStorage.getItem(RECENT_KEY)||'[]');return Array.isArray(r)?r:[]}catch(_){return[]}}
 function remember(line){try{localStorage.setItem(RECENT_KEY,JSON.stringify([line,...recent().filter(x=>x!==line)].slice(0,8)))}catch(_){}}
 
-// Ky (creator.js saved his creator code on this device) gets his own hellos. Cosmetic only:
+// Ky (creator.js noted that the server recognized him, signed in on his own account) gets his own hellos. Cosmetic only:
 // what Bluey believes is decided on the server.
 const CREATOR_LINES=[
  "K.Y.! You're back. I kept the sticky note safe.",
