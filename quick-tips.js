@@ -22,6 +22,10 @@ pill.type='button';pill.className='bluey-tips-pill';
 pill.setAttribute('aria-haspopup','dialog');pill.setAttribute('aria-label','Quick tips: how to use Bluey');
 pill.innerHTML='<span aria-hidden="true">?</span> Tips';
 tools.prepend(pill);
+// A soft yellow glow until the first tap, so new visitors notice it; then it's a plain pill
+const SEEN='bluey-tips-seen';
+let seen=false;try{seen=localStorage.getItem(SEEN)==='yes'}catch(_){}
+if(!seen)pill.classList.add('is-new');
 
 const shade=document.createElement('div');shade.className='bluey-tips-shade';shade.hidden=true;
 const card=document.createElement('section');card.className='bluey-tips-card';
@@ -42,7 +46,7 @@ for(const [icon,name,text] of TIPS){
 const done=document.createElement('button');done.type='button';done.className='bluey-tips-done';done.textContent='Got it';
 card.append(head,list,done);shade.append(card);document.body.append(shade);
 
-function open(){shade.hidden=false;document.body.classList.add('bluey-tips-open');done.focus({preventScroll:true})}
+function open(){if(pill.classList.contains('is-new')){pill.classList.remove('is-new');try{localStorage.setItem(SEEN,'yes')}catch(_){}}shade.hidden=false;document.body.classList.add('bluey-tips-open');done.focus({preventScroll:true})}
 function close(){if(shade.hidden)return;shade.hidden=true;document.body.classList.remove('bluey-tips-open');pill.focus({preventScroll:true})}
 pill.addEventListener('click',open);
 x.addEventListener('click',close);

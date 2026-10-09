@@ -18,3 +18,10 @@ html[data-text="large"] .bluey-tips-card{font-size:18px}
 html[data-text="larger"] .bluey-tips-card{font-size:20px}
 html[data-text="large"] .bluey-tips-list p,html[data-text="larger"] .bluey-tips-list p{font-size:1em}
 .bluey-tips-icon.is-plus{justify-self:center;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#5ec3f7,#0b78c9 70%);color:#fff;font-size:20px;font-weight:600;line-height:1}
+/* Glow on the Tips pill until it's tapped once. Only the glow layer's opacity animates (cheap
+   for the GPU), and it pauses while Bluey rests. */
+.bluey-session-tools .bluey-tips-pill.is-new{position:relative;border-color:#f3c52f;background:#fffbe6}
+.bluey-session-tools .bluey-tips-pill.is-new::after{content:'';position:absolute;inset:-5px;border-radius:999px;box-shadow:0 0 14px 6px rgba(255,204,51,.75),0 0 0 2px rgba(255,214,64,.6);pointer-events:none;animation:bluey-tips-glow 1.8s ease-in-out infinite}
+@keyframes bluey-tips-glow{0%,100%{opacity:.45}50%{opacity:1}}
+body.bluey-resting .bluey-tips-pill.is-new::after{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.bluey-session-tools .bluey-tips-pill.is-new::after{animation:none;opacity:.85}}
