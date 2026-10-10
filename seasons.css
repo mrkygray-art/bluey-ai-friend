@@ -1,0 +1,14 @@
+/* Seasonal sky scenes (seasons.js). Each piece lives in #bluey-scene-layer and is moved only by
+   Web Animations, so these rules are just the look. */
+.bluey-sky{position:absolute;display:block;pointer-events:none;border-radius:50%;will-change:transform,opacity}
+/* Winter: soft blue snowflakes (white would vanish on the white stage). */
+.bluey-flake{border-radius:0;width:auto!important;height:auto!important;line-height:1;font-style:normal;color:#9ccbf2;text-shadow:0 0 6px rgba(156,203,242,.7);opacity:0}
+/* Christmas: eight little blue balls led by a red one with a glow. */
+.bluey-sleigh-ball{background:radial-gradient(circle at 32% 28%,#fff 0 10%,#5cc4f2 22%,#1270c4 62%,#073f86);box-shadow:0 2px 4px rgba(0,0,0,.18);opacity:0}
+.bluey-sleigh-lead{background:radial-gradient(circle at 32% 28%,#fff 0 10%,#ff7b7b 24%,#d81f2c 64%,#7d0b12);box-shadow:0 0 8px 2px rgba(255,70,70,.65),0 2px 4px rgba(0,0,0,.18)}
+/* Fireworks: a glowing ball rises, then bursts into embers of its color. */
+.bluey-rocket{background:var(--c);box-shadow:0 0 6px 1px var(--c),0 6px 8px -2px var(--c)}
+.bluey-ember{background:var(--c);box-shadow:0 0 8px 1px var(--c)}
+.bluey-flash{background:radial-gradient(circle,#fff 0 20%,var(--c) 45%,transparent 70%)}
+/* White embers need an outline glow to show on the white stage. */
+.bluey-rocket[style*="#ffffff"],.bluey-ember[style*="#ffffff"],.bluey-rocket[style*="#f4f1e8"],.bluey-ember[style*="#f4f1e8"]{box-shadow:0 0 0 1px rgba(120,150,190,.45),0 0 6px rgba(120,150,190,.6)}
