@@ -40,6 +40,19 @@ const FRIENDS = [
       { src: '/friends/leighbug-halloween.jpg', alt: 'Ky in a curly wig and suspenders making a silly face next to Leigh in horns and wings', caption: 'Ky and Leighbug, dressed up for Halloween' },
     ],
   },
+  {
+    id: 'mary',
+    // Only when the question ties Mary to Ky ("Ky's friend Mary Miller", "Mary Miller ... Ky"): a
+    // plain "who is Mary Miller" is usually about someone else (there's a congresswoman by that name).
+    keys: new RegExp(
+      `${KY_WHO}['’]s\\s+((dear|best|good|old|close)\\s+)?friends?\\s+mary\\b` +
+      `|\\bmary\\s+miller\\b[^.?!]{0,40}${KY_WHO}\\b|${KY_WHO}\\b[^.?!]{0,40}\\bmary\\s+miller\\b`, 'i'),
+    followUp: false,
+    note: `KY'S DEAR FRIEND MARY (they asked about Ky's friend Mary; use only these facts): Mary is one of Ky's dearest friends. Ky asked you to share his own message to Mary, word for word, as a quote from him: "My dear friend. You kept me going. All our weird convos kept me afloat. Love you... Hooker." ("Hooker" is Ky's affectionate inside-joke nickname for Mary, and Mary is in on it; quote it as written, don't explain it, comment on it, or use it yourself.) Say there's a photo of Ky and Mary right below (the app shows it; you can't see it, so don't describe details). Keep it warm and short, and let Ky's words be the heart of it. Call her Mary (no last name). Don't add anything else about Mary: no age, job, town, how they met, or stories; if asked, say that's Mary's to share.`,
+    photos: [
+      { src: '/friends/ky-and-mary.jpg', alt: 'Mary and Ky grinning and pointing at each other in a goofy selfie', caption: 'Ky and Mary' },
+    ],
+  },
 ];
 
 // A short follow-up ("what car does he drive?") right after a reply about that friend counts too.
