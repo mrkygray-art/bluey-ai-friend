@@ -1,0 +1,17 @@
+/* Marbles from Bluey's collection (marbles.js). Glass look: a bright highlight, a swirl so you can
+   see them spin while they roll, and a soft shadow. */
+.bluey-marble-drop{position:absolute;z-index:6;border-radius:50%;pointer-events:none;opacity:0;will-change:transform;
+ box-shadow:inset -2px -3px 5px rgba(0,0,0,.28),0 3px 4px rgba(0,0,0,.14);
+ background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 12%,rgba(255,255,255,0) 26%),
+  conic-gradient(from 20deg,transparent 0 30%,rgba(255,255,255,.5) 34% 40%,transparent 44% 100%),
+  radial-gradient(circle at 50% 55%,var(--m1),var(--m2))}
+.bluey-marble-drop.m-blue{--m1:#7cc4ff;--m2:#1769d6}
+.bluey-marble-drop.m-storm{--m1:#8fa3bd;--m2:#17305e}
+.bluey-marble-drop.m-teal{--m1:#8ff0e0;--m2:#0e8f86}
+.bluey-marble-drop.m-amber{--m1:#ffd88a;--m2:#d9861a}
+.bluey-marble-drop.m-red{--m1:#ff9d9d;--m2:#c62f3c}
+.bluey-marble-drop.m-green{--m1:#b6f29a;--m2:#3c9a2e}
+.bluey-marble-drop.m-violet{--m1:#d4b8ff;--m2:#6a3fc7}
+/* The storm-cloud marble (specialness score 5 out of 5) has a little grey cloud inside. */
+.bluey-marble-drop.m-storm::after{content:"";position:absolute;left:24%;top:46%;width:52%;height:24%;border-radius:50%;
+ background:radial-gradient(circle at 30% 60%,#d9e0ea 0 34%,transparent 36%),radial-gradient(circle at 62% 40%,#c4ccd8 0 38%,transparent 40%);opacity:.85}
