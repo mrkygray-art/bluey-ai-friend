@@ -6,6 +6,8 @@
 
 // Ways people refer to Ky and to a partner, for the Leighbug entry.
 const KY_WHO = String.raw`\b(ky|ky gray|k\.\s?y\.?|your (creator|maker|builder|dad|father|parent)|the creator|(the (guy|person|man) )?who (made|built|created) you)`;
+// Ky's mom: Kathy Biagi.
+const KATHY = String.raw`\b(kathy|kathleen|kathryn|katherine)\s+biagi\b`;
 // Ky's dad: Jim Gray, Judge Jim Gray, James Gray (James P. Gray).
 const JIM = String.raw`\b(judge\s+)?(jim|jimmy|james)\s+(p\.?\s+)?gray\b`;
 const PARTNER = String.raw`wife|partner|girlfriend|gf|fianc[eé]e?|spouse|significant other|other half|better half|lady|soulmate|sweetheart`;
@@ -68,6 +70,21 @@ const FRIENDS = [
       { src: '/friends/dad-jim-gray-courtroom.jpg', alt: 'Judge Jim Gray speaking into a microphone in a wood-paneled courtroom', caption: "Ky's dad, Judge Jim Gray" },
       { src: '/friends/dad-jim-gray-speaking.jpg', alt: 'Jim Gray in a suit giving a talk at a college podium', caption: 'Jim Gray, speaking' },
       { src: '/friends/dad-jim-gray-hiking.jpg', alt: 'Jim Gray and family smiling together in hiking gear in a red-rock canyon', caption: 'A family hike' },
+    ],
+  },
+  {
+    id: 'mom',
+    // Only when the question ties Kathy Biagi to Ky ("Does Ky know Kathy Biagi?").
+    keys: new RegExp(`${KATHY}[^?!]{0,60}${KY_WHO}\\b|${KY_WHO}\\b[^?!]{0,60}${KATHY}`, 'i'),
+    followUp: false,
+    shown: /become the man I am today/i,
+    note: `KY'S MOM (they asked whether Ky knows Kathy Biagi; use only these facts): Kathy is Ky's mom. Ky asked you to share his own words, exactly, as a quote from him: "This is my Mom. Thank you for helping me become the man I am today. I am so happy we have the relationship we have. I love you." Say yes warmly (he doesn't just know her, that's his mom), share Ky's words as the heart of the answer, and say there are photos right below (the app shows them with an "Another photo" button; you can't see them, so don't describe details). Call her Kathy or Ky's mom. Don't add anything else about her or the family (no age, job, town, other names, or stories), and don't search the web for this answer. If they ask for more, say that's Ky's family's to share.`,
+    more: `They asked for another photo of Ky's mom, Kathy. Say here's another one in one short, warm line (don't repeat Ky's whole quote, and don't describe the photo; you can't see it).`,
+    photos: [
+      { src: '/friends/mom-kathy-painting.jpg', alt: 'Kathy smiling on a sofa, holding up a framed painting of sailboats', caption: "Ky's mom, Kathy" },
+      { src: '/friends/mom-kathy-family-dinner.jpg', alt: 'Kathy, Ky, and family smiling around a table at an outdoor restaurant', caption: 'Family dinner' },
+      { src: '/friends/mom-kathy-patio.jpg', alt: 'Kathy smiling with her hands on the shoulders of a man seated on a sunny garden patio', caption: 'Kathy on the patio' },
+      { src: '/friends/mom-kathy-dressed-up.jpg', alt: 'Kathy in a blue dress, smiling with family at a dressed-up evening event', caption: 'All dressed up with family' },
     ],
   },
 ];
