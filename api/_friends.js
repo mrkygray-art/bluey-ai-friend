@@ -26,17 +26,35 @@ const FRIENDS = [
       `|\\b(is|does)\\s+${KY_WHO}\\s+(married|single|dating|seeing (someone|anyone)|in a relationship|have an?\\s+(${PARTNER}))\\b` +
       `|\\bwho(\\s+is|'s)\\s+${KY_WHO}\\s+(married to|dating|with|in love with)\\b`, 'i'),
     followUp: false,
-    note: `KY'S PARTNER (they asked about Ky's wife, partner, or girlfriend; use only these facts): Ky's partner is Leigh, and his nickname for her is Leighbug. Ky asked you to share his own words exactly, as a quote from him: "This is my love, Leighbug. Strong, stubborn woman. I wouldn't have it any other way." Say there's a photo of the two of them together right below (the app shows it under your reply; you can't see it, so don't describe details). Keep it warm and short, and let Ky's words be the heart of it. Call her his partner (if they said wife or girlfriend, just say partner without correcting them). Don't add anything else about her or them: no last name, age, job, town, how they met, wedding or marriage details, or stories; if asked, say that's theirs to share. No jokes about her.`,
-    photo: { src: '/friends/ky-and-leighbug.webp', alt: 'Ky and Leigh smiling together in sunglasses, with the ocean behind them', caption: 'Ky and his Leighbug' },
+    // Seen in Bluey's last reply: "show me another one" right after it counts as asking again.
+    shown: /\bleighbug\b/i,
+    note: `KY'S PARTNER (they asked about Ky's wife, partner, or girlfriend; use only these facts): Ky's partner is Leigh (it rhymes with "sleigh"), and his nickname for her is Leighbug. Ky asked you to share his own words exactly, as a quote from him: "This is my love, Leighbug. Strong, stubborn woman. I wouldn't have it any other way." Say there's a photo right below (the app shows one of several photos Ky shared, with an "Another photo" button; you can't see them, so don't describe details). Keep it warm and short, and let Ky's words be the heart of it. Call her his partner (if they said wife or girlfriend, just say partner without correcting them). Don't add anything else about her or them: no last name, age, job, town, how they met, wedding or marriage details, or stories; if asked, say that's theirs to share. No jokes about her.`,
+    more: `They asked for another photo of Ky and Leighbug. Say here's another one in one short, warm line (don't repeat Ky's whole quote, and don't describe the photo; you can't see it).`,
+    photos: [
+      { src: '/friends/ky-and-leighbug.webp', alt: 'Ky and Leigh smiling together in sunglasses, with the ocean behind them', caption: 'Ky and his Leighbug' },
+      { src: '/friends/leighbug-dinner.jpg', alt: 'Ky and Leigh smiling at a dinner table', caption: 'Ky and Leighbug, dinner out' },
+      { src: '/friends/leighbug-road-trip.jpg', alt: 'Ky and Leigh grinning in sunglasses on a road trip, Leigh driving', caption: 'Road trip with Leighbug at the wheel' },
+      { src: '/friends/leighbug-aladdin.jpg', alt: 'Ky and Leigh with a golden lamp in front of an Aladdin musical poster', caption: 'Ky and Leighbug at Aladdin' },
+      { src: '/friends/leighbug-mirror.jpg', alt: 'Leigh smiling in a green flowered dress and tall black boots', caption: 'Leighbug, all dressed up' },
+      { src: '/friends/leighbug-horns.jpg', alt: 'Leigh smiling in big black costume horns and red lipstick', caption: 'Leighbug in her costume horns' },
+      { src: '/friends/leighbug-halloween.jpg', alt: 'Ky in a curly wig and suspenders making a silly face next to Leigh in horns and wings', caption: 'Ky and Leighbug, dressed up for Halloween' },
+    ],
   },
 ];
 
 // A short follow-up ("what car does he drive?") right after a reply about that friend counts too.
 const FOLLOW_UP = /\b(he|him|his|he's|drive|drives|car|truck|ride|picture|photo)\b/i;
+// "Show me another one" / "more pictures" right after a friend's photo.
+const MORE = /\b(another|more|next|different|other|new)\b[^.?!]{0,20}\b(one|ones|pics?|pictures?|photos?)\b|\bshow me (more|another)\b/i;
 
-// The friend this message is about, if any.
+// The friend this message is about, if any. Each friend has photos (Will's one photo counts as a
+// list of one); the browser picks which to show and rotates through them.
 export function pickFriend(text, prevBluey = '') {
-  const t = String(text || ''), prev = String(prevBluey || '');
-  const f = FRIENDS.find(x => x.keys.test(t)) || (t.length <= 80 && FOLLOW_UP.test(t) ? FRIENDS.find(x => x.followUp !== false && x.keys.test(prev)) : null);
-  return f ? { note: `\n\n${f.note}`, photo: f.photo } : null;
+  const t = String(text || ''), prev = String(prevBluey || ''), short = t.length <= 80;
+  let f = FRIENDS.find(x => x.keys.test(t)), more = false;
+  if (!f && short && MORE.test(t)) { f = FRIENDS.find(x => (x.shown || x.keys).test(prev)); more = !!f; }
+  if (!f && short && FOLLOW_UP.test(t)) f = FRIENDS.find(x => x.followUp !== false && x.keys.test(prev));
+  if (!f) return null;
+  const photos = f.photos || [f.photo];
+  return { note: `\n\n${more && f.more ? f.more : f.note}`, id: f.id, photos, photo: photos[0], more };
 }

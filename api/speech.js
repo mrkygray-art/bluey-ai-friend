@@ -9,7 +9,9 @@ export default async function handler(req,res){
   // right. Only the audio changes (format.js blueySpeakable does the same for the browser voice).
   const text=String(req.body?.text||"").trim()
     .replace(/\bky[-\s]gray[-\s]portfolio\b/gi,"Ky Gray portfolio")
-    .replace(/\bky(?=[-\s]gray\b)/g,"Ky");
+    .replace(/\bky(?=[-\s]gray\b)/g,"Ky")
+    // Ky's partner Leigh says her name like "sleigh" without the S: "Lay" (and "Laybug").
+    .replace(/\bLeigh(bug)?\b/gi,(_,bug)=>"Lay"+(bug?"bug":""));
   // "Slower voice" in the + menu (ease.js): calmer pacing for people who find fast speech hard to follow.
   const slow=req.body?.slow===true;
   if(!text)return res.status(400).json({error:"Add a reply for Bluey to speak"});

@@ -109,7 +109,7 @@ window.blueyCopyReply=async function(text){
 // letters "K Y"; capitalized "Ky" is said right. Only what's spoken changes; the screen and
 // Copy keep the real address. api/speech.js does the same for generated speech.
 window.blueySpeakable=function(text){
- return String(text||'').replace(/\bky[-\s]gray[-\s]portfolio\b/gi,'Ky Gray portfolio').replace(/\bky(?=[-\s]gray\b)/g,'Ky');
+ return String(text||'').replace(/\bky[-\s]gray[-\s]portfolio\b/gi,'Ky Gray portfolio').replace(/\bky(?=[-\s]gray\b)/g,'Ky').replace(/\bLeigh(bug)?\b/gi,(_,bug)=>'Lay'+(bug?'bug':'')); // Leigh rhymes with sleigh
 };
 
 // Speech reads the reply without Markdown symbols. speak() is redefined by alpha7/11/36,
