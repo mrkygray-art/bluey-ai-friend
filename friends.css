@@ -1,0 +1,4 @@
+/* friends.js: a friend's photo under Bluey's reply. */
+.bluey-friend-photo{margin:-10px 0 22px 1px;max-width:min(460px,100%)}
+.bluey-friend-photo img{display:block;width:100%;height:auto;border-radius:14px;border:1px solid #dbe6ec;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.bluey-friend-photo figcaption{margin-top:6px;font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:#6a7c8b}
