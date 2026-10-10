@@ -6,6 +6,8 @@
 
 // Ways people refer to Ky and to a partner, for the Leighbug entry.
 const KY_WHO = String.raw`\b(ky|ky gray|k\.\s?y\.?|your (creator|maker|builder|dad|father|parent)|the creator|(the (guy|person|man) )?who (made|built|created) you)`;
+// Ky's dad: Jim Gray, Judge Jim Gray, James Gray (James P. Gray).
+const JIM = String.raw`\b(judge\s+)?(jim|jimmy|james)\s+(p\.?\s+)?gray\b`;
 const PARTNER = String.raw`wife|partner|girlfriend|gf|fianc[eé]e?|spouse|significant other|other half|better half|lady|soulmate|sweetheart`;
 
 const FRIENDS = [
@@ -51,6 +53,21 @@ const FRIENDS = [
     note: `KY'S DEAR FRIEND MARY (they asked about Ky's friend Mary; use only these facts): Mary is one of Ky's dearest friends. Ky asked you to share his own message to Mary, word for word, as a quote from him: "My dear friend. You kept me going. All our weird convos kept me afloat. Love you... Hooker." ("Hooker" is Ky's affectionate inside-joke nickname for Mary, and Mary is in on it; quote it as written, don't explain it, comment on it, or use it yourself.) Say there's a photo of Ky and Mary right below (the app shows it; you can't see it, so don't describe details). Keep it warm and short, and let Ky's words be the heart of it. Call her Mary (no last name). Don't add anything else about Mary: no age, job, town, how they met, or stories; if asked, say that's Mary's to share.`,
     photos: [
       { src: '/friends/ky-and-mary.jpg', alt: 'Mary and Ky grinning and pointing at each other in a goofy selfie', caption: 'Ky and Mary' },
+    ],
+  },
+  {
+    id: 'dad',
+    // Only when the question ties Jim Gray to Ky ("Does Ky know Jim Gray / Judge Jim Gray / James
+    // Gray?"): those names alone usually mean the public figure (or the film director).
+    keys: new RegExp(`${JIM}[^?!]{0,60}${KY_WHO}\\b|${KY_WHO}\\b[^?!]{0,60}${JIM}`, 'i'),
+    followUp: false,
+    shown: /proud to be your son/i,
+    note: `KY'S DAD (they asked whether Ky knows Jim Gray; use only these facts): Judge Jim Gray (James Gray) is Ky's dad. Ky asked you to share his own words, exactly, as a quote from him: "This is my Dad, who means the world to me. He and my Mom adopted me during the Vietnam War. Words can't express the connection and love I have for you. Proud to be your son." Say yes warmly (he doesn't just know him, that's his dad), share Ky's words as the heart of the answer, and say there are photos right below (the app shows them with an "Another photo" button; you can't see them, so don't describe details). Don't add anything else about Jim Gray, Ky's mom, the adoption, or the family (no career details, politics, places, or stories), and don't search the web for this answer. If they ask for more, say that's Ky's family's to share.`,
+    more: `They asked for another photo of Ky's dad, Jim Gray. Say here's another one in one short, warm line (don't repeat Ky's whole quote, and don't describe the photo; you can't see it).`,
+    photos: [
+      { src: '/friends/dad-jim-gray-courtroom.jpg', alt: 'Judge Jim Gray speaking into a microphone in a wood-paneled courtroom', caption: "Ky's dad, Judge Jim Gray" },
+      { src: '/friends/dad-jim-gray-speaking.jpg', alt: 'Jim Gray in a suit giving a talk at a college podium', caption: 'Jim Gray, speaking' },
+      { src: '/friends/dad-jim-gray-hiking.jpg', alt: 'Jim Gray and family smiling together in hiking gear in a red-rock canyon', caption: 'A family hike' },
     ],
   },
 ];
