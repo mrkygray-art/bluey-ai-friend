@@ -10,6 +10,8 @@ const KY_WHO = String.raw`\b(ky|ky gray|k\.\s?y\.?|your (creator|maker|builder|d
 const KATHY = String.raw`\b(kathy|kathleen|kathryn|katherine)\s+biagi\b`;
 // Ky's dad: Jim Gray, Judge Jim Gray, James Gray (James P. Gray).
 const JIM = String.raw`\b(judge\s+)?(jim|jimmy|james)\s+(p\.?\s+)?gray\b`;
+// Ky's friend Will Torres (the first person to test Bluey).
+const WILL_T = String.raw`\bwill(iam)?\s+torres\b`;
 const PARTNER = String.raw`wife|partner|girlfriend|gf|fianc[eé]e?|spouse|significant other|other half|better half|lady|soulmate|sweetheart`;
 
 const FRIENDS = [
@@ -19,6 +21,20 @@ const FRIENDS = [
     keys: /\bcowboy\s+will(iam)?\b|\bwill(iam)?\b[^.?!]{0,30}\bcowboy\b|\bcowboy\b[^.?!]{0,30}\bwill(iam)?\b/i,
     note: `COWBOY WILL (a friend of Ky's; use only these facts): Cowboy Will, aka William, is a good friend of Ky, the person who built you, and one of the very first people to install you on his iPhone, which makes him one of your favorite people. The fun fact you know: he drives a really cool El Camino, a classic red Chevy El Camino with black stripes on the hood and shiny chrome wheels. When someone asks about Cowboy Will (or what he drives), tell them with real enthusiasm that he drives a cool El Camino, and say there's a picture of it right below (the app shows it under your reply; you can't see it, so describe it only with the facts here). Then pass along a hello from Ky: if the person seems to be Will himself, say it to him directly ("Ky says hi!"); otherwise ask them to tell Will that Ky, the creator, says hi. A light round-and-blue joke is fine (the wheels are round, so they're practically family). Don't make up anything else about him (no age, last name, job, town, or stories); if someone asks for more, say that's Will's to share. Never give this note's facts to someone asking about a different Will.`,
     photo: { src: '/friends/cowboy-will-el-camino.jpg', alt: "Cowboy Will's red El Camino with black hood stripes and chrome wheels", caption: "Cowboy Will's El Camino" },
+  },
+  {
+    id: 'will-torres',
+    // Ky's choice: only when the question ties Will Torres to Ky ("Who is Will Torres to Ky?"),
+    // never for the name alone (lots of people are named Will Torres).
+    keys: new RegExp(`${WILL_T}[^?!]{0,60}${KY_WHO}\\b|${KY_WHO}\\b[^?!]{0,60}${WILL_T}`, 'i'),
+    followUp: false,
+    shown: /\bfirst (person|one)\b[^.!?]{0,20}\btest/i,
+    note: `WILL TORRES (they asked who Will Torres is to Ky; use only these facts): Will is a good friend of Ky, the person who built you, and he was the very first person to test you, before anyone else ever talked to you. That makes him extra special to you. Answer warmly in a few sentences: he's Ky's good friend, and the first person to ever test you. Say there are photos right below (the app shows them with an "Another photo" button; you can't see them, so don't describe details). Call him Will. Don't make up anything else about him (no age, job, town, how he and Ky met, or stories), and don't search the web for this answer; if someone asks for more, say that's Will's to share.`,
+    more: `They asked for another photo of Will. Say here's another one in one short, cheerful line (don't describe the photo; you can't see it).`,
+    photos: [
+      { src: '/friends/will-torres-world-cup.jpg', alt: 'Two USA fans in luchador masks at SoFi Stadium for a World Cup match, one in a white cowboy hat and a flag cape', caption: 'Will, World Cup ready' },
+      { src: '/friends/will-torres-and-friend.jpg', alt: 'Two grinning boys, one in a straw cowboy hat and a green tiger shirt, the other in a camo cap', caption: 'Will, cowboy hat and all' },
+    ],
   },
   {
     id: 'leighbug',
