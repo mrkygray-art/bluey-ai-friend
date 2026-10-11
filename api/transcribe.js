@@ -2,6 +2,7 @@ import { overLimit } from "./_limit.js";
 import OpenAI, { toFile } from "openai";
 import formidable from "formidable";
 import fs from "fs/promises";
+import { spellKy } from "./_ky.js";
 
 export const config={api:{bodyParser:false}};
 const one=v=>Array.isArray(v)?v[0]:v;
@@ -49,7 +50,7 @@ export default async function handler(req,res){
       model:process.env.BLUEY_TRANSCRIBE_MODEL||"gpt-4o-mini-transcribe"
     });
 
-    const text=(out?.text||"").trim();
+    const text=spellKy(out?.text).trim();
     console.log("Bluey transcription success",{characters:text.length});
     if(!text)return res.status(422).json({error:"No speech was transcribed"});
     return res.status(200).json({text});

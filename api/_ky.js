@@ -86,3 +86,9 @@ export function pickKy(text, prevBluey = '') {
   const chosen = [...(aboutKy ? [BY_ID.short] : []), ...hits.slice(0, 3)];
   return `\n\nTHE REAL KY (what you know about the real person who built you, and how you were really made; follow THE REAL KY rules above; use only these facts, in your own words, and only as much as this question asks for):\n${chosen.map(k => `[${k.title}] ${k.text}`).join('\n\n')}\n\nOther things you could tell them about if they're curious (tease one at most):\n${TOPICS}`;
 }
+
+// Ky sounds like "Kai", so speech-to-text (and some people typing) spell it that way. Bluey's world
+// spells it Ky: "Kai" (any case) and an all-caps "KY" become "Ky". K.Y. (the storybook spelling) stays.
+export function spellKy(text) {
+  return String(text || '').replace(/\bkai\b/gi, 'Ky').replace(/\bKY\b(?!\.)/g, 'Ky');
+}
