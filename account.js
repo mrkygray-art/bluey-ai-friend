@@ -32,8 +32,8 @@ let preview=false;
 try{const q=new URLSearchParams(location.search).get('signin');if(q==='1'||q==='all')localStorage.setItem('bluey-signin-preview',q);if(q==='0')localStorage.removeItem('bluey-signin-preview');preview=localStorage.getItem('bluey-signin-preview')||false}catch(_){}
 const methods=()=>preview==='all'?ALL:preview?ALL.filter(m=>READY.includes(m)||TESTING.includes(m)):READY;
 
-let sb=null,loading=null,user=null,rows=new Map(),quiet=false;
-const account={get user(){return user},open:()=>openSheet()};
+let sb=null,loading=null,user=null,token=null,rows=new Map(),quiet=false;
+const account={get user(){return user},get token(){return token},open:()=>openSheet()};
 window.blueyAccount=account;
 
 function client(){
@@ -52,7 +52,7 @@ function writeQuiet(k,v){quiet=true;try{localStorage.setItem(k,JSON.stringify(v)
 function redraw(){window.blueyMemory?.refresh();if(window.blueyRenderRemembered)blueyRenderRemembered();renderItem()}
 
 async function changed(event,session){
- const was=user;user=session?.user||null;
+ const was=user;user=session?.user||null;token=session?.access_token||null;
  if(location.hash&&/access_token=|error_description=/.test(location.hash))window.history.replaceState(null,'',location.pathname+location.search);
  renderItem();window.blueyMemory?.refresh();
  if(user&&(!was||was.id!==user.id)){try{await firstSync();if(event==='SIGNED_IN')status('Signed in. What Bluey remembers now follows you to your other devices.',5000)}catch(e){console.warn('Bluey account sync',e);status('Signed in, but I couldn’t reach your saved memories just now.',5000)}}
@@ -219,12 +219,12 @@ function openSheet(){
   sheet.replaceChildren(el('h2',null,'Your account'),el('p','bluey-memory-lead',`Signed in as ${user.email||'you'}. ${n?`Bluey remembers ${n} thing${n===1?'':'s'} about you, saved to your account`:'Anything Bluey remembers about you will be saved to your account'}, so it follows you to your other devices.`));
   const see=button('See what Bluey remembers',null,()=>{close();document.querySelector('.bluey-memory-item')?.click()});
   const chats=button('Your saved chats',null,()=>{close();openChats()});
-  const out=button('Sign out','is-quiet',async()=>{out.disabled=true;clearTimeout(chatTimer);await queue(pushChat);try{await sb.auth.signOut()}catch(_){}writeQuiet(MEM,[]);writeQuiet(PREFS,[]);clearChatHere();user=null;rows=new Map();redraw();close();status('Signed out. Your memories and chats are safe in your account and were removed from this device.',5000)});
+  const out=button('Sign out','is-quiet',async()=>{out.disabled=true;clearTimeout(chatTimer);await queue(pushChat);try{await sb.auth.signOut()}catch(_){}writeQuiet(MEM,[]);writeQuiet(PREFS,[]);clearChatHere();user=null;token=null;rows=new Map();redraw();close();status('Signed out. Your memories and chats are safe in your account and were removed from this device.',5000)});
   let armed=false;
   const del=button('Delete my account','is-quiet is-danger',async()=>{
    if(!armed){armed=true;del.textContent='Tap again to delete your account and everything in it';return}
    del.disabled=true;say('Deleting…');
-   try{const {error}=await sb.rpc('delete_my_account');if(error)throw error;try{await sb.auth.signOut({scope:'local'})}catch(_){}writeQuiet(MEM,[]);writeQuiet(PREFS,[]);clearChatHere();user=null;rows=new Map();redraw();close();status('Your account and everything in it are deleted.',5000)}
+   try{const media=await fetch('/api/media/library?all=1',{method:'DELETE',headers:{Authorization:'Bearer '+token}});if(!media.ok&&media.status!==501)throw new Error('pictures');const {error}=await sb.rpc('delete_my_account');if(error)throw error;try{await sb.auth.signOut({scope:'local'})}catch(_){}writeQuiet(MEM,[]);writeQuiet(PREFS,[]);clearChatHere();user=null;token=null;rows=new Map();redraw();close();status('Your account and everything in it are deleted.',5000)}
    catch(_){del.disabled=false;say('I couldn’t delete it just now. Please try again in a moment.')}
   });
   sheet.append(note,actions(see,chats),actions(out,del,button('Done',null,close)),privacy());

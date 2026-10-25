@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/media/**/*.js": {
+      "maxDuration": 180
+    }
+  },
   "redirects": [
     {
       "source": "/brain-lab.html",
